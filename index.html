@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>小红书 (Web版) - 你的生活指南</title>
+    <title>Behance 风格展示页</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
@@ -12,17 +12,16 @@
             theme: {
                 extend: {
                     colors: {
-                        xhs: {
-                            red: '#ff2442',
-                            bg: '#fbfbfb',
-                            gray: '#f5f5f5',
-                            text: '#333333',
-                            sub: '#666666'
+                        // Behance 风格色调更偏冷、黑白灰
+                        behance: {
+                            blue: '#0057ff', // Behance 标志蓝
+                            dark: '#191919',
+                            gray: '#959595',
+                            bg: '#f9f9f9'
                         }
                     },
-                    boxShadow: {
-                        'card': '0 2px 8px rgba(0, 0, 0, 0.04)',
-                        'hover': '0 4px 12px rgba(0, 0, 0, 0.08)'
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
                     }
                 }
             }
@@ -30,204 +29,171 @@
     </script>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #fff; /* Web版大多是大白底 */
+            background-color: #f9f9f9; /* Behance 常用浅灰背景 */
             -webkit-font-smoothing: antialiased;
         }
-
-        /* 隐藏滚动条但允许滚动 */
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* 瀑布流核心优化 */
-        .masonry-grid {
-            column-count: 2;
-            column-gap: 16px;
+        /* 核心修改：移除瀑布流样式，改用标准 Grid
+           不再需要 column-count 和 break-inside-avoid
+        */
+        .behance-grid {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 2rem 1.5rem; /* 行间距大一点，列间距适中 */
         }
-        @media (min-width: 768px) { .masonry-grid { column-count: 3; } }
-        @media (min-width: 1024px) { .masonry-grid { column-count: 4; } }
-        @media (min-width: 1280px) { .masonry-grid { column-count: 5; } }
+        /* 响应式 Grid 断点参考 Behance */
+        @media (min-width: 640px) { .behance-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (min-width: 1024px) { .behance-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (min-width: 1440px) { .behance-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
-        .break-inside-avoid {
-            break-inside: avoid;
-            margin-bottom: 16px; /* 卡片间距 */
+        /* 图片加载动效优化 */
+        .img-loading-placeholder {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
         /* 点赞动画 */
-        @keyframes like-bounce {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        @keyframes thumbs-up-bounce {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(-15deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
-        .animate-like { animation: like-bounce 0.3s ease-in-out; }
-        .liked { color: #ff2442; }
+        .animate-thumbs-up { animation: thumbs-up-bounce 0.4s ease-in-out; }
+        .liked-blue { color: #0057ff; }
     </style>
 </head>
-<body class="h-screen flex overflow-hidden text-slate-800">
+<body class="text-behance-dark bg-behance-bg font-sans">
 
-    <aside class="w-[260px] flex-shrink-0 hidden md:flex flex-col h-full border-r border-gray-100 bg-white z-30 pt-4 pb-6 px-4">
-        <div class="px-5 mb-8 flex items-center gap-2 cursor-pointer">
-            <span class="text-3xl font-bold text-xhs-red italic">小红书</span>
+    <header class="sticky top-0 bg-white z-20 px-6 md:px-12 py-4 flex items-center justify-between border-b border-gray-200">
+        <div class="flex items-center gap-8">
+            <div class="text-2xl font-black tracking-tight">Behance<span class="text-behance-blue">.</span></div>
+            
+            <nav class="hidden md:flex items-center gap-6 text-sm font-bold text-gray-600">
+                <a href="#" class="text-behance-dark">发现</a>
+                <a href="#" class="hover:text-behance-dark transition">直播</a>
+                <a href="#" class="hover:text-behance-dark transition">职位</a>
+            </nav>
         </div>
 
-        <nav class="flex-1 space-y-1">
-            <a href="#" class="flex items-center px-5 py-3.5 bg-xhs-red text-white rounded-full font-bold transition-all shadow-md shadow-red-100">
-                <span class="text-lg mr-3">发现</span>
-            </a>
-            <a href="#" class="flex items-center px-5 py-3.5 text-slate-600 hover:bg-gray-50 rounded-full font-medium transition-all group">
-                <i class="ri-add-circle-line text-2xl mr-3 text-slate-400 group-hover:text-slate-600 transition"></i>
-                <span class="text-lg">发布</span>
-            </a>
-            <a href="#" class="flex items-center px-5 py-3.5 text-slate-600 hover:bg-gray-50 rounded-full font-medium transition-all group">
-                <i class="ri-notification-3-line text-2xl mr-3 text-slate-400 group-hover:text-slate-600 transition"></i>
-                <span class="text-lg">通知</span>
-            </a>
-             <a href="#" class="flex items-center px-5 py-3.5 text-slate-600 hover:bg-gray-50 rounded-full font-medium transition-all group">
-                 <div class="w-7 h-7 rounded-full bg-gray-200 mr-3 overflow-hidden border border-gray-200">
-                    <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix" alt="Me">
-                 </div>
-                <span class="text-lg">我</span>
-            </a>
-        </nav>
-
-        <div class="px-4">
-            <button class="flex items-center text-slate-500 hover:text-slate-900 px-2 py-2 w-full text-left rounded-lg hover:bg-gray-50 transition">
-                <i class="ri-menu-line mr-3 text-xl"></i>
-                <span class="font-medium">更多</span>
-            </button>
+        <div class="flex items-center gap-4">
+             <div class="relative group hidden md:block">
+                <input type="text" placeholder="搜索..." class="bg-gray-100 border border-transparent focus:bg-white focus:border-gray-300 rounded-full py-2 pl-10 pr-4 outline-none transition-all text-sm w-64">
+                <i class="ri-search-line absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <div class="flex items-center gap-4 text-sm font-bold">
+                <button class="hidden sm:block border border-gray-300 px-4 py-2 rounded-full hover:border-gray-800 transition">登录</button>
+                <button class="bg-behance-blue text-white px-5 py-2 rounded-full hover:bg-blue-700 transition shadow-sm shadow-blue-500/20">注册</button>
+            </div>
+            <button class="md:hidden text-2xl ml-2"><i class="ri-menu-line"></i></button>
         </div>
-    </aside>
+    </header>
 
-    <main class="flex-1 flex flex-col h-full relative bg-white">
+    <div class="bg-white px-6 md:px-12 py-3 border-b border-gray-200 overflow-x-auto no-scrollbar flex items-center gap-2">
+        <button class="flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded-md text-sm font-bold whitespace-nowrap hover:border-gray-800 transition">
+            <i class="ri-filter-3-line"></i> 筛选条件
+        </button>
+         <span class="text-gray-300 mx-2">|</span>
+        <div class="flex gap-4 text-sm font-bold text-gray-500">
+            <span class="text-behance-dark cursor-pointer bg-gray-100 px-3 py-1.5 rounded-md">推荐作品</span>
+            <span class="hover:text-behance-dark cursor-pointer px-3 py-1.5 transition whitespace-nowrap">平面设计</span>
+            <span class="hover:text-behance-dark cursor-pointer px-3 py-1.5 transition whitespace-nowrap">插画</span>
+            <span class="hover:text-behance-dark cursor-pointer px-3 py-1.5 transition whitespace-nowrap">UI/UX</span>
+            <span class="hover:text-behance-dark cursor-pointer px-3 py-1.5 transition whitespace-nowrap">摄影</span>
+        </div>
+    </div>
+
+    <main class="px-6 md:px-12 py-8">
+        <div class="behance-grid" id="card-container">
+            </div>
         
-        <header class="sticky top-0 bg-white/95 backdrop-blur-md z-20 px-4 md:px-10 py-4 flex items-center justify-between gap-6 border-b border-transparent transition-all" id="main-header">
-            <div class="md:hidden text-2xl font-bold text-xhs-red italic shrink-0">小红书</div>
-
-            <div class="flex-1 max-w-2xl mx-auto md:mx-0 relative group">
-                <input type="text" 
-                    placeholder="搜索小红书" 
-                    class="w-full bg-gray-100/80 border border-transparent focus:bg-white focus:border-gray-300 focus:ring-4 focus:ring-gray-100 rounded-full py-2.5 pl-11 pr-12 outline-none transition-all text-sm text-slate-700 placeholder-slate-400">
-                <i class="ri-search-line absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600"></i>
-                <button class="absolute right-1.5 top-1.5 bg-xhs-red text-white text-xs px-3 py-1.5 rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity">搜索</button>
-            </div>
-
-            <div class="flex items-center gap-6 text-slate-500 text-base shrink-0 hidden sm:flex font-medium">
-                <span class="hover:text-slate-900 cursor-pointer transition">创作中心</span>
-                <span class="hover:text-slate-900 cursor-pointer transition">业务合作</span>
-                <button class="bg-xhs-red text-white px-6 py-2 rounded-full text-sm font-bold hover:bg-red-600 hover:shadow-lg hover:shadow-red-500/30 transition-all transform hover:-translate-y-0.5">登录</button>
-            </div>
-            
-            <button class="md:hidden text-2xl text-slate-600">
-                <i class="ri-menu-3-line"></i>
-            </button>
-        </header>
-
-        <div class="px-4 md:px-10 py-2 flex gap-4 overflow-x-auto no-scrollbar text-sm text-slate-500 font-medium border-b border-gray-50 pb-3">
-            <span class="text-slate-900 bg-gray-100 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer">推荐</span>
-            <span class="hover:text-slate-900 hover:bg-gray-50 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer transition">穿搭</span>
-            <span class="hover:text-slate-900 hover:bg-gray-50 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer transition">美食</span>
-            <span class="hover:text-slate-900 hover:bg-gray-50 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer transition">彩妆</span>
-            <span class="hover:text-slate-900 hover:bg-gray-50 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer transition">影视</span>
-            <span class="hover:text-slate-900 hover:bg-gray-50 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer transition">职场</span>
-            <span class="hover:text-slate-900 hover:bg-gray-50 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer transition">家居</span>
-        </div>
-
-        <div class="flex-1 overflow-y-auto no-scrollbar p-2 md:p-4 lg:px-10 pb-20" id="scroll-container">
-            <div class="masonry-grid" id="card-container">
-                </div>
-            
-            <div id="loader" class="text-center py-8 text-slate-400 hidden">
-                <i class="ri-loader-4-line text-2xl animate-spin inline-block"></i>
-                <span class="ml-2 text-sm">加载中...</span>
-            </div>
+        <div id="loader" class="text-center py-12 hidden">
+            <div class="inline-block w-8 h-8 border-4 border-gray-200 border-t-behance-blue rounded-full animate-spin"></div>
         </div>
     </main>
 
-    <div id="modal-overlay" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl w-[90%] md:w-[800px] h-[80%] flex overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300" id="modal-content">
-            <div class="w-full md:w-2/3 bg-black flex items-center justify-center">
-                 <img id="modal-img" src="" class="max-w-full max-h-full object-contain">
-            </div>
-            <div class="w-1/3 p-6 hidden md:flex flex-col relative">
-                <div class="flex items-center gap-3 mb-4">
-                     <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix" class="w-8 h-8 rounded-full border">
-                     <span class="text-sm font-bold text-slate-700">作者名称</span>
-                </div>
-                <h2 class="text-lg font-bold mb-2">笔记标题演示</h2>
-                <p class="text-sm text-slate-500">这里是笔记的详细内容...</p>
-                <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-800" onclick="closeModal()">
-                    <i class="ri-close-line text-2xl"></i>
-                </button>
+    <div id="modal-overlay" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="bg-white rounded-lg w-full h-full md:w-[90%] md:h-[95%] flex overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300 relative" id="modal-content">
+             <button class="absolute top-4 right-4 z-10 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition" onclick="closeModal()">
+                <i class="ri-close-line text-xl"></i>
+            </button>
+            <div class="w-full h-full bg-gray-50 flex items-center justify-center p-4">
+                 <img id="modal-img" src="" class="max-w-full max-h-full object-contain shadow-lg">
             </div>
         </div>
     </div>
 
     <script>
-        // --- 数据模拟 ---
+        // --- 数据模拟 (更偏向设计类标题) ---
         const MOCK_TITLES = [
-            "我的设计好看吗铁铁们！！！下辈子还学设计 😭",
-            "疯狂无限城 - 7月18日强势上线，这也太酷了吧",
-            "UI+AI 工作流分享，DeepSeek + Claude 简直是王炸",
-            "Gemini 3 的审美也是脱胎换骨了！附提示词",
-            "珠海这个城市太适合微创业了，附保姆级攻略",
-            "男朋友拍的照片vs我拍的照片，真的绝了",
-            "2025年最值得入手的数码好物，均价不过百",
-            "今天长这样，OOTD分享，韩系慵懒风",
-            "这建模100费吗？工业设计毕设分享",
-            "省人变做成装饰画展览，师傅手工做的500kg软陶",
-            "谁懂啊！这种奶油风装修真的很容易翻车"
+            "品牌视觉识别系统设计 - Reborn",
+            "2025 极简主义 UI Kit (Figma)",
+            "赛博朋克风格插画系列 - Neon Dreams",
+            "可口可乐再设计概念提案",
+            "建筑摄影：光影几何学",
+            "3D 产品渲染 - 索尼耳机概念",
+            "复古字体设计与排版研究",
+            "网页设计趋势报告可视化",
+            "动态 Logo 设计合集 Showreel"
         ];
         
-        const MOCK_USERS = ["无敌小x", "设计大橙子", "Zorua", "极简设计", "如梦初醒", "妙手软陶", "CodeMaster", "ArtStation"];
+        const MOCK_USERS = ["Alex Bender", "Studio K", "Masaaki Sato", "Elena Woo", "Orizon Design"];
 
         // --- 核心逻辑 ---
-        
         const container = document.getElementById('card-container');
         const loader = document.getElementById('loader');
         let isLoading = false;
-
-        // 生成随机整数
         const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
-        // 创建卡片 HTML 字符串
+        // 创建卡片 (Behance 横幅风格)
         function createCard(id) {
-            // 随机高度 (300 - 600) 模拟不同比例图片
-            const height = randomInt(200, 450); 
             const title = MOCK_TITLES[randomInt(0, MOCK_TITLES.length - 1)];
             const user = MOCK_USERS[randomInt(0, MOCK_USERS.length - 1)];
-            const likes = randomInt(10, 5000);
-            const isVideo = Math.random() > 0.8; // 20% 概率是视频
+            const likes = randomInt(100, 8000);
+            const views = randomInt(1, 200); // K为单位
             
-            // 使用 Picsum 图片，加 id 确保不重复缓存
-            const imgUrl = `https://picsum.photos/400/${height}?random=${id}`;
-            const avatarUrl = `https://api.dicebear.com/7.x/notionists/svg?seed=${id}`;
+            // 请求横向图片 (例如 800x600, 4:3比例)
+            const width = 800;
+            const height = 600;
+            const imgUrl = `https://picsum.photos/${width}/${height}?random=${id}`;
+            const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${user}&backgroundColor=f0f0f0`;
 
             return `
-            <div class="break-inside-avoid group cursor-pointer relative" onclick="openModal('${imgUrl}')">
-                <div class="relative rounded-xl overflow-hidden mb-2.5 bg-gray-100 shadow-sm border border-black/5">
-                    <div class="absolute inset-0 bg-gray-200 animate-pulse -z-10"></div>
+            <div class="group cursor-pointer flex flex-col" onclick="openModal('${imgUrl}')">
+                <div class="relative w-full aspect-[4/3] rounded-[10px] overflow-hidden bg-gray-100 mb-3">
+                    <div class="absolute inset-0 img-loading-placeholder -z-10"></div>
                     
                     <img src="${imgUrl}" 
-                         class="w-full h-auto object-cover group-hover:scale-105 transition duration-500 ease-out align-middle" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" 
                          loading="lazy" 
-                         alt="Cover"
+                         alt="Project Cover"
                          onload="this.previousElementSibling.style.display='none'">
                     
-                    <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition duration-300"></div>
-                    
-                    ${isVideo ? '<i class="ri-play-circle-fill absolute top-2 right-2 text-white/90 text-2xl drop-shadow-md backdrop-blur-sm rounded-full"></i>' : ''}
+                    <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
                 
-                <h3 class="font-bold text-slate-800 text-[15px] leading-snug mb-2 line-clamp-2 group-hover:text-black transition-colors">${title}</h3>
-                
-                <div class="flex items-center justify-between text-xs text-slate-500">
-                    <div class="flex items-center gap-1.5 hover:bg-gray-100 pr-2 py-0.5 rounded-full -ml-1 transition-colors">
-                        <img src="${avatarUrl}" class="w-5 h-5 rounded-full border border-gray-100 bg-white">
-                        <span class="truncate max-w-[80px] text-slate-600">${user}</span>
+                <div class="flex justify-between items-start px-0.5">
+                    <div class="pr-4 flex-1">
+                        <h3 class="font-bold text-base text-[#191919] leading-tight mb-1 truncate group-hover:underline decoration-2">${title}</h3>
+                        <div class="flex items-center">
+                             <span class="text-xs font-semibold text-gray-500 hover:text-behance-dark transition">${user}</span>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-1 cursor-pointer group/like" onclick="toggleLike(this, event)">
-                        <i class="ri-heart-3-line text-sm group-hover/like:text-xhs-red transition-colors"></i>
-                        <span class="tabular-nums font-medium group-hover/like:text-slate-800">${likes}</span>
+                    
+                    <div class="flex items-center gap-3 text-xs font-bold text-gray-400 shrink-0 mt-0.5">
+                        <div class="flex items-center gap-1 group/like cursor-pointer" onclick="toggleLike(this, event)">
+                            <i class="ri-thumb-up-line text-sm group-hover/like:text-behance-dark transition-colors"></i>
+                            <span class="tabular-nums group-hover/like:text-behance-dark transition-colors">${likes}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <i class="ri-eye-line text-sm"></i>
+                            <span class="tabular-nums">${views}k</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -235,50 +201,44 @@
         }
 
         // 批量添加卡片
-        function loadMoreCards(count = 10) {
+        function loadMoreCards(count = 12) {
             if (isLoading) return;
             isLoading = true;
             loader.classList.remove('hidden');
 
             setTimeout(() => {
                 let html = '';
-                // 现在的 timestamp 加上随机数作为ID，保证每次都不一样
                 const baseId = Date.now();
                 for (let i = 0; i < count; i++) {
                     html += createCard(baseId + i);
                 }
-                
-                // 将 HTML 字符串解析并追加
                 container.insertAdjacentHTML('beforeend', html);
-                
                 isLoading = false;
                 loader.classList.add('hidden');
-            }, 500); // 模拟网络延迟 0.5s
+            }, 600);
         }
 
         // --- 交互功能 ---
 
-        // 点赞功能
+        // 点赞功能 (Behance 使用大拇指)
         window.toggleLike = function(el, event) {
-            event.stopPropagation(); // 防止触发卡片点击
+            event.stopPropagation();
             const icon = el.querySelector('i');
             const countSpan = el.querySelector('span');
             let count = parseInt(countSpan.innerText);
 
-            if (el.classList.contains('liked')) {
-                // 取消点赞
-                el.classList.remove('liked');
-                icon.className = 'ri-heart-3-line text-sm group-hover/like:text-xhs-red transition-colors';
+            if (el.classList.contains('liked-blue')) {
+                el.classList.remove('liked-blue');
+                icon.className = 'ri-thumb-up-line text-sm group-hover/like:text-behance-dark transition-colors';
                 countSpan.innerText = count - 1;
             } else {
-                // 点赞
-                el.classList.add('liked');
-                icon.className = 'ri-heart-3-fill text-sm animate-like'; // 变成实心红心
+                el.classList.add('liked-blue');
+                icon.className = 'ri-thumb-up-fill text-sm animate-thumbs-up'; // 实心蓝拇指
                 countSpan.innerText = count + 1;
             }
         }
 
-        // 模态框逻辑
+        // 模态框逻辑 (保持一致)
         const modalOverlay = document.getElementById('modal-overlay');
         const modalContent = document.getElementById('modal-content');
         const modalImg = document.getElementById('modal-img');
@@ -286,12 +246,12 @@
         window.openModal = function(src) {
             modalImg.src = src;
             modalOverlay.classList.remove('hidden');
-            // 简单的淡入动效
             requestAnimationFrame(() => {
                 modalOverlay.classList.remove('opacity-0');
                 modalContent.classList.remove('scale-95');
                 modalContent.classList.add('scale-100');
             });
+            document.body.style.overflow = 'hidden'; // 禁止背景滚动
         }
 
         window.closeModal = function() {
@@ -301,24 +261,22 @@
             setTimeout(() => {
                 modalOverlay.classList.add('hidden');
                 modalImg.src = '';
+                document.body.style.overflow = ''; // 恢复背景滚动
             }, 300);
         }
 
-        // 点击遮罩关闭
         modalOverlay.addEventListener('click', (e) => {
             if(e.target === modalOverlay) closeModal();
         });
 
-        // --- 无限滚动 (Intersection Observer) ---
+        // 无限滚动
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
-                loadMoreCards(10);
+                loadMoreCards(8);
             }
-        }, { rootMargin: '200px' });
+        }, { rootMargin: '300px' });
 
-        // 初始加载
-        loadMoreCards(15);
-        // 监听 loading 元素
+        loadMoreCards(12);
         observer.observe(loader);
 
     </script>
