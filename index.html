@@ -2,230 +2,325 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小红书 - 你的生活指南</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>小红书 (Web版) - 你的生活指南</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        xhs: {
+                            red: '#ff2442',
+                            bg: '#fbfbfb',
+                            gray: '#f5f5f5',
+                            text: '#333333',
+                            sub: '#666666'
+                        }
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.04)',
+                        'hover': '0 4px 12px rgba(0, 0, 0, 0.08)'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* 自定义一些细节以更接近原版 */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #fff; /* Web版大多是大白底 */
+            -webkit-font-smoothing: antialiased;
         }
-        .xhs-red {
-            color: #ff2442;
+
+        /* 隐藏滚动条但允许滚动 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 瀑布流核心优化 */
+        .masonry-grid {
+            column-count: 2;
+            column-gap: 16px;
         }
-        .xhs-bg-red {
-            background-color: #ff2442;
-        }
-        /* 隐藏滚动条但保持滚动功能 */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        /* 瀑布流卡片避免被截断 */
+        @media (min-width: 768px) { .masonry-grid { column-count: 3; } }
+        @media (min-width: 1024px) { .masonry-grid { column-count: 4; } }
+        @media (min-width: 1280px) { .masonry-grid { column-count: 5; } }
+
         .break-inside-avoid {
             break-inside: avoid;
+            margin-bottom: 16px; /* 卡片间距 */
         }
+
+        /* 点赞动画 */
+        @keyframes like-bounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .animate-like { animation: like-bounce 0.3s ease-in-out; }
+        .liked { color: #ff2442; }
     </style>
 </head>
-<body class="bg-white h-screen flex overflow-hidden text-gray-800">
+<body class="h-screen flex overflow-hidden text-slate-800">
 
-    <aside class="w-[240px] flex-shrink-0 flex flex-col border-r border-gray-100 h-full px-4 py-6 bg-white z-20 hidden md:flex">
-        <div class="mb-8 px-4">
-            <h1 class="text-4xl font-bold xhs-red italic">小红书</h1>
+    <aside class="w-[260px] flex-shrink-0 hidden md:flex flex-col h-full border-r border-gray-100 bg-white z-30 pt-4 pb-6 px-4">
+        <div class="px-5 mb-8 flex items-center gap-2 cursor-pointer">
+            <span class="text-3xl font-bold text-xhs-red italic">小红书</span>
         </div>
 
-        <nav class="flex-1 space-y-2">
-            <a href="#" class="flex items-center px-4 py-3 bg-gray-100 rounded-full font-bold text-gray-900">
-                <span class="text-xl mr-3 font-normal">发现</span>
+        <nav class="flex-1 space-y-1">
+            <a href="#" class="flex items-center px-5 py-3.5 bg-xhs-red text-white rounded-full font-bold transition-all shadow-md shadow-red-100">
+                <span class="text-lg mr-3">发现</span>
             </a>
-            <a href="#" class="flex items-center px-4 py-3 hover:bg-gray-50 rounded-full text-gray-600 transition">
-                <i class="ri-add-circle-line text-xl mr-3"></i>
-                <span>发布</span>
+            <a href="#" class="flex items-center px-5 py-3.5 text-slate-600 hover:bg-gray-50 rounded-full font-medium transition-all group">
+                <i class="ri-add-circle-line text-2xl mr-3 text-slate-400 group-hover:text-slate-600 transition"></i>
+                <span class="text-lg">发布</span>
             </a>
-            <a href="#" class="flex items-center px-4 py-3 hover:bg-gray-50 rounded-full text-gray-600 transition">
-                <i class="ri-notification-3-line text-xl mr-3"></i>
-                <span>通知</span>
+            <a href="#" class="flex items-center px-5 py-3.5 text-slate-600 hover:bg-gray-50 rounded-full font-medium transition-all group">
+                <i class="ri-notification-3-line text-2xl mr-3 text-slate-400 group-hover:text-slate-600 transition"></i>
+                <span class="text-lg">通知</span>
             </a>
-            <a href="#" class="flex items-center px-4 py-3 hover:bg-gray-50 rounded-full text-gray-600 transition">
-                <div class="w-6 h-6 rounded-full bg-gray-300 mr-3 overflow-hidden">
-                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Me">
-                </div>
-                <span>我</span>
+             <a href="#" class="flex items-center px-5 py-3.5 text-slate-600 hover:bg-gray-50 rounded-full font-medium transition-all group">
+                 <div class="w-7 h-7 rounded-full bg-gray-200 mr-3 overflow-hidden border border-gray-200">
+                    <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix" alt="Me">
+                 </div>
+                <span class="text-lg">我</span>
             </a>
         </nav>
 
-        <div class="mt-auto px-4">
-            <button class="flex items-center text-gray-500 hover:text-gray-900">
-                <i class="ri-menu-line mr-2"></i>
-                <span>更多</span>
+        <div class="px-4">
+            <button class="flex items-center text-slate-500 hover:text-slate-900 px-2 py-2 w-full text-left rounded-lg hover:bg-gray-50 transition">
+                <i class="ri-menu-line mr-3 text-xl"></i>
+                <span class="font-medium">更多</span>
             </button>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col h-full relative">
+    <main class="flex-1 flex flex-col h-full relative bg-white">
         
-        <header class="sticky top-0 bg-white/90 backdrop-blur-sm z-10 px-8 py-4 flex items-center justify-between gap-8">
-            <div class="md:hidden text-2xl font-bold xhs-red">小红书</div>
+        <header class="sticky top-0 bg-white/95 backdrop-blur-md z-20 px-4 md:px-10 py-4 flex items-center justify-between gap-6 border-b border-transparent transition-all" id="main-header">
+            <div class="md:hidden text-2xl font-bold text-xhs-red italic shrink-0">小红书</div>
 
-            <div class="flex-1 max-w-2xl mx-auto relative">
-                <input type="text" placeholder="搜索小红书" class="w-full bg-gray-100 border-transparent focus:bg-white focus:ring-2 focus:ring-gray-200 rounded-full py-2.5 pl-12 pr-4 outline-none transition text-sm text-gray-700">
-                <i class="ri-search-line absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <div class="flex-1 max-w-2xl mx-auto md:mx-0 relative group">
+                <input type="text" 
+                    placeholder="搜索小红书" 
+                    class="w-full bg-gray-100/80 border border-transparent focus:bg-white focus:border-gray-300 focus:ring-4 focus:ring-gray-100 rounded-full py-2.5 pl-11 pr-12 outline-none transition-all text-sm text-slate-700 placeholder-slate-400">
+                <i class="ri-search-line absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-600"></i>
+                <button class="absolute right-1.5 top-1.5 bg-xhs-red text-white text-xs px-3 py-1.5 rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity">搜索</button>
             </div>
 
-            <div class="flex items-center gap-4 text-gray-500 text-sm shrink-0 hidden sm:flex">
-                <span class="hover:text-gray-900 cursor-pointer">创作中心</span>
-                <span class="hover:text-gray-900 cursor-pointer">业务合作</span>
-                <button class="bg-black text-white px-4 py-1.5 rounded-full text-sm font-medium hover:opacity-80 transition">登录</button>
+            <div class="flex items-center gap-6 text-slate-500 text-base shrink-0 hidden sm:flex font-medium">
+                <span class="hover:text-slate-900 cursor-pointer transition">创作中心</span>
+                <span class="hover:text-slate-900 cursor-pointer transition">业务合作</span>
+                <button class="bg-xhs-red text-white px-6 py-2 rounded-full text-sm font-bold hover:bg-red-600 hover:shadow-lg hover:shadow-red-500/30 transition-all transform hover:-translate-y-0.5">登录</button>
             </div>
+            
+            <button class="md:hidden text-2xl text-slate-600">
+                <i class="ri-menu-3-line"></i>
+            </button>
         </header>
 
-        <div class="flex-1 overflow-y-auto no-scrollbar p-4 md:px-8 pb-10">
-            <div class="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4">
-                
-                <div class="break-inside-avoid group cursor-pointer">
-                    <div class="relative rounded-xl overflow-hidden mb-2">
-                        <img src="https://picsum.photos/400/600?random=1" class="w-full object-cover group-hover:scale-105 transition duration-300" alt="Cover">
-                        <div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition"></div>
-                    </div>
-                    <h3 class="font-medium text-gray-900 text-sm mb-1 line-clamp-2">最猛的城市：珠海！微创业不需要很多钱。</h3>
-                    <div class="flex items-center justify-between text-xs text-gray-500 mt-1">
-                        <div class="flex items-center gap-1.5">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=1" class="w-5 h-5 rounded-full border border-gray-100">
-                            <span class="truncate max-w-[80px]">无敌小x</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <i class="ri-heart-line"></i> 77
-                        </div>
-                    </div>
+        <div class="px-4 md:px-10 py-2 flex gap-4 overflow-x-auto no-scrollbar text-sm text-slate-500 font-medium border-b border-gray-50 pb-3">
+            <span class="text-slate-900 bg-gray-100 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer">推荐</span>
+            <span class="hover:text-slate-900 hover:bg-gray-50 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer transition">穿搭</span>
+            <span class="hover:text-slate-900 hover:bg-gray-50 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer transition">美食</span>
+            <span class="hover:text-slate-900 hover:bg-gray-50 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer transition">彩妆</span>
+            <span class="hover:text-slate-900 hover:bg-gray-50 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer transition">影视</span>
+            <span class="hover:text-slate-900 hover:bg-gray-50 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer transition">职场</span>
+            <span class="hover:text-slate-900 hover:bg-gray-50 px-4 py-1.5 rounded-full whitespace-nowrap cursor-pointer transition">家居</span>
+        </div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar p-2 md:p-4 lg:px-10 pb-20" id="scroll-container">
+            <div class="masonry-grid" id="card-container">
                 </div>
-
-                <div class="break-inside-avoid group cursor-pointer">
-                    <div class="relative rounded-xl overflow-hidden mb-2">
-                        <img src="https://picsum.photos/400/300?random=2" class="w-full object-cover group-hover:scale-105 transition duration-300" alt="Cover">
-                    </div>
-                    <h3 class="font-medium text-gray-900 text-sm mb-1 line-clamp-2">UI+AI 工作流分享，这也太强了吧！</h3>
-                    <div class="flex items-center justify-between text-xs text-gray-500 mt-1">
-                        <div class="flex items-center gap-1.5">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=2" class="w-5 h-5 rounded-full border border-gray-100">
-                            <span>设计大橙子</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <i class="ri-heart-line"></i> 1598
-                        </div>
-                    </div>
-                </div>
-
-                 <div class="break-inside-avoid group cursor-pointer">
-                    <div class="relative rounded-xl overflow-hidden mb-2">
-                        <img src="https://picsum.photos/400/500?random=3" class="w-full object-cover group-hover:scale-105 transition duration-300" alt="Cover">
-                    </div>
-                    <h3 class="font-medium text-gray-900 text-sm mb-1 line-clamp-2">Gemini 3 Pro 生成的 Chiikawa 漫画</h3>
-                    <div class="flex items-center justify-between text-xs text-gray-500 mt-1">
-                        <div class="flex items-center gap-1.5">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=3" class="w-5 h-5 rounded-full border border-gray-100">
-                            <span>Zorua</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <i class="ri-heart-line"></i> 448
-                        </div>
-                    </div>
-                </div>
-
-                <div class="break-inside-avoid group cursor-pointer">
-                    <div class="relative rounded-xl overflow-hidden mb-2">
-                        <img src="https://picsum.photos/400/450?random=4" class="w-full object-cover group-hover:scale-105 transition duration-300" alt="Cover">
-                    </div>
-                    <h3 class="font-medium text-gray-900 text-sm mb-1 line-clamp-2">这建模100费吗？工业设计</h3>
-                    <div class="flex items-center justify-between text-xs text-gray-500 mt-1">
-                        <div class="flex items-center gap-1.5">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=4" class="w-5 h-5 rounded-full border border-gray-100">
-                            <span>极简设计</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <i class="ri-heart-line"></i> 97
-                        </div>
-                    </div>
-                </div>
-
-                <div class="break-inside-avoid group cursor-pointer">
-                    <div class="relative rounded-xl overflow-hidden mb-2">
-                        <img src="https://picsum.photos/400/350?random=5" class="w-full object-cover group-hover:scale-105 transition duration-300" alt="Cover">
-                    </div>
-                    <h3 class="font-medium text-gray-900 text-sm mb-1 line-clamp-2">2025全球命理师大赛</h3>
-                    <div class="flex items-center justify-between text-xs text-gray-500 mt-1">
-                        <div class="flex items-center gap-1.5">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=5" class="w-5 h-5 rounded-full border border-gray-100">
-                            <span>如梦初醒</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <i class="ri-heart-line"></i> 1176
-                        </div>
-                    </div>
-                </div>
-
-                 <div class="break-inside-avoid group cursor-pointer">
-                    <div class="relative rounded-xl overflow-hidden mb-2">
-                        <img src="https://picsum.photos/400/550?random=6" class="w-full object-cover group-hover:scale-105 transition duration-300" alt="Cover">
-                        <i class="ri-play-circle-fill absolute top-2 right-2 text-white text-xl drop-shadow-md"></i>
-                    </div>
-                    <h3 class="font-medium text-gray-900 text-sm mb-1 line-clamp-2">省人变做成装饰画展览，师傅手工做的500kg软陶</h3>
-                    <div class="flex items-center justify-between text-xs text-gray-500 mt-1">
-                        <div class="flex items-center gap-1.5">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=6" class="w-5 h-5 rounded-full border border-gray-100">
-                            <span>妙手软陶</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <i class="ri-heart-line"></i> 2996
-                        </div>
-                    </div>
-                </div>
-
-                <script>
-                    // 简单的脚本来生成更多卡片以展示瀑布流效果
-                    const titles = [
-                        "我的设计好看吗铁铁们！！！下辈子还学设计",
-                        "疯狂无限城 - 7月18日强势上线",
-                        "SW今天接了一单，这一单60元！",
-                        "Gemini 3 的审美也是脱胎换骨了！",
-                        "特级设计师——奶龙2",
-                        "日本人学了中国语 slang"
-                    ];
-                    const container = document.querySelector('.columns-2');
-                    
-                    for(let i=0; i<15; i++) {
-                        const height = Math.floor(Math.random() * (600 - 300 + 1) + 300);
-                        const randomTitle = titles[Math.floor(Math.random() * titles.length)];
-                        const randomLikes = Math.floor(Math.random() * 2000);
-                        
-                        const cardHTML = `
-                        <div class="break-inside-avoid group cursor-pointer">
-                            <div class="relative rounded-xl overflow-hidden mb-2">
-                                <img src="https://picsum.photos/400/${height}?random=${i+10}" class="w-full object-cover group-hover:scale-105 transition duration-300" alt="Cover" loading="lazy">
-                            </div>
-                            <h3 class="font-medium text-gray-900 text-sm mb-1 line-clamp-2">${randomTitle}</h3>
-                            <div class="flex items-center justify-between text-xs text-gray-500 mt-1">
-                                <div class="flex items-center gap-1.5">
-                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${i+10}" class="w-5 h-5 rounded-full border border-gray-100">
-                                    <span>用户${i+100}</span>
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <i class="ri-heart-line"></i> ${randomLikes}
-                                </div>
-                            </div>
-                        </div>
-                        `;
-                        container.insertAdjacentHTML('beforeend', cardHTML);
-                    }
-                </script>
-
+            
+            <div id="loader" class="text-center py-8 text-slate-400 hidden">
+                <i class="ri-loader-4-line text-2xl animate-spin inline-block"></i>
+                <span class="ml-2 text-sm">加载中...</span>
             </div>
         </div>
     </main>
 
+    <div id="modal-overlay" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl w-[90%] md:w-[800px] h-[80%] flex overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300" id="modal-content">
+            <div class="w-full md:w-2/3 bg-black flex items-center justify-center">
+                 <img id="modal-img" src="" class="max-w-full max-h-full object-contain">
+            </div>
+            <div class="w-1/3 p-6 hidden md:flex flex-col relative">
+                <div class="flex items-center gap-3 mb-4">
+                     <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix" class="w-8 h-8 rounded-full border">
+                     <span class="text-sm font-bold text-slate-700">作者名称</span>
+                </div>
+                <h2 class="text-lg font-bold mb-2">笔记标题演示</h2>
+                <p class="text-sm text-slate-500">这里是笔记的详细内容...</p>
+                <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-800" onclick="closeModal()">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 数据模拟 ---
+        const MOCK_TITLES = [
+            "我的设计好看吗铁铁们！！！下辈子还学设计 😭",
+            "疯狂无限城 - 7月18日强势上线，这也太酷了吧",
+            "UI+AI 工作流分享，DeepSeek + Claude 简直是王炸",
+            "Gemini 3 的审美也是脱胎换骨了！附提示词",
+            "珠海这个城市太适合微创业了，附保姆级攻略",
+            "男朋友拍的照片vs我拍的照片，真的绝了",
+            "2025年最值得入手的数码好物，均价不过百",
+            "今天长这样，OOTD分享，韩系慵懒风",
+            "这建模100费吗？工业设计毕设分享",
+            "省人变做成装饰画展览，师傅手工做的500kg软陶",
+            "谁懂啊！这种奶油风装修真的很容易翻车"
+        ];
+        
+        const MOCK_USERS = ["无敌小x", "设计大橙子", "Zorua", "极简设计", "如梦初醒", "妙手软陶", "CodeMaster", "ArtStation"];
+
+        // --- 核心逻辑 ---
+        
+        const container = document.getElementById('card-container');
+        const loader = document.getElementById('loader');
+        let isLoading = false;
+
+        // 生成随机整数
+        const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+
+        // 创建卡片 HTML 字符串
+        function createCard(id) {
+            // 随机高度 (300 - 600) 模拟不同比例图片
+            const height = randomInt(200, 450); 
+            const title = MOCK_TITLES[randomInt(0, MOCK_TITLES.length - 1)];
+            const user = MOCK_USERS[randomInt(0, MOCK_USERS.length - 1)];
+            const likes = randomInt(10, 5000);
+            const isVideo = Math.random() > 0.8; // 20% 概率是视频
+            
+            // 使用 Picsum 图片，加 id 确保不重复缓存
+            const imgUrl = `https://picsum.photos/400/${height}?random=${id}`;
+            const avatarUrl = `https://api.dicebear.com/7.x/notionists/svg?seed=${id}`;
+
+            return `
+            <div class="break-inside-avoid group cursor-pointer relative" onclick="openModal('${imgUrl}')">
+                <div class="relative rounded-xl overflow-hidden mb-2.5 bg-gray-100 shadow-sm border border-black/5">
+                    <div class="absolute inset-0 bg-gray-200 animate-pulse -z-10"></div>
+                    
+                    <img src="${imgUrl}" 
+                         class="w-full h-auto object-cover group-hover:scale-105 transition duration-500 ease-out align-middle" 
+                         loading="lazy" 
+                         alt="Cover"
+                         onload="this.previousElementSibling.style.display='none'">
+                    
+                    <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                    
+                    ${isVideo ? '<i class="ri-play-circle-fill absolute top-2 right-2 text-white/90 text-2xl drop-shadow-md backdrop-blur-sm rounded-full"></i>' : ''}
+                </div>
+                
+                <h3 class="font-bold text-slate-800 text-[15px] leading-snug mb-2 line-clamp-2 group-hover:text-black transition-colors">${title}</h3>
+                
+                <div class="flex items-center justify-between text-xs text-slate-500">
+                    <div class="flex items-center gap-1.5 hover:bg-gray-100 pr-2 py-0.5 rounded-full -ml-1 transition-colors">
+                        <img src="${avatarUrl}" class="w-5 h-5 rounded-full border border-gray-100 bg-white">
+                        <span class="truncate max-w-[80px] text-slate-600">${user}</span>
+                    </div>
+                    <div class="flex items-center gap-1 cursor-pointer group/like" onclick="toggleLike(this, event)">
+                        <i class="ri-heart-3-line text-sm group-hover/like:text-xhs-red transition-colors"></i>
+                        <span class="tabular-nums font-medium group-hover/like:text-slate-800">${likes}</span>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        // 批量添加卡片
+        function loadMoreCards(count = 10) {
+            if (isLoading) return;
+            isLoading = true;
+            loader.classList.remove('hidden');
+
+            setTimeout(() => {
+                let html = '';
+                // 现在的 timestamp 加上随机数作为ID，保证每次都不一样
+                const baseId = Date.now();
+                for (let i = 0; i < count; i++) {
+                    html += createCard(baseId + i);
+                }
+                
+                // 将 HTML 字符串解析并追加
+                container.insertAdjacentHTML('beforeend', html);
+                
+                isLoading = false;
+                loader.classList.add('hidden');
+            }, 500); // 模拟网络延迟 0.5s
+        }
+
+        // --- 交互功能 ---
+
+        // 点赞功能
+        window.toggleLike = function(el, event) {
+            event.stopPropagation(); // 防止触发卡片点击
+            const icon = el.querySelector('i');
+            const countSpan = el.querySelector('span');
+            let count = parseInt(countSpan.innerText);
+
+            if (el.classList.contains('liked')) {
+                // 取消点赞
+                el.classList.remove('liked');
+                icon.className = 'ri-heart-3-line text-sm group-hover/like:text-xhs-red transition-colors';
+                countSpan.innerText = count - 1;
+            } else {
+                // 点赞
+                el.classList.add('liked');
+                icon.className = 'ri-heart-3-fill text-sm animate-like'; // 变成实心红心
+                countSpan.innerText = count + 1;
+            }
+        }
+
+        // 模态框逻辑
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalContent = document.getElementById('modal-content');
+        const modalImg = document.getElementById('modal-img');
+
+        window.openModal = function(src) {
+            modalImg.src = src;
+            modalOverlay.classList.remove('hidden');
+            // 简单的淡入动效
+            requestAnimationFrame(() => {
+                modalOverlay.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            });
+        }
+
+        window.closeModal = function() {
+            modalOverlay.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modalOverlay.classList.add('hidden');
+                modalImg.src = '';
+            }, 300);
+        }
+
+        // 点击遮罩关闭
+        modalOverlay.addEventListener('click', (e) => {
+            if(e.target === modalOverlay) closeModal();
+        });
+
+        // --- 无限滚动 (Intersection Observer) ---
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                loadMoreCards(10);
+            }
+        }, { rootMargin: '200px' });
+
+        // 初始加载
+        loadMoreCards(15);
+        // 监听 loading 元素
+        observer.observe(loader);
+
+    </script>
 </body>
 </html>
