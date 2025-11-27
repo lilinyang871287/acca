@@ -255,8 +255,8 @@
                         </>
                     )}
 
-                    {/* 修复点：删除了原本这里的 pointer-events-none 
-                        现在内部元素（如输入框）可以正常接收点击事件了 
+                    {/* 【关键修改】这里去掉了 pointer-events-none 
+                        保证输入框（textarea）可以被点击聚焦
                     */}
                     <div className="relative z-20 w-full h-full">
                         {children}
@@ -276,6 +276,9 @@
             const [currentPageIndex, setCurrentPageIndex] = useState(0);
             const [showClearConfirm, setShowClearConfirm] = useState(false);
             
+            // 【关键修改】添加一个 ref 标记是否正在拖拽
+            const isDraggingRef = useRef(false);
+
             const scrollContainerRef = useRef(null);
             const pageRefs = useRef([]);
 
@@ -393,8 +396,8 @@
                                 <div className="relative w-[340px] h-[340px] md:w-[500px] md:h-[500px]"> 
                                    
                                    {/* ========================================================
-                                       修复点：石头渲染逻辑
-                                       使用了 onTap 替代 Stone 的 onClick
+                                       【关键修改】使用 Drag Lock 逻辑
+                                       手动控制点击和拖拽的冲突
                                    ======================================================== */}
                                    {chunk.map((stone) => (
                                         <motion.div 
@@ -402,10 +405,30 @@
                                             drag
                                             dragMomentum={false}
                                             dragConstraints={{ left: -150, right: 150, top: -150, bottom: 150 }}
-                                            onDragEnd={(e, info) => handleDragEnd(stone.id, info)}
                                             
-                                            /* 【核心修改】onTap 只在纯点击时触发，拖拽时不会触发 */
-                                            onTap={() => {
+                                            // 1. 开始拖拽：上锁
+                                            onDragStart={() => {
+                                                isDraggingRef.current = true;
+                                            }}
+
+                                            // 2. 结束拖拽：延迟开锁
+                                            onDragEnd={(e, info) => { 
+                                                handleDragEnd(stone.id, info);
+                                                // 延迟 200ms 将状态重置为 false
+                                                // 这样可以确保紧接着触发的 'click' 事件被拦截
+                                                setTimeout(() => {
+                                                    isDraggingRef.current = false;
+                                                }, 200);
+                                            }}
+                                            
+                                            // 3. 点击：检查锁
+                                            onClick={(e) => {
+                                                // 如果正在拖拽（或刚刚拖拽完），拦截点击，不打开卡片
+                                                if (isDraggingRef.current) {
+                                                    e.stopPropagation();
+                                                    return;
+                                                }
+                                                // 只有完全静止时，才执行打开逻辑
                                                 if (!isSelectorOpen && !selectedStone) {
                                                     setSelectedStone(stone);
                                                 }
@@ -425,7 +448,7 @@
                                                 shape={stone.shapePolygon} 
                                                 isMossy 
                                                 size="sm" 
-                                                /* 注意：这里删除了 onClick，防止双重触发 */
+                                                /* 注意：这里删除了 onClick */
                                                 className="hover:scale-105 transition-transform duration-300 shadow-lg"
                                             />
                                         </motion.div>
