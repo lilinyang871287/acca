@@ -1,284 +1,943 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Behance 风格展示页</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Moss & Stone</title>
     
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        // Behance 风格色调更偏冷、黑白灰
-                        behance: {
-                            blue: '#0057ff', // Behance 标志蓝
-                            dark: '#191919',
-                            gray: '#959595',
-                            bg: '#f9f9f9'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              concrete: '#E0E0E0',
+              'concrete-dark': '#C0C0C0',
+              moss: '#3A4D1F',
+              'moss-light': '#7B924A',
+              ink: '#2C2C2C',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['"Noto Serif SC"', 'serif'],
+            },
+          },
+        },
+      }
     </script>
+
     <style>
-        body {
-            background-color: #f9f9f9; /* Behance 常用浅灰背景 */
-            -webkit-font-smoothing: antialiased;
-        }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+      body {
+        background-color: #E0E0E0;
+        color: #2C2C2C;
+        overflow: hidden; /* 防止 Body 滚动，交由内部容器滚动 */
+        touch-action: none;
+      }
+      
+      .noise-bg {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        pointer-events: none; z-index: 50; opacity: 0.05;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      }
 
-        /* 核心修改：移除瀑布流样式，改用标准 Grid
-           不再需要 column-count 和 break-inside-avoid
-        */
-        .behance-grid {
-            display: grid;
-            grid-template-columns: repeat(1, minmax(0, 1fr));
-            gap: 2rem 1.5rem; /* 行间距大一点，列间距适中 */
-        }
-        /* 响应式 Grid 断点参考 Behance */
-        @media (min-width: 640px) { .behance-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-        @media (min-width: 1024px) { .behance-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-        @media (min-width: 1440px) { .behance-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+      .carved-deep {
+        color: rgba(44, 44, 44, 0.65) !important;
+        text-shadow: 
+            0px 1px 0px rgba(255,255,255, 0.6), 
+            0px -1px 1px rgba(0,0,0, 0.2) !important;
+        transition: all 1s ease-out;
+      }
 
-        /* 图片加载动效优化 */
-        .img-loading-placeholder {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
+      textarea:focus, input:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { 
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
 
-        /* 点赞动画 */
-        @keyframes thumbs-up-bounce {
-            0% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.2) rotate(-15deg); }
-            100% { transform: scale(1) rotate(0deg); }
-        }
-        .animate-thumbs-up { animation: thumbs-up-bounce 0.4s ease-in-out; }
-        .liked-blue { color: #0057ff; }
+      .jagged-top {
+          background-image: 
+              linear-gradient(45deg, transparent 50%, #Fdfdfd 50%), 
+              linear-gradient(-45deg, transparent 50%, #Fdfdfd 50%);
+          background-position: bottom left;
+          background-size: 10px 10px;
+          background-repeat: repeat-x;
+      }
+
+      .jagged-bottom {
+          background-image: 
+              linear-gradient(135deg, transparent 50%, #Fdfdfd 50%), 
+              linear-gradient(-135deg, transparent 50%, #Fdfdfd 50%);
+          background-position: top left;
+          background-size: 10px 10px;
+          background-repeat: repeat-x;
+      }
+      
+      .drop-shadow-jagged {
+          filter: drop-shadow(4px 4px 10px rgba(0,0,0,0.15));
+      }
+
+      /* 庭院滚动容器样式 */
+      .courtyard-scroll-container {
+          height: 100vh;
+          overflow-y: auto;
+          scroll-snap-type: y mandatory;
+          scroll-behavior: smooth;
+      }
+      
+      .courtyard-page {
+          height: 100vh;
+          width: 100%;
+          scroll-snap-align: start;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden; /* 限制石头拖拽不出界 */
+      }
     </style>
 </head>
-<body class="text-behance-dark bg-behance-bg font-sans">
+<body>
+    <div id="root"></div>
+    <div class="noise-bg"></div>
+    
+    <svg style="display: none;">
+        <defs>
+            <filter id="mossRoughness">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch" />
+                <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1.2 -0.2" />
+            </filter>
+            <filter id="mossFuzz">
+                <feTurbulence type="fractalNoise" baseFrequency="2.5" numOctaves="3" stitchTiles="stitch" />
+                <feContrast in="SourceGraphic" mode="linear" slope="2" />
+            </filter>
+        </defs>
+    </svg>
 
-    <header class="sticky top-0 bg-white z-20 px-6 md:px-12 py-4 flex items-center justify-between border-b border-gray-200">
-        <div class="flex items-center gap-8">
-            <div class="text-2xl font-black tracking-tight">Behance<span class="text-behance-blue">.</span></div>
-            
-            <nav class="hidden md:flex items-center gap-6 text-sm font-bold text-gray-600">
-                <a href="#" class="text-behance-dark">发现</a>
-                <a href="#" class="hover:text-behance-dark transition">直播</a>
-                <a href="#" class="hover:text-behance-dark transition">职位</a>
-            </nav>
-        </div>
-
-        <div class="flex items-center gap-4">
-             <div class="relative group hidden md:block">
-                <input type="text" placeholder="搜索..." class="bg-gray-100 border border-transparent focus:bg-white focus:border-gray-300 rounded-full py-2 pl-10 pr-4 outline-none transition-all text-sm w-64">
-                <i class="ri-search-line absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            </div>
-            <div class="flex items-center gap-4 text-sm font-bold">
-                <button class="hidden sm:block border border-gray-300 px-4 py-2 rounded-full hover:border-gray-800 transition">登录</button>
-                <button class="bg-behance-blue text-white px-5 py-2 rounded-full hover:bg-blue-700 transition shadow-sm shadow-blue-500/20">注册</button>
-            </div>
-            <button class="md:hidden text-2xl ml-2"><i class="ri-menu-line"></i></button>
-        </div>
-    </header>
-
-    <div class="bg-white px-6 md:px-12 py-3 border-b border-gray-200 overflow-x-auto no-scrollbar flex items-center gap-2">
-        <button class="flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded-md text-sm font-bold whitespace-nowrap hover:border-gray-800 transition">
-            <i class="ri-filter-3-line"></i> 筛选条件
-        </button>
-         <span class="text-gray-300 mx-2">|</span>
-        <div class="flex gap-4 text-sm font-bold text-gray-500">
-            <span class="text-behance-dark cursor-pointer bg-gray-100 px-3 py-1.5 rounded-md">推荐作品</span>
-            <span class="hover:text-behance-dark cursor-pointer px-3 py-1.5 transition whitespace-nowrap">平面设计</span>
-            <span class="hover:text-behance-dark cursor-pointer px-3 py-1.5 transition whitespace-nowrap">插画</span>
-            <span class="hover:text-behance-dark cursor-pointer px-3 py-1.5 transition whitespace-nowrap">UI/UX</span>
-            <span class="hover:text-behance-dark cursor-pointer px-3 py-1.5 transition whitespace-nowrap">摄影</span>
-        </div>
-    </div>
-
-    <main class="px-6 md:px-12 py-8">
-        <div class="behance-grid" id="card-container">
-            </div>
-        
-        <div id="loader" class="text-center py-12 hidden">
-            <div class="inline-block w-8 h-8 border-4 border-gray-200 border-t-behance-blue rounded-full animate-spin"></div>
-        </div>
-    </main>
-
-    <div id="modal-overlay" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300 backdrop-blur-sm">
-        <div class="bg-white rounded-lg w-full h-full md:w-[90%] md:h-[95%] flex overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300 relative" id="modal-content">
-             <button class="absolute top-4 right-4 z-10 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition" onclick="closeModal()">
-                <i class="ri-close-line text-xl"></i>
-            </button>
-            <div class="w-full h-full bg-gray-50 flex items-center justify-center p-4">
-                 <img id="modal-img" src="" class="max-w-full max-h-full object-contain shadow-lg">
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // --- 数据模拟 (更偏向设计类标题) ---
-        const MOCK_TITLES = [
-            "品牌视觉识别系统设计 - Reborn",
-            "2025 极简主义 UI Kit (Figma)",
-            "赛博朋克风格插画系列 - Neon Dreams",
-            "可口可乐再设计概念提案",
-            "建筑摄影：光影几何学",
-            "3D 产品渲染 - 索尼耳机概念",
-            "复古字体设计与排版研究",
-            "网页设计趋势报告可视化",
-            "动态 Logo 设计合集 Showreel"
+    <script type="text/babel">
+        // ==========================================
+        // 0. 配置区域
+        // ==========================================
+        const INSIGHT_POOL = [
+            "风吹过，痕迹变淡，但石头记得。",
+            "有些重量，放下后才能看清形状。",
+            "青苔不急于生长，它只是覆盖。",
+            "如同雨水归于大海，情绪也终将平静。",
+            "静默是最大的回响。",
+            "此刻的粗糙，是未来圆润的开始。",
+            "不要慌张，月亮也经常失眠。",
+            "山谷没有回音，是因为它在倾听。"
         ];
-        
-        const MOCK_USERS = ["Alex Bender", "Studio K", "Masaaki Sato", "Elena Woo", "Orizon Design"];
 
-        // --- 核心逻辑 ---
-        const container = document.getElementById('card-container');
-        const loader = document.getElementById('loader');
-        let isLoading = false;
-        const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+        // ==========================================
+        // 1. 工具函数
+        // ==========================================
+        const { motion, AnimatePresence } = window.Motion;
+        const { useState, useEffect, useCallback, useRef, useMemo } = React;
 
-        // 创建卡片 (Behance 横幅风格)
-        function createCard(id) {
-            const title = MOCK_TITLES[randomInt(0, MOCK_TITLES.length - 1)];
-            const user = MOCK_USERS[randomInt(0, MOCK_USERS.length - 1)];
-            const likes = randomInt(100, 8000);
-            const views = randomInt(1, 200); // K为单位
-            
-            // 请求横向图片 (例如 800x600, 4:3比例)
-            const width = 800;
-            const height = 600;
-            const imgUrl = `https://picsum.photos/${width}/${height}?random=${id}`;
-            const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${user}&backgroundColor=f0f0f0`;
+        const Icons = {
+            Sun: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>,
+            Cloud: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M17.5 19c0-3.037-2.463-5.5-5.5-5.5S6.5 15.963 6.5 19"/><path d="M17.5 19h1a4.5 4.5 0 0 0 0-9h-1.257A6.478 6.478 0 0 0 5.5 10a6.5 6.5 0 0 0 6.5 6.5h.5"/></svg>,
+            CloudRain: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>,
+            CloudLightning: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973"/><path d="m13 12-3 5h4l-3 5"/></svg>,
+            X: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>,
+            Trash: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>,
+            Grid: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>,
+            Broom: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 2L12 12"/><path d="M16 11l1-1a3 3 0 0 1 4.2 4.2l-6 6a3 3 0 0 1-4.2-4.2l1-1"/><path d="M3 21l6-6"/></svg>
+        };
 
-            return `
-            <div class="group cursor-pointer flex flex-col" onclick="openModal('${imgUrl}')">
-                <div class="relative w-full aspect-[4/3] rounded-[10px] overflow-hidden bg-gray-100 mb-3">
-                    <div class="absolute inset-0 img-loading-placeholder -z-10"></div>
-                    
-                    <img src="${imgUrl}" 
-                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" 
-                         loading="lazy" 
-                         alt="Project Cover"
-                         onload="this.previousElementSibling.style.display='none'">
-                    
-                    <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                
-                <div class="flex justify-between items-start px-0.5">
-                    <div class="pr-4 flex-1">
-                        <h3 class="font-bold text-base text-[#191919] leading-tight mb-1 truncate group-hover:underline decoration-2">${title}</h3>
-                        <div class="flex items-center">
-                             <span class="text-xs font-semibold text-gray-500 hover:text-behance-dark transition">${user}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center gap-3 text-xs font-bold text-gray-400 shrink-0 mt-0.5">
-                        <div class="flex items-center gap-1 group/like cursor-pointer" onclick="toggleLike(this, event)">
-                            <i class="ri-thumb-up-line text-sm group-hover/like:text-behance-dark transition-colors"></i>
-                            <span class="tabular-nums group-hover/like:text-behance-dark transition-colors">${likes}</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <i class="ri-eye-line text-sm"></i>
-                            <span class="tabular-nums">${views}k</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            `;
-        }
+        const ScreenState = {
+            COURTYARD: 'COURTYARD',
+            ETCHING: 'ETCHING',
+            OVERGROWTH: 'OVERGROWTH',
+            ECHO: 'ECHO'
+        };
 
-        // 批量添加卡片
-        function loadMoreCards(count = 12) {
-            if (isLoading) return;
-            isLoading = true;
-            loader.classList.remove('hidden');
+        const Weather = {
+            SUN: 'Sun',
+            CLOUD: 'Cloud',
+            RAIN: 'Rain',
+            STORM: 'Storm'
+        };
 
-            setTimeout(() => {
-                let html = '';
-                const baseId = Date.now();
-                for (let i = 0; i < count; i++) {
-                    html += createCard(baseId + i);
-                }
-                container.insertAdjacentHTML('beforeend', html);
-                isLoading = false;
-                loader.classList.add('hidden');
-            }, 600);
-        }
+        const generateOrganicShape = () => {
+            const r = () => 30 + Math.random() * 40; 
+            return `${r()}% ${r()}% ${r()}% ${r()}% / ${r()}% ${r()}% ${r()}% ${r()}%`;
+        };
 
-        // --- 交互功能 ---
-
-        // 点赞功能 (Behance 使用大拇指)
-        window.toggleLike = function(el, event) {
-            event.stopPropagation();
-            const icon = el.querySelector('i');
-            const countSpan = el.querySelector('span');
-            let count = parseInt(countSpan.innerText);
-
-            if (el.classList.contains('liked-blue')) {
-                el.classList.remove('liked-blue');
-                icon.className = 'ri-thumb-up-line text-sm group-hover/like:text-behance-dark transition-colors';
-                countSpan.innerText = count - 1;
-            } else {
-                el.classList.add('liked-blue');
-                icon.className = 'ri-thumb-up-fill text-sm animate-thumbs-up'; // 实心蓝拇指
-                countSpan.innerText = count + 1;
-            }
-        }
-
-        // 模态框逻辑 (保持一致)
-        const modalOverlay = document.getElementById('modal-overlay');
-        const modalContent = document.getElementById('modal-content');
-        const modalImg = document.getElementById('modal-img');
-
-        window.openModal = function(src) {
-            modalImg.src = src;
-            modalOverlay.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                modalOverlay.classList.remove('opacity-0');
-                modalContent.classList.remove('scale-95');
-                modalContent.classList.add('scale-100');
+        const generateInsight = async (text) => {
+            return new Promise(resolve => {
+                const randomInsight = INSIGHT_POOL[Math.floor(Math.random() * INSIGHT_POOL.length)];
+                setTimeout(() => resolve(randomInsight), 2000);
             });
-            document.body.style.overflow = 'hidden'; // 禁止背景滚动
-        }
+        };
 
-        window.closeModal = function() {
-            modalOverlay.classList.add('opacity-0');
-            modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-95');
-            setTimeout(() => {
-                modalOverlay.classList.add('hidden');
-                modalImg.src = '';
-                document.body.style.overflow = ''; // 恢复背景滚动
-            }, 300);
-        }
-
-        modalOverlay.addEventListener('click', (e) => {
-            if(e.target === modalOverlay) closeModal();
-        });
-
-        // 无限滚动
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                loadMoreCards(8);
+        const chunkArray = (array, size) => {
+            const chunked_arr = [];
+            for (let i = 0; i < array.length; i += size) {
+                chunked_arr.push(array.slice(i, i + size));
             }
-        }, { rootMargin: '300px' });
+            return chunked_arr;
+        };
 
-        loadMoreCards(12);
-        observer.observe(loader);
+        // ==========================================
+        // 2. 基础组件 Stone (已修复输入框点击问题)
+        // ==========================================
+        const Stone = ({ shape, size = 'md', isMossy = false, className = '', onClick, children, style }) => {
+            const sizeClasses = {
+                sm: 'w-16 h-16',
+                md: 'w-32 h-32',
+                lg: 'w-80 h-80' 
+            };
+            
+            const thickShadowStyle = `
+                inset 2px 2px 10px rgba(255,255,255, 0.8), 
+                inset -3px -3px 15px rgba(0,0,0, 0.25), 
+                0px 5px 5px rgba(0,0,0, 0.15), 
+                0px 12px 20px rgba(0,0,0, 0.1), 
+                0px 25px 40px rgba(0,0,0, 0.1)
+            `;
 
+            return (
+                <div 
+                    onClick={onClick}
+                    className={`relative bg-[#d4d4d4] overflow-hidden cursor-grab active:cursor-grabbing transition-all duration-300 ease-out ${sizeClasses[size]} ${className}`}
+                    style={{ 
+                        borderRadius: shape,
+                        boxShadow: thickShadowStyle,
+                        transform: 'translateZ(0) perspective(500px) rotateX(2deg)',
+                        backfaceVisibility: 'hidden',
+                        ...style
+                    }}
+                >
+                    <div className="absolute inset-0 opacity-20 pointer-events-none z-0" 
+                         style={{
+                             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`
+                         }}
+                    ></div>
+
+                    {isMossy && (
+                        <>
+                            <div className="absolute inset-0 z-10 opacity-70 mix-blend-multiply pointer-events-none"
+                                 style={{
+                                    backgroundColor: '#4A5D23',
+                                    filter: 'url(#mossRoughness) contrast(1.2)',
+                                    transform: 'scale(1.02)'
+                                 }}
+                            ></div>
+                            <div className="absolute inset-0 z-10 opacity-60 mix-blend-overlay pointer-events-none"
+                                 style={{
+                                     backgroundColor: '#8A9A5B',
+                                     backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='fuzz'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23fuzz)' opacity='0.5'/%3E%3C/svg%3E")`,
+                                     boxShadow: 'inset 5px 5px 20px rgba(255,255,255,0.3)'
+                                 }}
+                            ></div>
+                             <div className="absolute inset-0 z-10 pointer-events-none opacity-40 mix-blend-multiply"
+                                 style={{
+                                     background: 'radial-gradient(circle at 30% 30%, transparent 40%, #1a260e 100%)'
+                                 }}
+                            ></div>
+                        </>
+                    )}
+
+                    {/* 修复点：删除了原本这里的 pointer-events-none 
+                        现在内部元素（如输入框）可以正常接收点击事件了 
+                    */}
+                    <div className="relative z-20 w-full h-full">
+                        {children}
+                    </div>
+                </div>
+            );
+        };
+
+        // ==========================================
+        // 3. 核心页面组件
+        // ==========================================
+
+        // --- Courtyard (庭院 - 无限分页版) ---
+        const Courtyard = ({ stones, onStart, onUpdateStones }) => {
+            const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+            const [selectedStone, setSelectedStone] = useState(null);
+            const [currentPageIndex, setCurrentPageIndex] = useState(0);
+            const [showClearConfirm, setShowClearConfirm] = useState(false);
+            
+            const scrollContainerRef = useRef(null);
+            const pageRefs = useRef([]);
+
+            const stoneChunks = useMemo(() => {
+                const sorted = [...stones].reverse(); 
+                const chunks = chunkArray(sorted, 9);
+                return chunks.length > 0 ? chunks : [[]];
+            }, [stones]);
+
+            const weatherOptions = [
+                { type: Weather.SUN, icon: Icons.Sun, label: "晴朗" },
+                { type: Weather.CLOUD, icon: Icons.Cloud, label: "多云" },
+                { type: Weather.RAIN, icon: Icons.CloudRain, label: "雨天" },
+                { type: Weather.STORM, icon: Icons.CloudLightning, label: "风暴" },
+            ];
+
+            const formatDate = (timestamp) => {
+                return new Date(timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+            };
+
+            const handleScroll = () => {
+                if (!scrollContainerRef.current) return;
+                const scrollTop = scrollContainerRef.current.scrollTop;
+                const height = scrollContainerRef.current.clientHeight;
+                const index = Math.round(scrollTop / height);
+                setCurrentPageIndex(index);
+            };
+
+            const handleDragEnd = (stoneId, info) => {
+                const delta = { x: info.offset.x, y: info.offset.y };
+                onUpdateStones(prev => prev.map(s => {
+                    if (s.id === stoneId) {
+                        return {
+                            ...s,
+                            x: (s.x || 0) + delta.x,
+                            y: (s.y || 0) + delta.y
+                        };
+                    }
+                    return s;
+                }));
+            };
+
+            const handleOrganize = () => {
+                if(stoneChunks[currentPageIndex].length === 0) return;
+                const currentChunkStones = stoneChunks[currentPageIndex];
+                const gridGap = 110; 
+                const startX = -110; 
+                const startY = -120; 
+
+                const updates = {};
+                
+                currentChunkStones.forEach((stone, index) => {
+                    const row = Math.floor(index / 3);
+                    const col = index % 3;
+                    const targetX = startX + col * gridGap;
+                    const targetY = startY + row * gridGap;
+                    updates[stone.id] = { x: targetX, y: targetY, rotation: 0 };
+                });
+
+                onUpdateStones(prev => prev.map(s => {
+                    if (updates[s.id]) {
+                        return { ...s, ...updates[s.id] };
+                    }
+                    return s;
+                }));
+            };
+
+            const handleClear = (type) => {
+                if (type === 'current') {
+                    const stonesToRemove = stoneChunks[currentPageIndex].map(s => s.id);
+                    onUpdateStones(prev => prev.filter(s => !stonesToRemove.includes(s.id)));
+                } else if (type === 'all') {
+                    onUpdateStones([]);
+                }
+                setShowClearConfirm(false);
+            };
+
+            return (
+                <div className="relative w-full h-full">
+                    <header className="absolute top-4 left-0 w-full text-center z-20 pointer-events-none">
+                        <h1 className="text-3xl font-serif font-bold text-ink opacity-80">苔与石</h1>
+                        <p className="text-xs text-ink/60 mt-2 tracking-[0.2em] uppercase">Moss & Stone</p>
+                    </header>
+
+                    {stones.length > 0 && (
+                        <div className="absolute top-6 right-6 z-30 flex gap-4">
+                            <button 
+                                onClick={handleOrganize}
+                                className="p-2 rounded-full bg-concrete/50 hover:bg-white/80 text-ink/40 hover:text-moss transition-all shadow-sm backdrop-blur-sm"
+                                title="整理"
+                            >
+                                <Icons.Grid size={20} />
+                            </button>
+                            <button 
+                                onClick={() => setShowClearConfirm(true)}
+                                className="p-2 rounded-full bg-concrete/50 hover:bg-white/80 text-ink/40 hover:text-red-800 transition-all shadow-sm backdrop-blur-sm"
+                                title="清扫"
+                            >
+                                <Icons.Broom size={20} />
+                            </button>
+                        </div>
+                    )}
+
+                    <div 
+                        ref={scrollContainerRef}
+                        onScroll={handleScroll}
+                        className="courtyard-scroll-container no-scrollbar"
+                    >
+                        {stoneChunks.map((chunk, pageIndex) => (
+                            <div 
+                                key={pageIndex} 
+                                ref={el => pageRefs.current[pageIndex] = el}
+                                className="courtyard-page"
+                            >
+                                <div className="relative w-[340px] h-[340px] md:w-[500px] md:h-[500px]"> 
+                                   
+                                   {/* ========================================================
+                                       修复点：石头渲染逻辑
+                                       使用了 onTap 替代 Stone 的 onClick
+                                   ======================================================== */}
+                                   {chunk.map((stone) => (
+                                        <motion.div 
+                                            key={stone.id} 
+                                            drag
+                                            dragMomentum={false}
+                                            dragConstraints={{ left: -150, right: 150, top: -150, bottom: 150 }}
+                                            onDragEnd={(e, info) => handleDragEnd(stone.id, info)}
+                                            
+                                            /* 【核心修改】onTap 只在纯点击时触发，拖拽时不会触发 */
+                                            onTap={() => {
+                                                if (!isSelectorOpen && !selectedStone) {
+                                                    setSelectedStone(stone);
+                                                }
+                                            }}
+
+                                            initial={{ scale: 0 }}
+                                            animate={{ 
+                                                scale: 1, 
+                                                x: stone.x || 0, 
+                                                y: stone.y || 0, 
+                                                rotate: stone.rotation 
+                                            }}
+                                            className="absolute left-1/2 top-1/2 -ml-8 -mt-8"
+                                            style={{ zIndex: 10 }}
+                                        >
+                                            <Stone 
+                                                shape={stone.shapePolygon} 
+                                                isMossy 
+                                                size="sm" 
+                                                /* 注意：这里删除了 onClick，防止双重触发 */
+                                                className="hover:scale-105 transition-transform duration-300 shadow-lg"
+                                            />
+                                        </motion.div>
+                                    ))}
+
+                                    {pageIndex === 0 && !isSelectorOpen && !selectedStone && (
+                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                            <motion.button
+                                                initial={{ opacity: 0, scale: 0.9 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                whileHover={{ scale: 1.02, rotate: 2 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                onClick={() => setIsSelectorOpen(true)}
+                                                className="w-48 h-32 border-4 border-dashed border-ink/10 rounded-[40%_60%_50%_50%/50%_40%_60%_50%] flex items-center justify-center hover:border-ink/30 transition-colors bg-concrete/20 pointer-events-auto"
+                                            >
+                                                <span className="text-2xl text-ink/20">+</span>
+                                            </motion.button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="absolute bottom-8 left-0 w-full text-center pointer-events-none">
+                                    <p className="text-xs text-ink/30 font-serif tracking-widest">
+                                        {pageIndex === 0 ? "把心事，放在这里。" : "旧日的庭院"}
+                                    </p>
+                                    {stoneChunks.length > 1 && (
+                                        <div className="mt-2 flex justify-center gap-1">
+                                            {stoneChunks.map((_, i) => (
+                                                <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === currentPageIndex ? 'bg-moss' : 'bg-ink/10'}`} />
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <AnimatePresence>
+                        {isSelectorOpen && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-concrete/80 backdrop-blur-sm">
+                            <motion.div
+                                initial={{ y: 50, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                exit={{ y: 50, opacity: 0 }}
+                                className="bg-[#E8E8E8] p-8 rounded-3xl shadow-2xl w-80 max-w-sm border border-white/40"
+                            >
+                                <h3 className="text-center text-ink/70 mb-8 font-serif text-lg">此刻内心的天气？</h3>
+                                <div className="flex justify-between px-2 mb-4">
+                                {weatherOptions.map((option) => (
+                                    <button
+                                    key={option.type}
+                                    onClick={() => { setIsSelectorOpen(false); onStart(option.type); }}
+                                    className="flex flex-col items-center gap-3 text-ink/40 hover:text-moss transition-colors group"
+                                    >
+                                    <div className="p-3 rounded-full bg-white/50 group-hover:bg-white transition-colors shadow-sm">
+                                        <option.icon size={24} />
+                                    </div>
+                                    <span className="text-xs font-serif">{option.label}</span>
+                                    </button>
+                                ))}
+                                </div>
+                                <button 
+                                    onClick={() => setIsSelectorOpen(false)}
+                                    className="w-full mt-8 text-xs text-ink/30 tracking-widest hover:text-ink py-2"
+                                >
+                                    取消
+                                </button>
+                            </motion.div>
+                            </div>
+                        )}
+                    </AnimatePresence>
+
+                    <AnimatePresence>
+                        {selectedStone && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-concrete/80 backdrop-blur-sm" onClick={() => setSelectedStone(null)}>
+                            <motion.div
+                                initial={{ scale: 0.95, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.95, opacity: 0 }}
+                                onClick={(e) => e.stopPropagation()}
+                                className="bg-[#F0F0F0] p-8 rounded-2xl shadow-2xl w-80 max-w-sm border border-white/40 relative text-center m-4"
+                            >
+                                <button 
+                                    onClick={() => setSelectedStone(null)}
+                                    className="absolute top-4 right-4 text-ink/30 hover:text-ink transition-colors"
+                                >
+                                    <Icons.X size={20} /> 
+                                </button>
+                                
+                                <div className="mt-4 mb-8">
+                                    <p className="text-xs text-ink/40 font-serif tracking-[0.2em] uppercase mb-4">
+                                        {formatDate(selectedStone.timestamp)}
+                                    </p>
+                                    <div className="w-8 h-1 bg-moss/20 mx-auto mb-8 rounded-full"></div>
+                                    <p className="font-serif text-xl text-ink leading-loose">
+                                        “{selectedStone.insight}”
+                                    </p>
+                                </div>
+                                
+                                <div className="pt-6 border-t border-ink/5">
+                                    <p className="text-xs text-moss opacity-60 font-serif tracking-widest">
+                                        记忆已模糊，但智慧留存。
+                                    </p>
+                                </div>
+                            </motion.div>
+                        </div>
+                        )}
+                    </AnimatePresence>
+
+                    <AnimatePresence>
+                        {showClearConfirm && (
+                            <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/10 backdrop-blur-sm" onClick={() => setShowClearConfirm(false)}>
+                                <motion.div
+                                    initial={{ scale: 0.9, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.9, opacity: 0 }}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="bg-[#F0F0F0] p-6 rounded-2xl shadow-xl w-72 text-center border border-white/50"
+                                >
+                                    <h4 className="text-ink/80 font-serif font-bold mb-4">清扫庭院</h4>
+                                    <p className="text-xs text-ink/50 mb-6 font-serif">要扫去哪些记忆？</p>
+                                    <div className="flex flex-col gap-3">
+                                        <button 
+                                            onClick={() => handleClear('current')}
+                                            className="py-2.5 px-4 rounded-lg bg-white border border-ink/10 text-ink/70 text-sm hover:bg-moss/10 hover:text-moss transition-colors"
+                                        >
+                                            仅清扫当前页面
+                                        </button>
+                                        <button 
+                                            onClick={() => handleClear('all')}
+                                            className="py-2.5 px-4 rounded-lg bg-white border border-ink/10 text-red-800/60 text-sm hover:bg-red-50 hover:text-red-800 transition-colors"
+                                        >
+                                            清空所有
+                                        </button>
+                                        <button 
+                                            onClick={() => setShowClearConfirm(false)}
+                                            className="mt-2 text-xs text-ink/30 hover:text-ink/60 transition-colors"
+                                        >
+                                            取消
+                                        </button>
+                                    </div>
+                                </motion.div>
+                            </div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            );
+        };
+
+        // --- Etching (蚀刻) ---
+        const Etching = ({ stoneShape, onLayDown }) => {
+            const [text, setText] = useState('');
+            const [isCarving, setIsCarving] = useState(false);
+            const [carvedIndex, setCarvedIndex] = useState(0); 
+            const textareaRef = useRef(null);
+            const scrollRef = useRef(null);
+
+            useEffect(() => {
+                const timer = setTimeout(() => {
+                    if (textareaRef.current) textareaRef.current.focus();
+                }, 850);
+                return () => clearTimeout(timer);
+            }, []);
+
+            useEffect(() => {
+                if (isCarving && scrollRef.current) {
+                    const element = scrollRef.current;
+                    const isOverflowing = element.scrollHeight > element.clientHeight;
+                    if (isOverflowing) {
+                        element.scrollTop = element.scrollHeight;
+                    }
+                }
+            }, [carvedIndex, isCarving]);
+
+            useEffect(() => {
+                if (!isCarving) return;
+                if (carvedIndex > text.length) {
+                    const finishTimer = setTimeout(() => {
+                        onLayDown(text);
+                    }, 500);
+                    return () => clearTimeout(finishTimer);
+                }
+                let delay = 50; 
+                if (carvedIndex < 5) delay = 300; 
+                else if (carvedIndex < 10) delay = 150; 
+                else delay = 40;  
+                const timer = setTimeout(() => {
+                    setCarvedIndex(prev => prev + 1);
+                }, delay);
+                return () => clearTimeout(timer);
+            }, [isCarving, carvedIndex, text, onLayDown]);
+
+            const handleSubmit = () => {
+                if (text.trim().length === 0) return;
+                if (textareaRef.current) textareaRef.current.blur();
+                setTimeout(() => {
+                    setIsCarving(true); 
+                    setCarvedIndex(0); 
+                }, 50); 
+            };
+
+            const handleKeyDown = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit();
+                }
+            };
+
+            return (
+                <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 pb-20 overflow-hidden"> 
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="relative"
+                    >
+                        <Stone shape={stoneShape} size="lg" className="overflow-hidden relative">
+                            <div className="w-full h-full flex items-center justify-center relative z-20">
+                                {!isCarving && (
+                                    <textarea
+                                        ref={textareaRef}
+                                        value={text}
+                                        onChange={(e) => setText(e.target.value)}
+                                        onKeyDown={handleKeyDown}
+                                        placeholder="刚才发生了什么？"
+                                        maxLength={140}
+                                        spellCheck={false}
+                                        autoComplete="off"
+                                        style={{
+                                            textShadow: '0px 1px 0px rgba(255,255,255,0.5)',
+                                            caretColor: '#2C2C2C',
+                                            outline: 'none', border: 'none', boxShadow: 'none', resize: 'none'
+                                        }}
+                                        className="no-scrollbar appearance-none border-0 shadow-none w-[75%] h-[55%] py-4 bg-transparent text-center text-[#333] font-serif text-lg leading-relaxed placeholder:text-ink/30 placeholder:italic placeholder:shadow-none overflow-y-auto focus:ring-0"
+                                    />
+                                )}
+                                {isCarving && (
+                                    <div 
+                                        ref={scrollRef}
+                                        style={{ 
+                                            transform: 'translateZ(0)',
+                                            maskImage: 'linear-gradient(to bottom, transparent 0px, black 24px, black calc(100% - 24px), transparent 100%)',
+                                            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 24px, black calc(100% - 24px), transparent 100%)'
+                                        }}
+                                        className="no-scrollbar w-[80%] h-[60%] py-6 text-center font-serif text-lg leading-relaxed break-words whitespace-pre-wrap flex flex-wrap justify-center content-start overflow-y-auto scroll-smooth"
+                                    >
+                                        {text.split('').map((char, index) => (
+                                            <span 
+                                                key={index}
+                                                className={index < carvedIndex ? "carved-deep" : "opacity-0"}
+                                                style={{ transition: 'opacity 0.1s' }}
+                                            >
+                                                {char}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </Stone>
+                        <div className="absolute top-full left-0 w-full flex flex-col items-center pt-12">
+                            <motion.button
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: text.length > 0 && !isCarving ? 1 : 0 }}
+                                disabled={text.length === 0 || isCarving}
+                                onClick={handleSubmit}
+                                className="px-8 py-3 bg-transparent border border-ink/20 rounded-full text-ink/60 tracking-widest text-sm font-serif hover:bg-ink/5 transition-all disabled:opacity-0 focus:outline-none focus:ring-0 whitespace-nowrap"
+                            >
+                                {isCarving ? "刻录中..." : "刻好了，放下吧"}
+                            </motion.button>
+                            {!isCarving && (
+                                <div className="mt-4 text-ink/20 text-xs italic font-serif">
+                                    {text.length}/140
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+                </div>
+            );
+        };
+
+        // --- Overgrowth (生长) ---
+        const Overgrowth = ({ worry, stoneShape, onGrowthComplete }) => {
+            useEffect(() => {
+                const timer = setTimeout(() => {
+                    onGrowthComplete();
+                }, 5000); 
+                return () => clearTimeout(timer);
+            }, [onGrowthComplete]);
+
+            return (
+                <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 pb-20 overflow-hidden"> 
+                    <motion.div className="relative">
+                        <Stone shape={stoneShape} size="lg" className="overflow-hidden relative">
+                            <div className="w-full h-full flex items-center justify-center relative z-0">
+                                <motion.div
+                                    initial={{ opacity: 0.8 }}
+                                    animate={{ opacity: 0 }}
+                                    transition={{ duration: 2, delay: 1 }}
+                                    style={{ 
+                                        transform: 'translateZ(0)',
+                                        maskImage: 'linear-gradient(to bottom, transparent 0px, black 24px, black calc(100% - 24px), transparent 100%)',
+                                        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 24px, black calc(100% - 24px), transparent 100%)'
+                                    }}
+                                    className="no-scrollbar w-[80%] h-[60%] py-6 text-center font-serif text-lg leading-relaxed break-words whitespace-pre-wrap flex flex-wrap justify-center content-start overflow-hidden pointer-events-none"
+                                >
+                                    <span className="carved-deep w-full">{worry}</span>
+                                </motion.div>
+                            </div>
+                            <motion.div
+                                initial={{ opacity: 0, scale: 1.1 }} 
+                                animate={{ opacity: 0.7, scale: 1 }}
+                                transition={{ duration: 4, ease: "easeOut", delay: 0.5 }}
+                                className="absolute inset-0 z-30 mix-blend-multiply"
+                                style={{
+                                    borderRadius: stoneShape,
+                                    backgroundColor: '#4A5D23',
+                                    filter: 'url(#mossRoughness)'
+                                }}
+                            />
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 0.6 }}
+                                transition={{ duration: 3, delay: 1.8 }}
+                                className="absolute inset-0 z-40 mix-blend-overlay"
+                                style={{ 
+                                    borderRadius: stoneShape,
+                                    backgroundColor: '#8A9A5B',
+                                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='fuzz'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23fuzz)' opacity='0.5'/%3E%3C/svg%3E")`
+                                }}
+                            />
+                        </Stone>
+                        <div className="absolute top-full left-0 w-full flex justify-center pt-12">
+                            <motion.p 
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: [0, 1, 0] }}
+                                transition={{ duration: 4, times: [0, 0.5, 1] }}
+                                className="text-moss text-sm font-serif whitespace-nowrap"
+                            >
+                                正在回归大地...
+                            </motion.p>
+                        </div>
+                    </motion.div>
+                </div>
+            );
+        };
+
+        // --- Echo (回响) ---
+        const Echo = ({ insight, stoneShape, onReturn }) => {
+            const randomID = useMemo(() => 
+                Math.random().toString(36).substring(2, 8).toUpperCase(), 
+            []);
+            const currentDate = useMemo(() => {
+                const d = new Date();
+                return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear().toString().substr(-2)} ${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;
+            }, []);
+
+            return (
+                <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 bg-black/5 overflow-hidden relative">
+                    <motion.div
+                        initial={{ scale: 1.5, y: 0, opacity: 1 }}
+                        animate={{ scale: 0.6, y: -120, opacity: 0.8 }} 
+                        transition={{ duration: 1.5, type: "spring", bounce: 0.2 }}
+                        className="absolute pointer-events-none grayscale opacity-10 z-0"
+                    >
+                        <Stone shape={stoneShape} isMossy size="md" />
+                    </motion.div>
+                    <motion.div
+                        drag
+                        dragConstraints={{ left: -100, right: 100, top: -100, bottom: 100 }}
+                        whileDrag={{ scale: 1.05, rotate: 0 }}
+                        dragElastic={0.1}
+                        initial={{ opacity: 0, y: 20, rotate: -5 }} 
+                        animate={{ opacity: 1, y: 20, rotate: 1 }}
+                        transition={{ delay: 0.5, duration: 0.8, type: "spring" }}
+                        className="relative z-20 bg-[#Fdfdfd] text-ink w-64 max-w-sm drop-shadow-jagged cursor-grab active:cursor-grabbing"
+                        style={{ transformOrigin: "center center" }}
+                    >
+                        <div className="absolute top-[-8px] left-0 w-full h-[8px] jagged-top"></div>
+                        <div className="absolute bottom-[-8px] left-0 w-full h-[8px] jagged-bottom"></div>
+                        <button 
+                            onClick={onReturn}
+                            className="absolute top-2 right-2 text-ink/40 hover:text-red-500 transition-colors z-30 p-2"
+                        >
+                            <Icons.X size={16} />
+                        </button>
+                        <div className="p-5 pb-6 font-sans">
+                            <div className="text-center mb-4">
+                                <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-ink/80">Pager Message</h3>
+                            </div>
+                            <div className="flex justify-between items-end text-[9px] text-ink/50 mb-2 font-bold tracking-wide">
+                                <span>ID: {randomID}</span>
+                                <span>{currentDate}</span>
+                            </div>
+                            <div className="w-full border-b-2 border-dashed border-ink/10 mb-4"></div>
+                            <div className="min-h-[100px] flex items-center justify-center">
+                                <p className="text-base font-bold leading-relaxed text-ink text-left w-full select-none">
+                                    {insight}
+                                </p>
+                            </div>
+                            <div className="h-4"></div>
+                            <div className="w-full border-b-2 border-dashed border-ink/10 mb-3"></div>
+                            <div className="flex justify-between items-center opacity-60">
+                                <div className="flex items-end gap-[2px] h-6 overflow-hidden">
+                                    {[...Array(15)].map((_, i) => (
+                                        <div 
+                                            key={i} 
+                                            className="bg-ink" 
+                                            style={{ width: Math.random() > 0.6 ? '1px' : '2px', height: '100%' }}
+                                        ></div>
+                                    ))}
+                                </div>
+                                <span className="text-[8px] tracking-widest uppercase font-bold">End of Transmission</span>
+                            </div>
+                        </div>
+                    </motion.div>
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 2 }}
+                        className="absolute bottom-12 text-xs font-serif text-ink/40 tracking-widest pointer-events-none"
+                    >
+                        拖拽纸条 · 点击 × 收入口袋
+                    </motion.p>
+                </div>
+            );
+        };
+
+        // --- App ---
+        const App = () => {
+            const [screen, setScreen] = useState(ScreenState.COURTYARD);
+            const [stones, setStones] = useState([]);
+            const [currentShape, setCurrentShape] = useState(generateOrganicShape());
+            const [currentWorry, setCurrentWorry] = useState('');
+            const [currentWeather, setCurrentWeather] = useState(Weather.SUN);
+            const [currentInsight, setCurrentInsight] = useState('');
+
+            const handleStart = (weather) => {
+                setCurrentWeather(weather);
+                setCurrentShape(generateOrganicShape());
+                setScreen(ScreenState.ETCHING);
+            };
+
+            const handleLayDown = useCallback(async (text) => {
+                setCurrentWorry(text);
+                setScreen(ScreenState.OVERGROWTH);
+                try {
+                    const insight = await generateInsight(text);
+                    setCurrentInsight(insight);
+                } catch (e) {
+                    setCurrentInsight("风吹过青苔的声音。");
+                }
+            }, []);
+
+            const handleGrowthComplete = () => {
+                setScreen(ScreenState.ECHO);
+            };
+
+            const handleReturn = () => {
+                const newStone = {
+                    id: Date.now().toString(),
+                    worry: currentWorry,
+                    insight: currentInsight,
+                    timestamp: Date.now(),
+                    weather: currentWeather,
+                    shapePolygon: currentShape,
+                    rotation: Math.random() * 30 - 15,
+                    // 初始随机位置（相对于页面中心）
+                    x: Math.random() * 200 - 100,
+                    y: Math.random() * 200 - 100
+                };
+                
+                // 将新石头添加到列表中（不再限制9个）
+                setStones(prevStones => [...prevStones, newStone]);
+                
+                setScreen(ScreenState.COURTYARD);
+                setCurrentWorry('');
+                setCurrentInsight('');
+            };
+
+            return (
+                <main className="w-full h-screen overflow-hidden bg-concrete text-ink font-sans selection:bg-moss selection:text-white relative">
+                    <AnimatePresence mode="wait">
+                        {screen === ScreenState.COURTYARD && (
+                            <motion.div key="courtyard" className="w-full h-full" exit={{ opacity: 0, transition: { duration: 0.5 } }}>
+                                <Courtyard stones={stones} onStart={handleStart} onUpdateStones={setStones} />
+                            </motion.div>
+                        )}
+
+                        {screen === ScreenState.ETCHING && (
+                            <motion.div key="etching" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.5 } }}>
+                                <Etching stoneShape={currentShape} onLayDown={handleLayDown} />
+                            </motion.div>
+                        )}
+
+                        {screen === ScreenState.OVERGROWTH && (
+                            <motion.div key="overgrowth" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.8 } }}>
+                                <Overgrowth worry={currentWorry} stoneShape={currentShape} onGrowthComplete={handleGrowthComplete} />
+                            </motion.div>
+                        )}
+
+                        {screen === ScreenState.ECHO && (
+                            <motion.div key="echo" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.5 } }}>
+                                <Echo insight={currentInsight} stoneShape={currentShape} onReturn={handleReturn} />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </main>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
