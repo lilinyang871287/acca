@@ -912,76 +912,65 @@ const playSound = (type, volume = 1.0) => {
             }, [carvedIndex, isCarving]);
 
             useEffect(() => {
-                if (!isCarving) return;
-                
-                if (carvedIndex > text.length) {
-                    const finishTimer = setTimeout(() => {
-                        onLayDown(text);
-                    }, 500);
-                    return () => clearTimeout(finishTimer);
-                }
+    if (!isCarving) return;
 
-                // 机械键盘节奏
-               let delay;
-                const maxDelay = 250;  // 前 5 个字的延迟 (慢速)
-                const minDelay = 10;   // 最终最快速度 (极快)
-                const accelerationStart = 5; // 从第 5 个字开始加速 (index = 5)
+    // 结束逻辑 (保持不变，>= 逻辑正确)
+    if (carvedIndex >= text.length) {
+        const finishTimer = setTimeout(() => {
+            onLayDown(text);
+        }, 500);
+        return () => clearTimeout(finishTimer);
+    }
 
-                if (carvedIndex < accelerationStart) {
-                    // 前 5 个字保持慢速
-                    delay = maxDelay;
-                } else {
-                    // 从第 5 个字开始，使用指数函数递减延迟
-                    const x = carvedIndex - accelerationStart; // x: 0, 1, 2, ...
-                    
-                    // 衰减系数：数字越大，加速越快。0.5 是一个平衡的快速衰减值。
-                    const decayFactor = 0.5; 
-                    
-                    // 计算新的延迟：maxDelay * e^(-decayFactor * x)
-                    // Math.pow(Math.E, -decayFactor * x) 是指数衰减的核心
-                    delay = Math.max(
-                        minDelay, 
-                        maxDelay * Math.pow(Math.E, -decayFactor * x)
-                    );
-                    
-                    // 限制 delay 为整数
-                    delay = Math.round(delay);
-                }                        
+    // ==========================================
+    // 1. 节奏算法：调整参数以还原你喜欢的"慢起步"
+    // ==========================================
+    let delay;
+    // 【关键修改】把原来的 250 改成 450。
+    // 原理解释：你原来觉得"刚刚好"是因为 250(delay) + 300(强制延迟) ≈ 550ms。
+    // 现在我们为了音画同步去掉了强制延迟，所以要把基础时间加长，否则会觉得太快。
+    const maxDelay = 450; 
+    const minDelay = 10;   
+    const accelerationStart = 5; 
 
-                const timer = setTimeout(() => {
-                    // ==========================================
-                    // 1. 音量控制：9个字 (1-9有声，10静音)
-                    // ==========================================
-                    // Index 0 (第1字) = 1.0
-                    // Index 9 (第10字) = 0.0 (静音)
-                    let currentVol = 1.0 - (carvedIndex / 9.0);
+    if (carvedIndex < accelerationStart) {
+        delay = maxDelay;
+    } else {
+        const x = carvedIndex - accelerationStart; 
+        const decayFactor = 0.5; 
+        delay = Math.max(
+            minDelay, 
+            // 这里的 maxDelay 也会影响加速曲线的起点，这样过渡更自然
+            maxDelay * Math.pow(Math.E, -decayFactor * x)
+        );
+        delay = Math.round(delay);
+    }                        
 
-                    // 兜底防止负数
-                    if (currentVol < 0) currentVol = 0;
+    const timer = setTimeout(() => {
+        // ==========================================
+        // 2. 只有一件事：先出字，紧接着出声
+        // ==========================================
+        
+        // 【第一步】先让字出来 (视觉优先)
+        setCarvedIndex(prev => prev + 1);
 
-                    // 播放声音
-                    if (currentVol > 0) {
-                        playSound('carve', currentVol); 
-                    }
+        // 【第二步】紧接着播放声音 (音画同步)
+        // React 的状态更新是微任务，这里直接播放声音，
+        // 实际上人类感觉就是"字出现的瞬间响起了声音"。
+        let currentVol = 1.0 - (carvedIndex / 9.0);
+        if (currentVol < 0) currentVol = 0;
+        
+        if (currentVol > 0) {
+            playSound('carve', currentVol); 
+        }
 
-                    // ==========================================
-                    // 2. 解决音画不同步的关键点
-                    // ==========================================
-                    // 不要等速度变快了才去延迟，而是“准备加速时”就立刻去掉延迟。
-                    // 你的 accelerationStart 是 5。
-                    // 所以：前 5 个字(0-4)保持 300ms 沉重感。
-                    // 第 6 个字(index 5)开始，立刻设为 0，确保字紧跟声音，绝不脱节。
-                    const myManualDelay = carvedIndex < 5 ? 300 : 0;
-                    
-                    // 3. 执行文字显示
-                    setTimeout(() => {
-                        setCarvedIndex(prev => prev + 1);
-                    }, myManualDelay);
+        // 注意：这里删除了原来那个 300ms 的 setTimeout
+        // 也不需要 myManualDelay 了，因为我们直接让 delay 变长了
 
-                }, delay);
+    }, delay);
 
-                return () => clearTimeout(timer);
-            }, [isCarving, carvedIndex, text, onLayDown]);
+    return () => clearTimeout(timer);
+}, [isCarving, carvedIndex, text, onLayDown]);
 
             const handleSubmit = () => {
                 if (text.trim().length === 0) return;
