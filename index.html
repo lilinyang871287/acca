@@ -357,20 +357,22 @@
                     if (container) {
                         const pageHeight = container.clientHeight;
                         const targetScrollTop = lastPageIndex * pageHeight;
-                        
-                        // --- 关键修复开始 ---
-                        // 计算上一页的位置
                         const prevPageScrollTop = (lastPageIndex - 1) * pageHeight;
 
-                        // 如果当前滚动条在顶部 (说明是刚从回信页回来，组件重置了)，
-                        // 我们先“瞬移”到上一页的位置。
-                        // 这样，动画就会从“上一页”滑到“最新页”，而不是从第一页滑下来。
+                        // 【关键修改 1】
+                        // 必须强制把 CSS 里的 scroll-behavior: smooth 关掉！
+                        // 否则浏览器会把我们的“瞬移”指令变成“从头开始的慢动作播放”。
+                        container.style.scrollBehavior = 'auto'; 
+
+                        // 【关键修改 2】
+                        // 执行瞬移：如果当前在顶部，直接跳到上一页的位置
                         if (container.scrollTop < 10) {
                              container.scrollTop = prevPageScrollTop;
                         }
-                        // --- 关键修复结束 ---
 
-                        // 执行自定义滚动：从刚才设定的位置滑到目标位置
+                        // 【关键修改 3】
+                        // 开始 JS 手动动画 (从上一页滑向当前页)
+                        // 动画函数内部会自己处理每一帧的滚动，不需要 CSS 插手
                         smoothScrollTo(container, targetScrollTop, 1500); 
                     }
                 }
