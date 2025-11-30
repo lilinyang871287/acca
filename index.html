@@ -159,7 +159,7 @@ for (let i = 0; i < bufferSize; i++) {
 
 const playSound = (type) => {
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    const t = audioCtx.currentTime;
+    const t = audioCtx.currentTime + 0.05;
     const gainNode = audioCtx.createGain();
     gainNode.connect(audioCtx.destination);
 
@@ -591,11 +591,18 @@ const playSound = (type) => {
         key={stone.id} 
         layout
         drag
-        whileDrag={{ scale: 1.05 }} // 保持变大效果
+        whileDrag={{ scale: 1.05 }} 
         dragMomentum={false}
         dragElastic={0}
         
-        // 【修改点】：只有在开始拖动的一瞬间才播放声音
+        // 【关键逻辑 1】按下时：只预热引擎，不发声
+        onPointerDown={() => {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }}
+        
+        // 【关键逻辑 2】拖动开始时：才真正播放声音
         onDragStart={() => {
             isDraggingRef.current = true;
             playSound('lift'); 
@@ -609,17 +616,8 @@ const playSound = (type) => {
             }, 200);
         }}
         
-        transition={{ 
-            type: "spring", 
-            stiffness: 400, 
-            damping: 25
-        }}
-        dragConstraints={{ 
-            left: -xLimit, 
-            right: xLimit, 
-            top: -yLimit, 
-            bottom: yLimit 
-        }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        dragConstraints={{ left: -xLimit, right: xLimit, top: -yLimit, bottom: yLimit }}
         
         onClick={(e) => {
             if (isDraggingRef.current) {
@@ -631,21 +629,11 @@ const playSound = (type) => {
             }
         }}
         initial={{ scale: 0 }}
-        animate={{ 
-            scale: 1, 
-            x: stone.x || 0, 
-            y: stone.y || 0, 
-            rotate: stone.rotation 
-        }}
+        animate={{ scale: 1, x: stone.x || 0, y: stone.y || 0, rotate: stone.rotation }}
         className="absolute left-1/2 top-1/2 -ml-8 -mt-8"
         style={{ zIndex: 10 }}
     >
-        <Stone 
-            shape={stone.shapePolygon} 
-            isMossy 
-            size="sm" 
-            className="hover:scale-105 transition-transform duration-300 shadow-lg"
-        />
+        <Stone shape={stone.shapePolygon} isMossy size="sm" className="hover:scale-105 transition-transform duration-300 shadow-lg" />
     </motion.div>
 ))}
 
