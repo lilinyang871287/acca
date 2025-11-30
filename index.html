@@ -157,12 +157,9 @@ for (let i = 0; i < bufferSize; i++) {
     output[i] = Math.random() * 2 - 1;
 }
 
-const playSound = (type) => {
-    // 1. 把“制造声音”的步骤封装成一个内部函数
+const playSound = (type, volume = 1.0) => {
     const runAudioLogic = () => {
-        // 关键：必须在引擎运行状态下获取时间，否则时间可能是旧的
-        const t = audioCtx.currentTime + 0.05;
-        
+        const t = audioCtx.currentTime;
         const gainNode = audioCtx.createGain();
         gainNode.connect(audioCtx.destination);
 
@@ -201,8 +198,8 @@ const playSound = (type) => {
             osc.start(t);
             osc.stop(t + 0.7);
 
-        } else if (type === 'organize') {
-            // --- 整理 ---
+       } else if (type === 'organize') {
+            // --- 整理 (保留原有代码) ---
             const source = audioCtx.createBufferSource();
             source.buffer = noiseBuffer;
 
@@ -219,6 +216,32 @@ const playSound = (type) => {
             
             source.start(t);
             source.stop(t + 0.7);
+
+        // ===============================================
+        //  ▼▼▼ 这里是新加入的“凿字”音效 ▼▼▼
+        // ===============================================
+        } else if (type === 'carve') {
+            const source = audioCtx.createBufferSource();
+            source.buffer = noiseBuffer;
+
+            // 【修改点】使用 Lowpass (低通)，模拟沉闷的机械键盘声
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass'; 
+            // 频率设为 800Hz - 1200Hz，这个范围听起来像敲击实木或厚塑料
+            filter.frequency.setValueAtTime(1000, t); 
+            
+            source.connect(filter);
+            filter.connect(gainNode);
+
+
+            const peakGain = 0.6 * volume;
+
+            gainNode.gain.setValueAtTime(0, t);
+            gainNode.gain.linearRampToValueAtTime(peakGain, t + 0.005); 
+            gainNode.gain.exponentialRampToValueAtTime(0.001, t + 0.04); 
+
+            source.start(t);
+            source.stop(t + 0.05);
         }
     };
 
@@ -890,36 +913,103 @@ const playSound = (type) => {
 
             useEffect(() => {
                 if (!isCarving) return;
+                
                 if (carvedIndex > text.length) {
                     const finishTimer = setTimeout(() => {
                         onLayDown(text);
                     }, 500);
                     return () => clearTimeout(finishTimer);
                 }
-                let delay = 50; 
-                if (carvedIndex < 5) delay = 300; 
-                else if (carvedIndex < 10) delay = 150; 
-                else delay = 40;  
+
+                // 机械键盘节奏
+               let delay;
+                const maxDelay = 250;  // 前 5 个字的延迟 (慢速)
+                const minDelay = 10;   // 最终最快速度 (极快)
+                const accelerationStart = 5; // 从第 5 个字开始加速 (index = 5)
+
+                if (carvedIndex < accelerationStart) {
+                    // 前 5 个字保持慢速
+                    delay = maxDelay;
+                } else {
+                    // 从第 5 个字开始，使用指数函数递减延迟
+                    const x = carvedIndex - accelerationStart; // x: 0, 1, 2, ...
+                    
+                    // 衰减系数：数字越大，加速越快。0.5 是一个平衡的快速衰减值。
+                    const decayFactor = 0.5; 
+                    
+                    // 计算新的延迟：maxDelay * e^(-decayFactor * x)
+                    // Math.pow(Math.E, -decayFactor * x) 是指数衰减的核心
+                    delay = Math.max(
+                        minDelay, 
+                        maxDelay * Math.pow(Math.E, -decayFactor * x)
+                    );
+                    
+                    // 限制 delay 为整数
+                    delay = Math.round(delay);
+                }                        
+
                 const timer = setTimeout(() => {
-                    setCarvedIndex(prev => prev + 1);
+                    // ==========================================
+                    // 1. 计算音量 (1-5字递减，6字以后为0)
+                    // ==========================================
+                    // carvedIndex 是从 0 开始的 (0是第1个字)
+                    // 0 -> 1.0
+                    // 1 -> 0.8
+                    // ...
+                    // 4 -> 0.2
+                    // 5 -> 0.0 (第6个字)
+                    let currentVol = 1.0 - (carvedIndex * 0.2);
+                    if (currentVol < 0) currentVol = 0;
+
+                    // 只有当音量大于0时才发声，节省资源
+                    if (currentVol > 0) {
+                        playSound('carve', currentVol); 
+                    }
+
+                    // ==========================================
+                    // 2. 解决“绊脚石”：动态调整文字显示延迟
+                    // ==========================================
+                    // 逻辑：当打字速度(delay)变快时(小于50ms)，
+                    // 文字显示的延迟(myManualDelay)直接归零，不再阻碍视觉。
+                    // 只有前几个慢字保留 300ms 延迟，制造“沉重感”。
+                    const myManualDelay = delay < 50 ? 0 : 300; 
+                    
+                    // 3. 执行文字显示
+                    setTimeout(() => {
+                        setCarvedIndex(prev => prev + 1);
+                    }, myManualDelay);
+
                 }, delay);
+
                 return () => clearTimeout(timer);
             }, [isCarving, carvedIndex, text, onLayDown]);
 
             const handleSubmit = () => {
                 if (text.trim().length === 0) return;
+                
+                // 【关键修复】
+                // 1. 立刻唤醒 AudioContext
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                // 2. 播放一个“空音效”来预热通道
+                // 这能消除首字声音的延迟
+                const dummyOsc = audioCtx.createOscillator();
+                const dummyGain = audioCtx.createGain();
+                dummyGain.gain.value = 0; // 它是静音的
+                dummyOsc.connect(dummyGain);
+                dummyGain.connect(audioCtx.destination);
+                dummyOsc.start();
+                dummyOsc.stop(0.1);
+
                 if (textareaRef.current) textareaRef.current.blur();
+                
+                // 3. 稍微缩短一点等待时间 (50ms -> 10ms)，让反应更灵敏
                 setTimeout(() => {
                     setIsCarving(true); 
                     setCarvedIndex(0); 
-                }, 50); 
-            };
-
-            const handleKeyDown = (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit();
-                }
+                }, 10); 
             };
 
             return (
@@ -937,7 +1027,6 @@ const playSound = (type) => {
                                         ref={textareaRef}
                                         value={text}
                                         onChange={(e) => setText(e.target.value)}
-                                        onKeyDown={handleKeyDown}
                                         placeholder="刚才发生了什么？"
                                         maxLength={130}
                                         spellCheck={false}
