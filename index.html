@@ -923,49 +923,57 @@ const playSound = (type, volume = 1.0) => {
     }
 
     // ==========================================
-    // 1. 节奏算法：调整参数以还原你喜欢的"慢起步"
-    // ==========================================
-    let delay;
-    // 【关键修改】把原来的 250 改成 450。
-    // 原理解释：你原来觉得"刚刚好"是因为 250(delay) + 300(强制延迟) ≈ 550ms。
-    // 现在我们为了音画同步去掉了强制延迟，所以要把基础时间加长，否则会觉得太快。
-    const maxDelay = 450; 
-    const minDelay = 10;   
-    const accelerationStart = 5; 
+            // 1. 节奏算法：优化后的自然曲线
+            // ==========================================
+            let delay;
+            const maxDelay = 450; // 起步的最慢速度 (毫秒)
+            const minDelay = 20;  // 最快速度限制 (避免过快导致卡顿)
+            
+            // 【改动点1】让加速开始得更早一点点，不要等太久
+            const accelerationStart = 2; 
 
-    if (carvedIndex < accelerationStart) {
-        delay = maxDelay;
-    } else {
-        const x = carvedIndex - accelerationStart; 
-        const decayFactor = 0.5; 
-        delay = Math.max(
-            minDelay, 
-            // 这里的 maxDelay 也会影响加速曲线的起点，这样过渡更自然
-            maxDelay * Math.pow(Math.E, -decayFactor * x)
-        );
-        delay = Math.round(delay);
-    }                        
+            if (carvedIndex < accelerationStart) {
+                delay = maxDelay;
+            } else {
+                // 计算已经加速了多少个字
+                const x = carvedIndex - accelerationStart; 
+                
+                // 【核心改动点】将 0.5 改为 0.12
+                // 0.5 = 极速陡峭加速 (断崖式)
+                // 0.12 = 优雅的缓动加速 (如流水般自然变快)
+                const decayFactor = 0.12; 
+                
+                delay = Math.max(
+                    minDelay, 
+                    maxDelay * Math.pow(Math.E, -decayFactor * x)
+                );
+                
+                // 增加一点微小的随机扰动，模拟人手的“不完美感”
+                const jitter = (Math.random() * 10) - 5;
+                delay = Math.round(delay + jitter);
+            }                        
 
     const timer = setTimeout(() => {
         // ==========================================
-        // 2. 只有一件事：先出字，紧接着出声
+        // 【第一步】先出字
         // ==========================================
-        
-        // 【第一步】先让字出来 (视觉优先)
         setCarvedIndex(prev => prev + 1);
 
-        // 【第二步】紧接着播放声音 (音画同步)
-        // React 的状态更新是微任务，这里直接播放声音，
-        // 实际上人类感觉就是"字出现的瞬间响起了声音"。
-        let currentVol = 1.0 - (carvedIndex / 9.0);
+        // ==========================================
+        // 【第二步】严格的音量控制 (解决"机关枪"问题)
+        // ==========================================
+        // 逻辑：index=0(第1个字) -> vol=1.0
+        //       index=15(第16个字) -> vol=0.0
+        //       之后全部静音
+        let currentVol = 1.0 - (carvedIndex / 15.0);
+        
+        // 确保不小于 0
         if (currentVol < 0) currentVol = 0;
         
+        // 只有当音量大于 0 时才调用发声函数
         if (currentVol > 0) {
             playSound('carve', currentVol); 
         }
-
-        // 注意：这里删除了原来那个 300ms 的 setTimeout
-        // 也不需要 myManualDelay 了，因为我们直接让 delay 变长了
 
     }, delay);
 
