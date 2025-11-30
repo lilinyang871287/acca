@@ -449,6 +449,29 @@
                         <p className="text-xs text-ink/60 mt-2 tracking-[0.2em] uppercase">Moss & Stone</p>
                     </header>
 
+{/* ================= 调试用按钮 START (发布前删除) ================= */}
+<button
+    onClick={() => {
+        const newStones = Array.from({ length: 9 }).map((_, i) => ({
+            id: `debug-${Date.now()}-${i}`,
+            worry: `这是第 ${i + 1} 个测试烦恼`,
+            insight: `山谷没有回音，是因为它在倾听 (测试数据 ${i + 1})。`,
+            timestamp: Date.now(),
+            weather: 'Sun',
+            shapePolygon: generateOrganicShape(), 
+            rotation: Math.random() * 30 - 15,
+            x: Math.random() * 160 - 80, 
+            y: Math.random() * 160 - 80
+        }));
+        onUpdateStones(prev => [...prev, ...newStones]);
+    }}
+    // 修改点：从 top-4 改为 bottom-4，保持 right-4
+    className="absolute bottom-4 right-4 z-50 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-800/60 text-xs font-bold rounded hover:bg-red-500/20 transition-colors backdrop-blur-md"
+>
+    [测试] +9 石头
+</button>
+{/* ================= 调试用按钮 END ================= */}
+
                     {stones.length > 0 && (
                         <div className="absolute top-6 right-6 z-30 flex gap-4">
                             <button 
@@ -929,9 +952,17 @@
                             </div>
                             <div className="w-full border-b-2 border-dashed border-ink/10 mb-4"></div>
                             <div className="min-h-[100px] flex items-center justify-center">
-                                <p className="text-base font-bold leading-relaxed text-ink text-left w-full select-none">
-                                    {insight}
-                                </p>
+                                <p 
+    className="text-base font-bold leading-relaxed text-ink text-left w-full select-none"
+    style={{ textWrap: 'balance' }} 
+>
+    {insight}
+</p><p 
+    className="text-base font-bold leading-relaxed text-ink text-left w-full select-none"
+    style={{ textWrap: 'balance' }} 
+>
+    {insight}
+</p>
                             </div>
                             <div className="h-4"></div>
                             <div className="w-full border-b-2 border-dashed border-ink/10 mb-3"></div>
