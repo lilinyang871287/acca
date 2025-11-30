@@ -681,7 +681,15 @@ const playSound = (type, volume = 1.0) => {
             ];
 
             const formatDate = (timestamp) => {
-                return new Date(timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+                const date = new Date(timestamp);
+                const Y = date.getFullYear();
+                const M = (date.getMonth() + 1).toString().padStart(2, '0');
+                const D = date.getDate().toString().padStart(2, '0');
+                const h = date.getHours().toString().padStart(2, '0');
+                const m = date.getMinutes().toString().padStart(2, '0');
+                
+                // 返回格式示例：2023年12月01日 14:30
+                return `${Y}年${M}月${D}日 ${h}:${m}`;
             };
 
             const handleScroll = () => {
@@ -997,7 +1005,7 @@ const playSound = (type, volume = 1.0) => {
                                 </button>
                                 
                                 <div className="mt-4 mb-8">
-                                    <p className="text-xs text-ink/40 font-serif tracking-[0.2em] uppercase mb-4">
+                                    <p className="text-xs text-ink/40 font-serif tracking-widest uppercase mb-4">
                                         {formatDate(selectedStone.timestamp)}
                                     </p>
                                     <div className="w-8 h-1 bg-moss/20 mx-auto mb-8 rounded-full"></div>
@@ -1124,42 +1132,40 @@ const playSound = (type, volume = 1.0) => {
             }                        
 
     const timer = setTimeout(() => {
-        // ==========================================
-        // 【第一步】先出字
-        // ==========================================
-        setCarvedIndex(prev => prev + 1);
+                // ==========================================
+                // 【第一步】先出字
+                // ==========================================
+                setCarvedIndex(prev => prev + 1);
 
-        // ==========================================
-        // 【第二步】精准音量控制 (查表法)
-        // ==========================================
-        
-        // 您指定的音量曲线表 (索引 0 代表第1个字)
-        const volumeProfile = [
-            1.00, // 第1个：100% (初始)
-            0.85, // 第2个：平滑过渡
-            0.70, // 第3个：平滑过渡
-            0.55, // 第4个：平滑过渡
-            0.37, // 第5个：37% (指定)
-            0.28, // 第6个：28% (指定)
-            0.24, // 第7个：24% (指定)
-            0.20, // 第8个：20% (指定)
-            0.16, // 第9个：16% (指定)
-            0.12, // 第10个：12% (指定)
-            0.10, // 第11个：10% (指定)
-            0.08, // 第12个：8% (指定)
-            0.04, // 第13个：4% (指定)
-            0.03, // 第14个：3% (指定)
-            0.01  // 第15个：1% (指定)
-        ];
+                // ==========================================
+                // 【修正逻辑】安全地获取当前字符
+                // ==========================================
+                // 确保 carvedIndex 在 text 范围内
+                const safeIndex = Math.min(carvedIndex, text.length - 1);
+                const currentChar = text[safeIndex] || ""; 
+                
+                // 检测是否为空格、回车等不可见字符
+                const isSilentChar = /\s/.test(currentChar);
 
-        // 如果字数还在表内，就取表里的值；超过15个字，就是 0
-        let currentVol = 0;
-        if (carvedIndex < volumeProfile.length) {
-            currentVol = volumeProfile[carvedIndex];
-        }
+                // ==========================================
+                // 【第二步】精准音量控制 (查表法)
+                // ==========================================
+                const volumeProfile = [
+                    1.00, 0.85, 0.70, 0.55, 
+                    0.37, 0.28, 0.24, 0.20, 0.16, 
+                    0.12, 0.10, 0.08, 0.04, 0.03, 0.01
+                ];
 
-        // 只有当音量大于 0 且 当前字符不是(空格/回车)时，才发声
-        if (currentVol > 0 && !isSilentChar) {
+                let currentVol = 0;
+                if (carvedIndex < volumeProfile.length) {
+                    currentVol = volumeProfile[carvedIndex];
+                }
+
+                // 【核心修正】
+                // 1. 只有音量 > 0 才播放
+                // 2. 只有不是静音字符(空格/回车) 才播放
+                // 3. 额外加一个防错：确保 currentVol 是有效数字
+                if (currentVol > 0 && !isSilentChar && isFinite(currentVol)) {
                     playSound('carve', currentVol); 
                 }
 
