@@ -158,53 +158,79 @@ for (let i = 0; i < bufferSize; i++) {
 }
 
 const playSound = (type) => {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    // 保持 0.05 的缓冲，防止卡顿
-    const t = audioCtx.currentTime + 0.05;
-    
-    const gainNode = audioCtx.createGain();
-    gainNode.connect(audioCtx.destination);
+    // 1. 把“制造声音”的步骤封装成一个内部函数
+    const runAudioLogic = () => {
+        // 关键：必须在引擎运行状态下获取时间，否则时间可能是旧的
+        const t = audioCtx.currentTime + 0.05;
+        
+        const gainNode = audioCtx.createGain();
+        gainNode.connect(audioCtx.destination);
 
-    if (type === 'lift') {
-        // --- 抬起：作为背景纹理，音量要小 ---
-        const source = audioCtx.createBufferSource();
-        source.buffer = noiseBuffer;
-        source.loop = true;
-        
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(150, t);
-        
-        source.connect(filter);
-        filter.connect(gainNode);
-        
-        gainNode.gain.setValueAtTime(0, t);
-        // 【修改点 1】：音量从 0.5 降到 0.1
-        // 这样即使和 Drop 叠加，也不会爆音，只是轻轻的沙沙声
-        gainNode.gain.linearRampToValueAtTime(0.1, t + 0.1); 
-        gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
-        
-        source.start(t);
-        source.stop(t + 0.35);
-        
-    } else if (type === 'drop') {
-        // --- 放下：主角，深沉有力 ---
-        const osc = audioCtx.createOscillator();
-        osc.type = 'sine';
-        
-        // 频率：90Hz -> 30Hz，下潜更深
-        osc.frequency.setValueAtTime(90, t);
-        // 【修改点 2】：下潜速度加快 (0.15 -> 0.12)，让撞击感更短促有力
-        osc.frequency.exponentialRampToValueAtTime(30, t + 0.12);
-        
-        // 【修改点 3】：音量从 0.8 降到 0.5 (留出余量)
-        // 0.5 + 0.1(抬起) = 0.6，非常安全，绝对不会破音
-        gainNode.gain.setValueAtTime(0.5, t);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
-        
-        osc.connect(gainNode);
-        osc.start(t);
-        osc.stop(t + 0.7);
+        if (type === 'lift') {
+            // --- 抬起 ---
+            const source = audioCtx.createBufferSource();
+            source.buffer = noiseBuffer;
+            source.loop = true;
+            
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(150, t);
+            
+            source.connect(filter);
+            filter.connect(gainNode);
+            
+            gainNode.gain.setValueAtTime(0, t);
+            gainNode.gain.linearRampToValueAtTime(0.1, t + 0.1); 
+            gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+            
+            source.start(t);
+            source.stop(t + 0.35);
+            
+        } else if (type === 'drop') {
+            // --- 放下 ---
+            const osc = audioCtx.createOscillator();
+            osc.type = 'sine';
+            
+            osc.frequency.setValueAtTime(90, t);
+            osc.frequency.exponentialRampToValueAtTime(30, t + 0.12);
+            
+            gainNode.gain.setValueAtTime(0.5, t);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+            
+            osc.connect(gainNode);
+            osc.start(t);
+            osc.stop(t + 0.7);
+
+        } else if (type === 'organize') {
+            // --- 整理 ---
+            const source = audioCtx.createBufferSource();
+            source.buffer = noiseBuffer;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(500, t);
+            
+            source.connect(filter);
+            filter.connect(gainNode);
+            
+            gainNode.gain.setValueAtTime(0, t);
+            gainNode.gain.linearRampToValueAtTime(0.1, t + 0.02); 
+            gainNode.gain.exponentialRampToValueAtTime(0.001, t + 0.6); 
+            
+            source.start(t);
+            source.stop(t + 0.7);
+        }
+    };
+
+    // 2. 检查引擎状态：
+    // 如果是“挂起/休眠”状态 (suspended)，先唤醒，等唤醒成功(.then)后再发声
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(() => {
+            runAudioLogic();
+        });
+    } else {
+        // 如果已经是“运行中” (running)，直接发声
+        runAudioLogic();
     }
 };
         // ==========================================
@@ -483,6 +509,7 @@ const playSound = (type) => {
             };
 
             const handleOrganize = () => {
+		playSound('organize');
                 if(stoneChunks[currentPageIndex].length === 0) return;
                 const currentChunkStones = stoneChunks[currentPageIndex];
                 const gridGap = 110; 
@@ -517,7 +544,7 @@ const playSound = (type) => {
                 setShowClearConfirm(false);
             };
 
-// ==========================================
+	    // ==========================================
             // 【新增功能】计算每一页的日期范围
             // ==========================================
             const getPageDateRange = (chunk) => {
