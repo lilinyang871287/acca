@@ -317,19 +317,52 @@
             // ==========================================
             // 【核心逻辑 2】自动滚动
             // 当页面数量增加时（产生了第10个、第19个...石头），自动滑到最新的一页
-            // ==========================================
+	    // ==========================================
+            
+            // 定义一个缓动滚动函数
+            const smoothScrollTo = (element, target, duration) => {
+                const start = element.scrollTop;
+                const change = target - start;
+                const startTime = performance.now();
+                
+                // 临时禁用 CSS 滚动吸附，防止它和动画打架
+                element.style.scrollSnapType = 'none';
+
+                const animateScroll = (currentTime) => {
+                    const timeElapsed = currentTime - startTime;
+                    if (timeElapsed < duration) {
+                        // 使用 easeInOutQuad 缓动曲线：慢-快-慢
+                        const progress = timeElapsed / duration;
+                        const ease = progress < 0.5 
+                            ? 2 * progress * progress 
+                            : -1 + (4 - 2 * progress) * progress;
+                        
+                        element.scrollTop = start + (change * ease);
+                        requestAnimationFrame(animateScroll);
+                    } else {
+                        element.scrollTop = target;
+                        // 动画结束后，恢复 CSS 滚动吸附
+                        element.style.scrollSnapType = 'y mandatory';
+                    }
+                };
+                requestAnimationFrame(animateScroll);
+            };
+
             useEffect(() => {
+                // 当页数增加，且不是初始加载时
                 if (stoneChunks.length > 1) {
                     const lastPageIndex = stoneChunks.length - 1;
-                    // 稍微延迟，等待 DOM 渲染完成
-                    setTimeout(() => {
-                        if (pageRefs.current[lastPageIndex]) {
-                            pageRefs.current[lastPageIndex].scrollIntoView({ 
-                                behavior: 'smooth', 
-                                block: 'center' 
-                            });
-                        }
-                    }, 100);
+                    const container = scrollContainerRef.current;
+                    
+                    if (container) {
+                        // 计算目标位置：页码 * 页面高度
+                        // 直接读取容器高度，比 windowSize 更准
+                        const pageHeight = container.clientHeight;
+                        const targetScrollTop = lastPageIndex * pageHeight;
+
+                        // 执行自定义滚动：持续 1.5秒 (1500ms)，营造一种“沉降”的厚重感
+                        smoothScrollTo(container, targetScrollTop, 1500); 
+                    }
                 }
             }, [stones.length, stoneChunks.length]);
 
