@@ -144,6 +144,53 @@
             "山谷没有回音，是因为它在倾听。"
         ];
 
+// ==========================================
+// 替换后的生成式音效系统 (不需要 mp3 文件)
+// ==========================================
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+// 生成白噪声缓存
+const bufferSize = audioCtx.sampleRate * 2; 
+const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+const output = noiseBuffer.getChannelData(0);
+for (let i = 0; i < bufferSize; i++) {
+    output[i] = Math.random() * 2 - 1;
+}
+
+const playSound = (type) => {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const t = audioCtx.currentTime;
+    const gainNode = audioCtx.createGain();
+    gainNode.connect(audioCtx.destination);
+
+    if (type === 'lift') {
+        // 抬起：沙沙的摩擦声
+        const source = audioCtx.createBufferSource();
+        source.buffer = noiseBuffer;
+        source.loop = true;
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(200, t);
+        source.connect(filter);
+        filter.connect(gainNode);
+        gainNode.gain.setValueAtTime(0, t);
+        gainNode.gain.linearRampToValueAtTime(0.15, t + 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+        source.start(t);
+        source.stop(t + 0.35);
+    } else if (type === 'drop') {
+        // 放下：沉闷的咚声
+        const osc = audioCtx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(90, t);
+        osc.frequency.exponentialRampToValueAtTime(40, t + 0.15);
+        gainNode.gain.setValueAtTime(0.5, t);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+        osc.connect(gainNode);
+        osc.start(t);
+        osc.stop(t + 0.25);
+    }
+};
         // ==========================================
         // 1. 工具函数
         // ==========================================
@@ -547,6 +594,17 @@
     whileDrag={{ scale: 1.05 }}
     dragMomentum={false}
     dragElastic={0}
+onDragStart={() => {
+        isDraggingRef.current = true;
+        playSound('lift');
+    }}
+    onDragEnd={(e, info) => { 
+        handleDragEnd(stone.id, info);
+        playSound('drop');
+        setTimeout(() => {
+            isDraggingRef.current = false;
+        }, 200);
+    }}
     transition={{ 
         type: "spring", 
         stiffness: 400, 
@@ -558,15 +616,7 @@
                                             top: -yLimit, 
                                             bottom: yLimit 
                                         }}
-                                        onDragStart={() => {
-                                            isDraggingRef.current = true;
-                                        }}
-                                        onDragEnd={(e, info) => { 
-                                            handleDragEnd(stone.id, info);
-                                            setTimeout(() => {
-                                                isDraggingRef.current = false;
-                                            }, 200);
-                                        }}
+                                       
                                         onClick={(e) => {
                                             if (isDraggingRef.current) {
                                                 e.stopPropagation();
