@@ -159,33 +159,49 @@ for (let i = 0; i < bufferSize; i++) {
 
 const playSound = (type) => {
     if (audioCtx.state === 'suspended') audioCtx.resume();
+    // 保持 0.05 的缓冲，防止卡顿
     const t = audioCtx.currentTime + 0.05;
+    
     const gainNode = audioCtx.createGain();
     gainNode.connect(audioCtx.destination);
 
     if (type === 'lift') {
-        // 移动：沙沙的摩擦声
+        // --- 抬起：作为背景纹理，音量要小 ---
         const source = audioCtx.createBufferSource();
         source.buffer = noiseBuffer;
         source.loop = true;
+        
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'bandpass';
         filter.frequency.setValueAtTime(150, t);
+        
         source.connect(filter);
         filter.connect(gainNode);
+        
         gainNode.gain.setValueAtTime(0, t);
-        gainNode.gain.linearRampToValueAtTime(0.5, t + 0.1);
+        // 【修改点 1】：音量从 0.5 降到 0.1
+        // 这样即使和 Drop 叠加，也不会爆音，只是轻轻的沙沙声
+        gainNode.gain.linearRampToValueAtTime(0.1, t + 0.1); 
         gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+        
         source.start(t);
         source.stop(t + 0.35);
+        
     } else if (type === 'drop') {
-        // 放下：沉闷的咚声
+        // --- 放下：主角，深沉有力 ---
         const osc = audioCtx.createOscillator();
         osc.type = 'sine';
+        
+        // 频率：90Hz -> 30Hz，下潜更深
         osc.frequency.setValueAtTime(90, t);
-        osc.frequency.exponentialRampToValueAtTime(40, t + 0.15);
-        gainNode.gain.setValueAtTime(0.8, t);
+        // 【修改点 2】：下潜速度加快 (0.15 -> 0.12)，让撞击感更短促有力
+        osc.frequency.exponentialRampToValueAtTime(30, t + 0.12);
+        
+        // 【修改点 3】：音量从 0.8 降到 0.5 (留出余量)
+        // 0.5 + 0.1(抬起) = 0.6，非常安全，绝对不会破音
+        gainNode.gain.setValueAtTime(0.5, t);
         gainNode.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+        
         osc.connect(gainNode);
         osc.start(t);
         osc.stop(t + 0.7);
