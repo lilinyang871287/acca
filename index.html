@@ -819,18 +819,31 @@ const Courtyard = ({ stones, onStart, onUpdateStones, gardenItems, onTransform }
             </header>
 
            {/* 庭院景观层 */}
-            <div className="absolute inset-0 z-0 overflow-hidden"> {/* 修改1: 去掉了 pointer-events-none */}
+            {/* 【修复点 1】去掉 pointer-events-none，否则鼠标点不到
+                改成 pointer-events-auto 或者直接删掉这一行
+            */}
+            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-auto"> 
                 {gardenItems && gardenItems.map(item => {
                     const Component = Decorations[item.type];
                     return (
                         <motion.div
                             key={item.id}
-                            drag // 修改2: 加上这个，允许拖拽
-                            dragMomentum={false} // 拖完即停，不乱飘
+                            
+                            /* 【修复点 2】加上 drag 属性，开启拖拽 */
+                            drag 
+                            
+                            /* 【修复点 3】dragMomentum={false} 
+                               让它像搬家具一样，松手即停，而不是像冰块一样滑走 
+                            */
+                            dragMomentum={false} 
+
                             initial={{ opacity: 0, scale: 0 }}
                             animate={{ opacity: 1, scale: item.scale }}
                             transition={{ duration: 2, ease: "easeOut" }}
-                            className="absolute cursor-move" // 修改3: 加上鼠标手势
+                            
+                            /* 【修复点 4】加上 cursor-move 提示用户可以拖 */
+                            className="absolute cursor-move" 
+                            
                             style={{
                                 left: `${item.x}%`,
                                 top: `${item.y}%`,
