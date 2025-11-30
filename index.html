@@ -349,18 +349,28 @@
             };
 
             useEffect(() => {
-                // 当页数增加，且不是初始加载时
+                // 只有当存在多页时才处理
                 if (stoneChunks.length > 1) {
                     const lastPageIndex = stoneChunks.length - 1;
                     const container = scrollContainerRef.current;
                     
                     if (container) {
-                        // 计算目标位置：页码 * 页面高度
-                        // 直接读取容器高度，比 windowSize 更准
                         const pageHeight = container.clientHeight;
                         const targetScrollTop = lastPageIndex * pageHeight;
+                        
+                        // --- 关键修复开始 ---
+                        // 计算上一页的位置
+                        const prevPageScrollTop = (lastPageIndex - 1) * pageHeight;
 
-                        // 执行自定义滚动：持续 1.5秒 (1500ms)，营造一种“沉降”的厚重感
+                        // 如果当前滚动条在顶部 (说明是刚从回信页回来，组件重置了)，
+                        // 我们先“瞬移”到上一页的位置。
+                        // 这样，动画就会从“上一页”滑到“最新页”，而不是从第一页滑下来。
+                        if (container.scrollTop < 10) {
+                             container.scrollTop = prevPageScrollTop;
+                        }
+                        // --- 关键修复结束 ---
+
+                        // 执行自定义滚动：从刚才设定的位置滑到目标位置
                         smoothScrollTo(container, targetScrollTop, 1500); 
                     }
                 }
@@ -506,15 +516,16 @@
                                    
                                    {chunk.map((stone) => (
                                        <motion.div 
-                                        key={stone.id} 
-                                        drag
-                                        dragMomentum={false}
-                                        dragElastic={0}
-                                        transition={{ 
-                                            type: "spring", 
-                                            stiffness: 400, 
-                                            damping: 25
-                                        }}
+    key={stone.id} 
+    layout
+    drag
+    dragMomentum={false}
+    dragElastic={0}
+    transition={{ 
+        type: "spring", 
+        stiffness: 400, 
+        damping: 25
+    }}
                                         dragConstraints={{ 
                                             left: -xLimit, 
                                             right: xLimit, 
@@ -953,11 +964,6 @@
                             <div className="w-full border-b-2 border-dashed border-ink/10 mb-4"></div>
                             <div className="min-h-[100px] flex items-center justify-center">
                                 <p 
-    className="text-base font-bold leading-relaxed text-ink text-left w-full select-none"
-    style={{ textWrap: 'balance' }} 
->
-    {insight}
-</p><p 
     className="text-base font-bold leading-relaxed text-ink text-left w-full select-none"
     style={{ textWrap: 'balance' }} 
 >
