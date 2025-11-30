@@ -145,59 +145,59 @@
         // 0. 配置区域
         // ==========================================
         const INSIGHT_DICT = {
-    // 【万能/巴纳姆效应】 (模棱两可，谁看都觉得准，用于兜底)
-    universal: [
-        "其实你心里早有决定。",
-        "并不是非要现在解决。",
-        "你的直觉是对的。",
-        "不是你的错。",
-        "留意最近的梦境。",
-        "相信那个最疯狂的念头。",
-        "这只是漫长一生的瞬间。",
-        "此时无声胜有声。",
-        "不需要答案，也是一种答案。",
-        "大多数担忧，从未发生。"
-    ],
-    // 【抚慰/治愈】 (对应：雨天、Cloud、关键词：累/难过/痛苦)
-    comfort: [
-        "允许事情暂时没有答案。",
-        "休息不是惩罚，是奖励。",
-        "抱抱自己，就现在。",
-        "今夜，只负责安睡。",
-        "万物皆有裂痕，那是光进来的地方。",
-        "不要为了合群而说话。",
-        "你已经做得足够好了。",
-        "软弱一下也没关系。",
-        "没人能读懂你的全部，这很正常。",
-        "把手松开，才能接住新的。"
-    ],
-    // 【勇气/行动】 (对应：Sun、Storm、关键词：怕/不敢/迷茫/工作)
-    courage: [
-        "墙也是门，只要你推。",
-        "山不向我走来，我便站住。",
-        "与其补救，不如重新开始。",
-        "现在放弃，也是一种勇敢。",
-        "风从不解释它的方向。",
-        "去见你想见的人。",
-        "害怕是因为你在这个乎。",
-        "在这个路口，停下来也没事。",
-        "这一次，你可以自私一点。",
-        "你的价值无需估量。"
-    ],
-    // 【等待/释怀】 (对应：Cloud、关键词：爱/恨/等/前任/烦)
-    patience: [
-        "时机未到，请稍安勿躁。",
-        "让子弹再飞一会儿。",
-        "答案正在赶来的路上。",
-        "河流流过，不留痕迹。",
-        "旧物比新人更懂沉默。",
-        "那个期待，可以放下了。",
-        "最好的安排往往在最后。",
-        "时间会解释一切。",
-        "缘起缘灭，皆是风景。",
-        "花开不是为了被看见。"
-    ]
-};
+            // 【万能/通用】(以“自然规律”为主，回应所有困惑)
+            universal: [
+                "石头从不着急赶路。",
+                "青苔不懂石头的坚硬，但它懂得拥抱。",
+                "山谷没有回音，是因为它在倾听。",
+                "有些重量，放下后才能看清形状。",
+                "风吹过，痕迹变淡，但石头记得。",
+                "此刻的粗糙，是未来圆润的开始。",
+                "河流流过，不留痕迹。",
+                "看不见的根，比看得见的叶更深。",
+                "世界是空旷的，回音全来自自身。",
+                "不要慌张，月亮也经常失眠。"
+            ],
+            // 【抚慰/治愈】(对应雨天/疲惫 -> 青苔的柔软)
+            comfort: [
+                "青苔只在阴影里生长，不必时刻向阳。",
+                "雨水归于大海，情绪也终将平静。",
+                "允许自己像石头一样，在这个午后静止。",
+                "裂缝不是破碎，是光和苔藓的入口。",
+                "落叶归根，并不是某种失败。",
+                "哪怕是石头，淋雨久了也会变软。",
+                "躲在壳里也没关系，蜗牛也是这样长大的。",
+                "潮湿的时候，就长一点青苔吧。",
+                "不必坚强，像水一样流淌就好。",
+                "夜色落下，一切都会变得温柔。"
+            ],
+            // 【勇气/行动】(对应晴天/迷茫 -> 石头的坚定)
+            courage: [
+                "山不向我走来，我便站住。",
+                "悬崖不害怕坠落，它成为了风景。",
+                "急流中，只有最重的石头最安静。",
+                "风无法撼动扎根的树。",
+                "把心变成石头，就不怕硬碰硬。",
+                "路没有尽头，只有路口。",
+                "去撞击吧，像浪花撞击礁石那样。",
+                "所有的墙，最后都会变成门。",
+                "野草不需要园丁的允许也能生长。",
+                "站直了，影子自然会跟随你。"
+            ],
+            // 【等待/释怀】(对应多云/纠结 -> 时间的流逝)
+            patience: [
+                "花只开一次，但年年准时。",
+                "等待也是一种生长，像钟乳石那样。",
+                "时间是风，记忆是灰，让它散去。",
+                "冬天来了，春天就不会迷路。",
+                "旧物比新人更懂沉默。",
+                "如果水流不通，那就变成湖泊。",
+                "答案像雾，太阳出来就会显现。",
+                "不要追赶落日，它明天还会升起。",
+                "缘起缘灭，像云聚云散。",
+                "有些事，过了一个季节就懂了。"
+            ]
+        };
 
 // ==========================================
 // 替换后的生成式音效系统 (不需要 mp3 文件)
@@ -358,54 +358,111 @@ const playSound = (type, volume = 1.0) => {
 
         const generateInsight = async (text, weatherType) => {
             return new Promise(resolve => {
-                // 模拟思考时间，让体验更真实 (1.5秒 - 2.5秒随机)
+                // 模拟思考时间 (1.5秒 - 2.5秒)
                 const thinkTime = 1500 + Math.random() * 1000;
                 
                 setTimeout(() => {
-                    // 1. 简单的关键词提取 (模糊语义分析)
-                    // 不需要复杂的 NLP，简单的包含匹配就很有效
-                    const t = text || "";
+                    const t = (text || "").toLowerCase(); // 统一转小写处理英文
+
+                    // ==========================================
+                    // 1. 扩充后的语义词库 (加权核心)
+                    // ==========================================
                     const keywords = {
-                        negative: ["累", "死", "难", "苦", "痛", "哭", "烦", "丧", "病", "糟"],
-                        hesitate: ["不", "迷", "惑", "选", "择", "路", "怎", "办", "怕", "慌"],
-                        relation: ["爱", "情", "他", "她", "人", "友", "离", "分", "家", "念"],
-                        material: ["钱", "职", "工", "作", "忙", "业", "考", "学"]
+                        // 【抚慰权重】对应：累、痛、难过、孤独
+                        comfort: [
+                            "累", "死", "难", "苦", "痛", "哭", "泪", "烦", "丧", "病", "糟", "烂",
+                            "失望", "绝望", "崩溃", "压抑", "窒息", "黑", "沉", "倦", "乏",
+                            "没人", "孤独", "寂寞", "冷", "甚至", "不好", "差", "伤", "害",
+                            "tired", "sad", "bad", "pain", "cry", "lonely"
+                        ],
+                        // 【勇气权重】对应：迷茫、害怕、选择、工作、未来
+                        courage: [
+                            "不", "迷", "惑", "选", "择", "路", "怎", "办", "怕", "慌", "恐",
+                            "敢", "逃", "避", "追", "梦", "想", "输", "赢", "败", "成", "功",
+                            "职", "工", "作", "忙", "业", "考", "学", "钱", "穷", "富",
+                            "方向", "未来", "目标", "意义", "值", "停", "滞", "动",
+                            "afraid", "lost", "job", "work", "future", "choice"
+                        ],
+                        // 【等待/释怀权重】对应：情感、人际、时间、过去
+                        patience: [
+                            "爱", "情", "他", "她", "人", "友", "离", "分", "家", "念", "想",
+                            "恨", "怨", "悔", "忘", "记", "忆", "过", "去", "回", "复",
+                            "等", "慢", "急", "早", "晚", "迟", "久", "时光", "岁月",
+                            "前任", "男朋友", "女朋友", "老公", "老婆", "孩子", "父母",
+                            "love", "hate", "wait", "miss", "time", "home"
+                        ]
                     };
 
+                    // ==========================================
+                    // 2. 计分逻辑 (谁分高听谁的)
+                    // ==========================================
+                    let scores = {
+                        comfort: 0,
+                        courage: 0,
+                        patience: 0
+                    };
+
+                    // 遍历统计分数
+                    keywords.comfort.forEach(k => { if(t.includes(k)) scores.comfort++; });
+                    keywords.courage.forEach(k => { if(t.includes(k)) scores.courage++; });
+                    keywords.patience.forEach(k => { if(t.includes(k)) scores.patience++; });
+
+                    // 找出最高分的类别
+                    let maxScore = 0;
+                    let bestCategory = null;
+
+                    Object.keys(scores).forEach(category => {
+                        if (scores[category] > maxScore) {
+                            maxScore = scores[category];
+                            bestCategory = category;
+                        }
+                    });
+
+                    // ==========================================
+                    // 3. 特殊规则：问句检测
+                    // ==========================================
+                    // 如果用户在问“为什么...？”或者“...吗？”，通常适合用模棱两可的【Universal】回答
+                    const isQuestion = t.includes("?") || t.includes("？") || t.includes("吗") || t.includes("为什么");
+                    
                     let pool = [];
 
-                    // 2. 策略 A：关键词优先 (Cold Reading 核心：捕捉关键字)
-                    let hitKeyword = false;
-                    
-                    if (keywords.negative.some(k => t.includes(k))) {
-                        pool = [...INSIGHT_DICT.comfort, ...INSIGHT_DICT.universal];
-                        hitKeyword = true;
-                    } else if (keywords.hesitate.some(k => t.includes(k))) {
-                        pool = [...INSIGHT_DICT.courage, ...INSIGHT_DICT.universal];
-                        hitKeyword = true;
-                    } else if (keywords.relation.some(k => t.includes(k))) {
-                        pool = [...INSIGHT_DICT.patience, ...INSIGHT_DICT.universal];
-                        hitKeyword = true;
-                    }
-
-                    // 3. 策略 B：如果没有明显关键词，则根据“天气心情”来定调
-                    if (!hitKeyword) {
-                        switch (weatherType) {
-                            case 'Rain':   // 雨天：通常忧郁，需要抚慰
-                            case 'Storm':  // 风暴：内心动荡，需要安抚或力量
-                                pool = [...INSIGHT_DICT.comfort, ...INSIGHT_DICT.patience];
-                                break;
-                            case 'Cloud':  // 多云：迷茫，需要等待或指引
-                                pool = [...INSIGHT_DICT.patience, ...INSIGHT_DICT.universal];
-                                break;
-                            case 'Sun':    // 晴天：积极或日常，给予行动指引
-                            default:
-                                pool = [...INSIGHT_DICT.courage, ...INSIGHT_DICT.universal];
-                                break;
+                    if (maxScore > 0) {
+                        // 命中规则：取最高分对应的类别 + Universal (作为调味)
+                        // 如果是问句，大大增加 Universal 的比例
+                        if (isQuestion) {
+                            pool = [...INSIGHT_DICT.universal, ...INSIGHT_DICT.universal, ...INSIGHT_DICT[bestCategory]];
+                        } else {
+                            pool = [...INSIGHT_DICT[bestCategory], ...INSIGHT_DICT.universal];
+                        }
+                    } else {
+                        // ==========================================
+                        // 4. 兜底策略：没有关键词，完全依赖天气和语境
+                        // ==========================================
+                        
+                        // 如果是极短的句子（比如就打了个句号），纯给 Universal
+                        if (t.length < 3) {
+                            pool = [...INSIGHT_DICT.universal];
+                        } else {
+                            // 结合天气做推断
+                            switch (weatherType) {
+                                case 'Rain':   // 雨天 -> 倾向安慰
+                                    pool = [...INSIGHT_DICT.comfort, ...INSIGHT_DICT.universal];
+                                    break;
+                                case 'Storm':  // 风暴 -> 倾向安抚或力量
+                                    pool = [...INSIGHT_DICT.comfort, ...INSIGHT_DICT.courage];
+                                    break;
+                                case 'Cloud':  // 多云 -> 倾向等待
+                                    pool = [...INSIGHT_DICT.patience, ...INSIGHT_DICT.universal];
+                                    break;
+                                case 'Sun':    // 晴天 -> 倾向行动
+                                default:
+                                    pool = [...INSIGHT_DICT.courage, ...INSIGHT_DICT.universal];
+                                    break;
+                            }
                         }
                     }
 
-                    // 4. 随机抽取
+                    // 5. 最终抽取
                     const result = pool[Math.floor(Math.random() * pool.length)];
                     resolve(result);
 
