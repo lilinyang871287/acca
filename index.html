@@ -358,113 +358,121 @@ const playSound = (type, volume = 1.0) => {
 
         const generateInsight = async (text, weatherType) => {
             return new Promise(resolve => {
-                // 模拟思考时间 (1.5秒 - 2.5秒)
-                const thinkTime = 1500 + Math.random() * 1000;
+                // 模拟思考时间 (保留神秘感)
+                const thinkTime = 1500 + Math.random() * 1200;
                 
                 setTimeout(() => {
-                    const t = (text || "").toLowerCase(); // 统一转小写处理英文
-
-                    // ==========================================
-                    // 1. 扩充后的语义词库 (加权核心)
-                    // ==========================================
-                    const keywords = {
-                        // 【抚慰权重】对应：累、痛、难过、孤独
-                        comfort: [
-                            "累", "死", "难", "苦", "痛", "哭", "泪", "烦", "丧", "病", "糟", "烂",
-                            "失望", "绝望", "崩溃", "压抑", "窒息", "黑", "沉", "倦", "乏",
-                            "没人", "孤独", "寂寞", "冷", "甚至", "不好", "差", "伤", "害",
-                            "tired", "sad", "bad", "pain", "cry", "lonely"
-                        ],
-                        // 【勇气权重】对应：迷茫、害怕、选择、工作、未来
-                        courage: [
-                            "不", "迷", "惑", "选", "择", "路", "怎", "办", "怕", "慌", "恐",
-                            "敢", "逃", "避", "追", "梦", "想", "输", "赢", "败", "成", "功",
-                            "职", "工", "作", "忙", "业", "考", "学", "钱", "穷", "富",
-                            "方向", "未来", "目标", "意义", "值", "停", "滞", "动",
-                            "afraid", "lost", "job", "work", "future", "choice"
-                        ],
-                        // 【等待/释怀权重】对应：情感、人际、时间、过去
-                        patience: [
-                            "爱", "情", "他", "她", "人", "友", "离", "分", "家", "念", "想",
-                            "恨", "怨", "悔", "忘", "记", "忆", "过", "去", "回", "复",
-                            "等", "慢", "急", "早", "晚", "迟", "久", "时光", "岁月",
-                            "前任", "男朋友", "女朋友", "老公", "老婆", "孩子", "父母",
-                            "love", "hate", "wait", "miss", "time", "home"
-                        ]
-                    };
-
-                    // ==========================================
-                    // 2. 计分逻辑 (谁分高听谁的)
-                    // ==========================================
-                    let scores = {
-                        comfort: 0,
-                        courage: 0,
-                        patience: 0
-                    };
-
-                    // 遍历统计分数
-                    keywords.comfort.forEach(k => { if(t.includes(k)) scores.comfort++; });
-                    keywords.courage.forEach(k => { if(t.includes(k)) scores.courage++; });
-                    keywords.patience.forEach(k => { if(t.includes(k)) scores.patience++; });
-
-                    // 找出最高分的类别
-                    let maxScore = 0;
-                    let bestCategory = null;
-
-                    Object.keys(scores).forEach(category => {
-                        if (scores[category] > maxScore) {
-                            maxScore = scores[category];
-                            bestCategory = category;
-                        }
-                    });
-
-                    // ==========================================
-                    // 3. 特殊规则：问句检测
-                    // ==========================================
-                    // 如果用户在问“为什么...？”或者“...吗？”，通常适合用模棱两可的【Universal】回答
-                    const isQuestion = t.includes("?") || t.includes("？") || t.includes("吗") || t.includes("为什么");
+                    const t = (text || "").toLowerCase();
                     
-                    let pool = [];
+                    // ==========================================
+                    // 1. 【黑科技】命运哈希 (Destiny Hash)
+                    // 将用户的输入转化成一个唯一的数字种子
+                    // 同样的输入 = 同样的回答 (增加宿命感)
+                    // ==========================================
+                    let hash = 0;
+                    for (let i = 0; i < t.length; i++) {
+                        const char = t.charCodeAt(i);
+                        hash = ((hash << 5) - hash) + char;
+                        hash = hash & hash; // Convert to 32bit integer
+                    }
+                    const seed = Math.abs(hash); // 得到一个正整数指纹
 
-                    if (maxScore > 0) {
-                        // 命中规则：取最高分对应的类别 + Universal (作为调味)
-                        // 如果是问句，大大增加 Universal 的比例
-                        if (isQuestion) {
-                            pool = [...INSIGHT_DICT.universal, ...INSIGHT_DICT.universal, ...INSIGHT_DICT[bestCategory]];
-                        } else {
-                            pool = [...INSIGHT_DICT[bestCategory], ...INSIGHT_DICT.universal];
-                        }
-                    } else {
-                        // ==========================================
-                        // 4. 兜底策略：没有关键词，完全依赖天气和语境
-                        // ==========================================
+                    // ==========================================
+                    // 2. 维度定义 (情绪 + 话题)
+                    // ==========================================
+                    const dict = {
+                        // 否定词 (避免"我不难过"被识别为难过)
+                        negations: ["不", "没", "非", "别", "无", "not", "no", "don't"],
                         
-                        // 如果是极短的句子（比如就打了个句号），纯给 Universal
-                        if (t.length < 3) {
-                            pool = [...INSIGHT_DICT.universal];
-                        } else {
-                            // 结合天气做推断
-                            switch (weatherType) {
-                                case 'Rain':   // 雨天 -> 倾向安慰
-                                    pool = [...INSIGHT_DICT.comfort, ...INSIGHT_DICT.universal];
-                                    break;
-                                case 'Storm':  // 风暴 -> 倾向安抚或力量
-                                    pool = [...INSIGHT_DICT.comfort, ...INSIGHT_DICT.courage];
-                                    break;
-                                case 'Cloud':  // 多云 -> 倾向等待
-                                    pool = [...INSIGHT_DICT.patience, ...INSIGHT_DICT.universal];
-                                    break;
-                                case 'Sun':    // 晴天 -> 倾向行动
-                                default:
-                                    pool = [...INSIGHT_DICT.courage, ...INSIGHT_DICT.universal];
-                                    break;
-                            }
+                        // 情绪维度
+                        emotions: {
+                            negative: ["累", "痛", "苦", "哭", "烦", "死", "糟", "烂", "丧", "病", "难", "累", "倦", "sad", "bad", "tired"],
+                            fear: ["怕", "慌", "恐", "吓", "避", "逃", "不敢", "担心", "afraid", "fear"],
+                            confused: ["迷", "惑", "乱", "晕", "不懂", "不知", "怀疑", "lost", "confused"]
+                        },
+                        
+                        // 话题维度
+                        topics: {
+                            love: ["爱", "情", "他", "她", "你", "想", "念", "分", "离", "前任", "友", "家", "love", "miss"],
+                            work: ["职", "工", "作", "钱", "穷", "忙", "业", "考", "学", "板", "户", "work", "job", "money"],
+                            self: ["我", "己", "人", "命", "运", "性格", "自", "self", "life"]
                         }
+                    };
+
+                    // ==========================================
+                    // 3. 语义交叉分析 (Intersection Analysis)
+                    // ==========================================
+                    
+                    // 辅助函数：检测是否包含，且排除否定词干扰
+                    // 比如 "不难过" -> 返回 false
+                    const has = (keywords) => {
+                        return keywords.some(k => {
+                            const idx = t.indexOf(k);
+                            if (idx === -1) return false;
+                            // 简单的否定检测：看关键词前面2个字有没有否定词
+                            const prev2Chars = t.substring(Math.max(0, idx - 2), idx);
+                            const isNegated = dict.negations.some(n => prev2Chars.includes(n));
+                            return !isNegated; 
+                        });
+                    };
+
+                    let category = null;
+
+                    // --- 场景 A: 职业倦怠 (工作 + 负面/累) ---
+                    if (has(dict.topics.work) && (has(dict.emotions.negative) || has(dict.emotions.fear))) {
+                        // 针对工作的累，给 "Comfort" (休息) 或 "Courage" (坚持)
+                        // 用 hash 决定给哪种，给用户惊喜
+                        category = (seed % 2 === 0) ? "comfort" : "courage";
+                    }
+                    
+                    // --- 场景 B: 情感困局 (爱 + 负面/迷茫) ---
+                    else if (has(dict.topics.love) && (has(dict.emotions.negative) || has(dict.emotions.confused))) {
+                        // 感情问题，通常需要 "Patience" (释怀/等待)
+                        category = "patience";
                     }
 
-                    // 5. 最终抽取
-                    const result = pool[Math.floor(Math.random() * pool.length)];
-                    resolve(result);
+                    // --- 场景 C: 自我内耗 (我 + 怕/迷茫) ---
+                    else if (has(dict.topics.self) && has(dict.emotions.confused)) {
+                        // 找自己，需要 "Courage" (勇气/方向)
+                        category = "courage";
+                    }
+
+                    // --- 场景 D: 纯粹的情绪宣泄 ---
+                    else if (has(dict.emotions.negative)) category = "comfort"; // 纯难过 -> 抚慰
+                    else if (has(dict.emotions.fear)) category = "courage";     // 纯害怕 -> 鼓励
+                    else if (has(dict.emotions.confused)) category = "patience";// 纯迷茫 -> 等待
+
+                    // --- 场景 E: 兜底逻辑 (天气 + 随机) ---
+                    else {
+                        // 如果什么都没命中，根据天气定大方向
+                        if (weatherType === 'Rain') category = "comfort";
+                        else if (weatherType === 'Cloud') category = "patience";
+                        else category = "universal";
+                    }
+
+                    // ==========================================
+                    // 4. 最终抽取 (混合了宿命感与随机性)
+                    // ==========================================
+                    
+                    // 获取目标池
+                    // 如果命中了特定类别，我们把那个类别加倍，增加权重，同时也混入 Universal 增加禅意
+                    let pool = [...INSIGHT_DICT[category || "universal"]];
+                    
+                    // 如果分类明确，额外混入几句 Universal 作为调味（避免太像人工客服）
+                    if (category && category !== "universal") {
+                        pool = [...pool, ...INSIGHT_DICT.universal];
+                    }
+
+                    // 【核心修改】
+                    // 这里不再使用纯 Math.random()。
+                    // 而是使用 (seed + 当天日期) 来做随机。
+                    // 这样：同1小时内，你输入同样的话，得到的回答是一样的（宿命感）。
+                    // 1小时后再输，会变（时间流动感）。
+                    
+                    const daySeed = new Date().getDate() + new Date().getHours();
+                    const finalIndex = (seed + daySeed) % pool.length;
+                    
+                    resolve(pool[finalIndex]);
 
                 }, thinkTime);
             });
