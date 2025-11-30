@@ -536,7 +536,7 @@
                                     ))}
 
                                     {/* 只在第一页显示添加按钮 */}
-                                    {pageIndex === 0 && !isSelectorOpen && !selectedStone && (
+                                    {pageIndex === stoneChunks.length - 1 && !isSelectorOpen && !selectedStone && (
                                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none translate-y-64">
                                             <motion.button
                                                 initial={{ opacity: 0, scale: 0.9 }}
@@ -554,8 +554,11 @@
 
                                 <div className="absolute bottom-8 left-0 w-full text-center pointer-events-none">
                                     <p className="text-xs text-ink/30 font-serif tracking-widest">
-                                        {pageIndex === 0 ? "把心事，放在这里。" : "旧日的庭院"}
-                                    </p>
+                                    {pageIndex === stoneChunks.length - 1 
+                                        ? "把心事，放在这里。" 
+                                        : "往事已生青苔。" 
+                                    }
+                                </p>
                                     {stoneChunks.length > 1 && (
                                         <div className="mt-2 flex justify-center gap-1">
                                             {stoneChunks.map((_, i) => (
