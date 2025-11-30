@@ -1158,12 +1158,12 @@ const playSound = (type, volume = 1.0) => {
             currentVol = volumeProfile[carvedIndex];
         }
 
-        // 只有当音量大于 0 时才调用发声函数
-        if (currentVol > 0) {
-            playSound('carve', currentVol); 
-        }
+        // 只有当音量大于 0 且 当前字符不是(空格/回车)时，才发声
+        if (currentVol > 0 && !isSilentChar) {
+                    playSound('carve', currentVol); 
+                }
 
-    }, delay);
+            }, delay);
 
     return () => clearTimeout(timer);
 }, [isCarving, carvedIndex, text, onLayDown]);
