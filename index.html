@@ -454,6 +454,29 @@
                 setShowClearConfirm(false);
             };
 
+// ==========================================
+            // 【新增功能】计算每一页的日期范围
+            // ==========================================
+            const getPageDateRange = (chunk) => {
+                if (!chunk || chunk.length === 0) return "";
+                
+                // 因为 chunk 里的石头是按时间顺序排的
+                const firstStone = chunk[0];
+                const lastStone = chunk[chunk.length - 1];
+
+                const fmt = (ts) => {
+                    const d = new Date(ts);
+                    return `${d.getFullYear()}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`;
+                };
+
+                const startStr = fmt(firstStone.timestamp);
+                const endStr = fmt(lastStone.timestamp);
+
+                // 如果开始和结束是同一天，只显示一个日期
+                // 如果跨越了多天，显示 "开始日期 - 结束日期"
+                return startStr === endStr ? startStr : `${startStr} - ${endStr}`;
+            };
+
             return (
                 <div className="relative w-full h-full">
                     <header className="absolute top-4 left-0 w-full text-center z-20 pointer-events-none">
@@ -589,7 +612,12 @@
                                 </div>
 
                                 <div className="absolute bottom-8 left-0 w-full text-center pointer-events-none">
-                                    <p className="text-xs text-ink/30 font-serif tracking-widest">
+
+<p className="text-[10px] font-sans font-bold tracking-[0.15em] text-ink/20 mb-1.5 uppercase">
+                                        {getPageDateRange(chunk)}
+                                    </p>
+                                    
+<p className="text-xs text-ink/30 font-serif tracking-widest">
                                     {pageIndex === stoneChunks.length - 1 
                                         ? "把心事，放在这里。" 
                                         : "往事已生青苔。" 
@@ -795,7 +823,7 @@
                                         onChange={(e) => setText(e.target.value)}
                                         onKeyDown={handleKeyDown}
                                         placeholder="刚才发生了什么？"
-                                        maxLength={140}
+                                        maxLength={130}
                                         spellCheck={false}
                                         autoComplete="off"
                                         style={{
@@ -841,7 +869,7 @@
                             </motion.button>
                             {!isCarving && (
                                 <div className="mt-4 text-ink/20 text-xs italic font-serif">
-                                    {text.length}/140
+                                    {text.length}/130
                                 </div>
                             )}
                         </div>
