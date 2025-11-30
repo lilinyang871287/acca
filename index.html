@@ -164,17 +164,17 @@ const playSound = (type) => {
     gainNode.connect(audioCtx.destination);
 
     if (type === 'lift') {
-        // 抬起：沙沙的摩擦声
+        // 移动：沙沙的摩擦声
         const source = audioCtx.createBufferSource();
         source.buffer = noiseBuffer;
         source.loop = true;
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(200, t);
+        filter.frequency.setValueAtTime(150, t);
         source.connect(filter);
         filter.connect(gainNode);
         gainNode.gain.setValueAtTime(0, t);
-        gainNode.gain.linearRampToValueAtTime(0.15, t + 0.1);
+        gainNode.gain.linearRampToValueAtTime(0.5, t + 0.1);
         gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
         source.start(t);
         source.stop(t + 0.35);
@@ -184,11 +184,11 @@ const playSound = (type) => {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(90, t);
         osc.frequency.exponentialRampToValueAtTime(40, t + 0.15);
-        gainNode.gain.setValueAtTime(0.5, t);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+        gainNode.gain.setValueAtTime(0.8, t);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
         osc.connect(gainNode);
         osc.start(t);
-        osc.stop(t + 0.25);
+        osc.stop(t + 0.7);
     }
 };
         // ==========================================
@@ -587,63 +587,67 @@ const playSound = (type) => {
                                 <div className="relative w-[340px] h-[340px] md:w-[500px] md:h-[500px]"> 
                                    
                                    {chunk.map((stone) => (
-                                       <motion.div 
-    key={stone.id} 
-    layout
-    drag
-    whileDrag={{ scale: 1.05 }}
-    dragMomentum={false}
-    dragElastic={0}
-onDragStart={() => {
-        isDraggingRef.current = true;
-        playSound('lift');
-    }}
-    onDragEnd={(e, info) => { 
-        handleDragEnd(stone.id, info);
-        playSound('drop');
-        setTimeout(() => {
-            isDraggingRef.current = false;
-        }, 200);
-    }}
-    transition={{ 
-        type: "spring", 
-        stiffness: 400, 
-        damping: 25
-    }}
-                                        dragConstraints={{ 
-                                            left: -xLimit, 
-                                            right: xLimit, 
-                                            top: -yLimit, 
-                                            bottom: yLimit 
-                                        }}
-                                       
-                                        onClick={(e) => {
-                                            if (isDraggingRef.current) {
-                                                e.stopPropagation();
-                                                return;
-                                            }
-                                            if (!isSelectorOpen && !selectedStone) {
-                                                setSelectedStone(stone);
-                                            }
-                                        }}
-                                        initial={{ scale: 0 }}
-                                        animate={{ 
-                                            scale: 1, 
-                                            x: stone.x || 0, 
-                                            y: stone.y || 0, 
-                                            rotate: stone.rotation 
-                                        }}
-                                        className="absolute left-1/2 top-1/2 -ml-8 -mt-8"
-                                        style={{ zIndex: 10 }}
-                                    >
-                                            <Stone 
-                                                shape={stone.shapePolygon} 
-                                                isMossy 
-                                                size="sm" 
-                                                className="hover:scale-105 transition-transform duration-300 shadow-lg"
-                                            />
-                                        </motion.div>
-                                    ))}
+    <motion.div 
+        key={stone.id} 
+        layout
+        drag
+        whileDrag={{ scale: 1.05 }} // 保持变大效果
+        dragMomentum={false}
+        dragElastic={0}
+        
+        // 【修改点】：只有在开始拖动的一瞬间才播放声音
+        onDragStart={() => {
+            isDraggingRef.current = true;
+            playSound('lift'); 
+        }}
+
+        onDragEnd={(e, info) => { 
+            handleDragEnd(stone.id, info);
+            playSound('drop');
+            setTimeout(() => {
+                isDraggingRef.current = false;
+            }, 200);
+        }}
+        
+        transition={{ 
+            type: "spring", 
+            stiffness: 400, 
+            damping: 25
+        }}
+        dragConstraints={{ 
+            left: -xLimit, 
+            right: xLimit, 
+            top: -yLimit, 
+            bottom: yLimit 
+        }}
+        
+        onClick={(e) => {
+            if (isDraggingRef.current) {
+                e.stopPropagation();
+                return;
+            }
+            if (!isSelectorOpen && !selectedStone) {
+                setSelectedStone(stone);
+            }
+        }}
+        initial={{ scale: 0 }}
+        animate={{ 
+            scale: 1, 
+            x: stone.x || 0, 
+            y: stone.y || 0, 
+            rotate: stone.rotation 
+        }}
+        className="absolute left-1/2 top-1/2 -ml-8 -mt-8"
+        style={{ zIndex: 10 }}
+    >
+        <Stone 
+            shape={stone.shapePolygon} 
+            isMossy 
+            size="sm" 
+            className="hover:scale-105 transition-transform duration-300 shadow-lg"
+        />
+    </motion.div>
+))}
 
                                     {/* 只在第一页显示添加按钮 */}
                                     {pageIndex === stoneChunks.length - 1 && !isSelectorOpen && !selectedStone && (
