@@ -269,46 +269,69 @@
         // 3. 核心页面组件
         // ==========================================
 
-        // --- Courtyard (庭院 - 无限分页版) ---
+// --- Courtyard (庭院 - 无限分页 + 自动滚动版) ---
         const Courtyard = ({ stones, onStart, onUpdateStones }) => {
-	    // 1. 定义一个 state 来强制刷新（当窗口大小改变时）
-    const [windowSize, setWindowSize] = useState({
-        w: window.innerWidth,
-        h: window.innerHeight
-    });
-
-    // 2. 监听窗口调整，实时更新边界
-    useEffect(() => {
-        const handleResize = () => {
-            setWindowSize({
+            // 1. 定义一个 state 来强制刷新（当窗口大小改变时）
+            const [windowSize, setWindowSize] = useState({
                 w: window.innerWidth,
                 h: window.innerHeight
             });
-        };
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
-    // 3. 计算边界 (基于实时窗口大小 windowSize)
-    // 加大了边距：左右 60px，上下 160px (防止遮挡顶部的 "苔与石" 和底部的页码)
-    const xLimit = windowSize.w / 2 - 60;
-    const yLimit = windowSize.h / 2 - 160;
-	    const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+            // 2. 监听窗口调整，实时更新边界
+            useEffect(() => {
+                const handleResize = () => {
+                    setWindowSize({
+                        w: window.innerWidth,
+                        h: window.innerHeight
+                    });
+                };
+                window.addEventListener('resize', handleResize);
+                return () => window.removeEventListener('resize', handleResize);
+            }, []);
+
+            // 3. 计算边界 (基于实时窗口大小 windowSize)
+            const xLimit = windowSize.w / 2 - 60;
+            const yLimit = windowSize.h / 2 - 90;
+
+            const [isSelectorOpen, setIsSelectorOpen] = useState(false);
             const [selectedStone, setSelectedStone] = useState(null);
             const [currentPageIndex, setCurrentPageIndex] = useState(0);
             const [showClearConfirm, setShowClearConfirm] = useState(false);
             
-            // 【关键修改】添加一个 ref 标记是否正在拖拽
+            // 标记是否正在拖拽，防止拖拽结束时误触点击
             const isDraggingRef = useRef(false);
 
             const scrollContainerRef = useRef(null);
             const pageRefs = useRef([]);
 
+            // ==========================================
+            // 【核心逻辑 1】石头分组
+            // 去掉了 .reverse()，现在是“先出生的在前面”
+            // ==========================================
             const stoneChunks = useMemo(() => {
-                const sorted = [...stones].reverse(); 
+                const sorted = [...stones]; // 保持出生顺序：最早的在 index 0
                 const chunks = chunkArray(sorted, 9);
                 return chunks.length > 0 ? chunks : [[]];
             }, [stones]);
+
+            // ==========================================
+            // 【核心逻辑 2】自动滚动
+            // 当页面数量增加时（产生了第10个、第19个...石头），自动滑到最新的一页
+            // ==========================================
+            useEffect(() => {
+                if (stoneChunks.length > 1) {
+                    const lastPageIndex = stoneChunks.length - 1;
+                    // 稍微延迟，等待 DOM 渲染完成
+                    setTimeout(() => {
+                        if (pageRefs.current[lastPageIndex]) {
+                            pageRefs.current[lastPageIndex].scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center' 
+                            });
+                        }
+                    }, 100);
+                }
+            }, [stones.length, stoneChunks.length]);
 
             const weatherOptions = [
                 { type: Weather.SUN, icon: Icons.Sun, label: "晴朗" },
@@ -329,19 +352,15 @@
                 setCurrentPageIndex(index);
             };
 
-           
-               const handleDragEnd = (stoneId, info) => {
+            const handleDragEnd = (stoneId, info) => {
                 const delta = { x: info.offset.x, y: info.offset.y };
                 
                 onUpdateStones(prev => prev.map(s => {
                     if (s.id === stoneId) {
-                        // 1. 先算出理论上的新位置
                         let newX = (s.x || 0) + delta.x;
                         let newY = (s.y || 0) + delta.y;
 
-                        // 2. 【核心修复】数学强制锁死
-                        // 即使鼠标移到了天涯海角，数据的 x 坐标决不允许超过 xLimit
-                        // Math.max 取下限，Math.min 取上限
+                        // 边界限制
                         newX = Math.max(-xLimit, Math.min(newX, xLimit));
                         newY = Math.max(-yLimit, Math.min(newY, yLimit));
 
@@ -429,10 +448,6 @@
                             >
                                 <div className="relative w-[340px] h-[340px] md:w-[500px] md:h-[500px]"> 
                                    
-                                   {/* ========================================================
-                                       【关键修改】使用 Drag Lock 逻辑
-                                       手动控制点击和拖拽的冲突
-                                   ======================================================== */}
                                    {chunk.map((stone) => (
                                        <motion.div 
                                         key={stone.id} 
@@ -487,6 +502,7 @@
                                         </motion.div>
                                     ))}
 
+                                    {/* 只在第一页显示添加按钮 */}
                                     {pageIndex === 0 && !isSelectorOpen && !selectedStone && (
                                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none translate-y-64">
                                             <motion.button
