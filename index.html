@@ -976,7 +976,7 @@ const playSound = (type, volume = 1.0) => {
                     // 只要速度检测到变快了(delay < 50)，就立刻去掉显示的延迟(设为0)，
                     // 保证视觉上文字能飞快刷屏，不被任何东西拖慢。
                     // (此时因为上面 currentVol 已经是 0 或很小了，所以不会有机关枪噪音)
-                    const myManualDelay = delay < 50 ? 0 : 300; 
+                    const myManualDelay = delay < 50 ? 0 : 0; 
                     
                     // 3. 执行文字显示
                     setTimeout(() => {
