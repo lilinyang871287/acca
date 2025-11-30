@@ -271,7 +271,9 @@
 
         // --- Courtyard (庭院 - 无限分页版) ---
         const Courtyard = ({ stones, onStart, onUpdateStones }) => {
-            const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+	    const xLimit = window.innerWidth / 2 - 50; 
+  	    const yLimit = window.innerHeight / 2 - 100;            
+	    const [isSelectorOpen, setIsSelectorOpen] = useState(false);
             const [selectedStone, setSelectedStone] = useState(null);
             const [currentPageIndex, setCurrentPageIndex] = useState(0);
             const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -401,15 +403,16 @@
                                    ======================================================== */}
                                    {chunk.map((stone) => (
                                         <motion.div 
-                                            key={stone.id} 
-                                            drag
-                                            dragMomentum={false}
-                                            dragConstraints={{ 
-                                                    left: -xLimit, 
-                                                    right: xLimit, 
-                                                    top: -yLimit, 
-                                                    bottom: yLimit 
-                                                }}
+    key={stone.id} 
+    drag
+    dragMomentum={false}
+    // 【修改】这里使用了动态计算的屏幕边界
+    dragConstraints={{ 
+        left: -xLimit, 
+        right: xLimit, 
+        top: -yLimit, 
+        bottom: yLimit 
+    }}
                                             
                                             // 1. 开始拖拽：上锁
                                             onDragStart={() => {
@@ -969,5 +972,3 @@
     </script>
 </body>
 </html>
-
-
