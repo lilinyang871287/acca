@@ -329,14 +329,26 @@
                 setCurrentPageIndex(index);
             };
 
-            const handleDragEnd = (stoneId, info) => {
+           
+               const handleDragEnd = (stoneId, info) => {
                 const delta = { x: info.offset.x, y: info.offset.y };
+                
                 onUpdateStones(prev => prev.map(s => {
                     if (s.id === stoneId) {
+                        // 1. 先算出理论上的新位置
+                        let newX = (s.x || 0) + delta.x;
+                        let newY = (s.y || 0) + delta.y;
+
+                        // 2. 【核心修复】数学强制锁死
+                        // 即使鼠标移到了天涯海角，数据的 x 坐标决不允许超过 xLimit
+                        // Math.max 取下限，Math.min 取上限
+                        newX = Math.max(-xLimit, Math.min(newX, xLimit));
+                        newY = Math.max(-yLimit, Math.min(newY, yLimit));
+
                         return {
                             ...s,
-                            x: (s.x || 0) + delta.x,
-                            y: (s.y || 0) + delta.y
+                            x: newX,
+                            y: newY
                         };
                     }
                     return s;
@@ -422,61 +434,54 @@
                                        手动控制点击和拖拽的冲突
                                    ======================================================== */}
                                    {chunk.map((stone) => (
-                                        <motion.div 
-    key={stone.id} 
-    drag
-    dragMomentum={false}
-    // 【修改】这里使用了动态计算的屏幕边界
-    dragConstraints={{ 
-        left: -xLimit, 
-        right: xLimit, 
-        top: -yLimit, 
-        bottom: yLimit 
-    }}
-                                            
-                                            // 1. 开始拖拽：上锁
-                                            onDragStart={() => {
-                                                isDraggingRef.current = true;
-                                            }}
-
-                                            // 2. 结束拖拽：延迟开锁
-                                            onDragEnd={(e, info) => { 
-                                                handleDragEnd(stone.id, info);
-                                                // 延迟 200ms 将状态重置为 false
-                                                // 这样可以确保紧接着触发的 'click' 事件被拦截
-                                                setTimeout(() => {
-                                                    isDraggingRef.current = false;
-                                                }, 200);
-                                            }}
-                                            
-                                            // 3. 点击：检查锁
-                                            onClick={(e) => {
-                                                // 如果正在拖拽（或刚刚拖拽完），拦截点击，不打开卡片
-                                                if (isDraggingRef.current) {
-                                                    e.stopPropagation();
-                                                    return;
-                                                }
-                                                // 只有完全静止时，才执行打开逻辑
-                                                if (!isSelectorOpen && !selectedStone) {
-                                                    setSelectedStone(stone);
-                                                }
-                                            }}
-
-                                            initial={{ scale: 0 }}
-                                            animate={{ 
-                                                scale: 1, 
-                                                x: stone.x || 0, 
-                                                y: stone.y || 0, 
-                                                rotate: stone.rotation 
-                                            }}
-                                            className="absolute left-1/2 top-1/2 -ml-8 -mt-8"
-                                            style={{ zIndex: 10 }}
-                                        >
+                                       <motion.div 
+                                        key={stone.id} 
+                                        drag
+                                        dragMomentum={false}
+                                        dragElastic={0}
+                                        transition={{ 
+                                            type: "spring", 
+                                            stiffness: 400, 
+                                            damping: 25
+                                        }}
+                                        dragConstraints={{ 
+                                            left: -xLimit, 
+                                            right: xLimit, 
+                                            top: -yLimit, 
+                                            bottom: yLimit 
+                                        }}
+                                        onDragStart={() => {
+                                            isDraggingRef.current = true;
+                                        }}
+                                        onDragEnd={(e, info) => { 
+                                            handleDragEnd(stone.id, info);
+                                            setTimeout(() => {
+                                                isDraggingRef.current = false;
+                                            }, 200);
+                                        }}
+                                        onClick={(e) => {
+                                            if (isDraggingRef.current) {
+                                                e.stopPropagation();
+                                                return;
+                                            }
+                                            if (!isSelectorOpen && !selectedStone) {
+                                                setSelectedStone(stone);
+                                            }
+                                        }}
+                                        initial={{ scale: 0 }}
+                                        animate={{ 
+                                            scale: 1, 
+                                            x: stone.x || 0, 
+                                            y: stone.y || 0, 
+                                            rotate: stone.rotation 
+                                        }}
+                                        className="absolute left-1/2 top-1/2 -ml-8 -mt-8"
+                                        style={{ zIndex: 10 }}
+                                    >
                                             <Stone 
                                                 shape={stone.shapePolygon} 
                                                 isMossy 
                                                 size="sm" 
-                                                /* 注意：这里删除了 onClick */
                                                 className="hover:scale-105 transition-transform duration-300 shadow-lg"
                                             />
                                         </motion.div>
@@ -992,3 +997,4 @@
     </script>
 </body>
 </html>
+
