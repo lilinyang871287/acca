@@ -144,16 +144,60 @@
         // ==========================================
         // 0. 配置区域
         // ==========================================
-        const INSIGHT_POOL = [
-            "风吹过，痕迹变淡，但石头记得。",
-            "有些重量，放下后才能看清形状。",
-            "青苔不急于生长，它只是覆盖。",
-            "如同雨水归于大海，情绪也终将平静。",
-            "静默是最大的回响。",
-            "此刻的粗糙，是未来圆润的开始。",
-            "不要慌张，月亮也经常失眠。",
-            "山谷没有回音，是因为它在倾听。"
-        ];
+        const INSIGHT_DICT = {
+    // 【万能/巴纳姆效应】 (模棱两可，谁看都觉得准，用于兜底)
+    universal: [
+        "其实你心里早有决定。",
+        "并不是非要现在解决。",
+        "你的直觉是对的。",
+        "不是你的错。",
+        "留意最近的梦境。",
+        "相信那个最疯狂的念头。",
+        "这只是漫长一生的瞬间。",
+        "此时无声胜有声。",
+        "不需要答案，也是一种答案。",
+        "大多数担忧，从未发生。"
+    ],
+    // 【抚慰/治愈】 (对应：雨天、Cloud、关键词：累/难过/痛苦)
+    comfort: [
+        "允许事情暂时没有答案。",
+        "休息不是惩罚，是奖励。",
+        "抱抱自己，就现在。",
+        "今夜，只负责安睡。",
+        "万物皆有裂痕，那是光进来的地方。",
+        "不要为了合群而说话。",
+        "你已经做得足够好了。",
+        "软弱一下也没关系。",
+        "没人能读懂你的全部，这很正常。",
+        "把手松开，才能接住新的。"
+    ],
+    // 【勇气/行动】 (对应：Sun、Storm、关键词：怕/不敢/迷茫/工作)
+    courage: [
+        "墙也是门，只要你推。",
+        "山不向我走来，我便站住。",
+        "与其补救，不如重新开始。",
+        "现在放弃，也是一种勇敢。",
+        "风从不解释它的方向。",
+        "去见你想见的人。",
+        "害怕是因为你在这个乎。",
+        "在这个路口，停下来也没事。",
+        "这一次，你可以自私一点。",
+        "你的价值无需估量。"
+    ],
+    // 【等待/释怀】 (对应：Cloud、关键词：爱/恨/等/前任/烦)
+    patience: [
+        "时机未到，请稍安勿躁。",
+        "让子弹再飞一会儿。",
+        "答案正在赶来的路上。",
+        "河流流过，不留痕迹。",
+        "旧物比新人更懂沉默。",
+        "那个期待，可以放下了。",
+        "最好的安排往往在最后。",
+        "时间会解释一切。",
+        "缘起缘灭，皆是风景。",
+        "花开不是为了被看见。"
+    ]
+};
 
 // ==========================================
 // 替换后的生成式音效系统 (不需要 mp3 文件)
@@ -270,8 +314,17 @@ const playSound = (type, volume = 1.0) => {
         // ==========================================
         // 1. 工具函数
         // ==========================================
-        const { motion, AnimatePresence } = window.Motion;
+        const { motion, AnimatePresence } = window.Motion || {};
         const { useState, useEffect, useCallback, useRef, useMemo } = React;
+
+        // 【补全这个缺失的函数】
+        const chunkArray = (array, size) => {
+            const result = [];
+            for (let i = 0; i < array.length; i += size) {
+                result.push(array.slice(i, i + size));
+            }
+            return result;
+        };
 
         const Icons = {
             Sun: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>,
@@ -303,19 +356,61 @@ const playSound = (type, volume = 1.0) => {
             return `${r()}% ${r()}% ${r()}% ${r()}% / ${r()}% ${r()}% ${r()}% ${r()}%`;
         };
 
-        const generateInsight = async (text) => {
+        const generateInsight = async (text, weatherType) => {
             return new Promise(resolve => {
-                const randomInsight = INSIGHT_POOL[Math.floor(Math.random() * INSIGHT_POOL.length)];
-                setTimeout(() => resolve(randomInsight), 2000);
-            });
-        };
+                // 模拟思考时间，让体验更真实 (1.5秒 - 2.5秒随机)
+                const thinkTime = 1500 + Math.random() * 1000;
+                
+                setTimeout(() => {
+                    // 1. 简单的关键词提取 (模糊语义分析)
+                    // 不需要复杂的 NLP，简单的包含匹配就很有效
+                    const t = text || "";
+                    const keywords = {
+                        negative: ["累", "死", "难", "苦", "痛", "哭", "烦", "丧", "病", "糟"],
+                        hesitate: ["不", "迷", "惑", "选", "择", "路", "怎", "办", "怕", "慌"],
+                        relation: ["爱", "情", "他", "她", "人", "友", "离", "分", "家", "念"],
+                        material: ["钱", "职", "工", "作", "忙", "业", "考", "学"]
+                    };
 
-        const chunkArray = (array, size) => {
-            const chunked_arr = [];
-            for (let i = 0; i < array.length; i += size) {
-                chunked_arr.push(array.slice(i, i + size));
-            }
-            return chunked_arr;
+                    let pool = [];
+
+                    // 2. 策略 A：关键词优先 (Cold Reading 核心：捕捉关键字)
+                    let hitKeyword = false;
+                    
+                    if (keywords.negative.some(k => t.includes(k))) {
+                        pool = [...INSIGHT_DICT.comfort, ...INSIGHT_DICT.universal];
+                        hitKeyword = true;
+                    } else if (keywords.hesitate.some(k => t.includes(k))) {
+                        pool = [...INSIGHT_DICT.courage, ...INSIGHT_DICT.universal];
+                        hitKeyword = true;
+                    } else if (keywords.relation.some(k => t.includes(k))) {
+                        pool = [...INSIGHT_DICT.patience, ...INSIGHT_DICT.universal];
+                        hitKeyword = true;
+                    }
+
+                    // 3. 策略 B：如果没有明显关键词，则根据“天气心情”来定调
+                    if (!hitKeyword) {
+                        switch (weatherType) {
+                            case 'Rain':   // 雨天：通常忧郁，需要抚慰
+                            case 'Storm':  // 风暴：内心动荡，需要安抚或力量
+                                pool = [...INSIGHT_DICT.comfort, ...INSIGHT_DICT.patience];
+                                break;
+                            case 'Cloud':  // 多云：迷茫，需要等待或指引
+                                pool = [...INSIGHT_DICT.patience, ...INSIGHT_DICT.universal];
+                                break;
+                            case 'Sun':    // 晴天：积极或日常，给予行动指引
+                            default:
+                                pool = [...INSIGHT_DICT.courage, ...INSIGHT_DICT.universal];
+                                break;
+                        }
+                    }
+
+                    // 4. 随机抽取
+                    const result = pool[Math.floor(Math.random() * pool.length)];
+                    resolve(result);
+
+                }, thinkTime);
+            });
         };
 
         // ==========================================
@@ -621,27 +716,26 @@ const playSound = (type, volume = 1.0) => {
                     </header>
 
 {/* ================= 调试用按钮 START (发布前删除) ================= */}
-<button
-    onClick={() => {
-        const newStones = Array.from({ length: 9 }).map((_, i) => ({
-            id: `debug-${Date.now()}-${i}`,
-            worry: `这是第 ${i + 1} 个测试烦恼`,
-            insight: `山谷没有回音，是因为它在倾听 (测试数据 ${i + 1})。`,
-            timestamp: Date.now(),
-            weather: 'Sun',
-            shapePolygon: generateOrganicShape(), 
-            rotation: Math.random() * 30 - 15,
-            x: Math.random() * 160 - 80, 
-            y: Math.random() * 160 - 80
-        }));
-        onUpdateStones(prev => [...prev, ...newStones]);
-    }}
-    // 修改点：从 top-4 改为 bottom-4，保持 right-4
-    className="absolute bottom-4 right-4 z-50 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-800/60 text-xs font-bold rounded hover:bg-red-500/20 transition-colors backdrop-blur-md"
->
-    [测试] +9 石头
-</button>
-{/* ================= 调试用按钮 END ================= */}
+                    <button
+                        onClick={() => {
+                            const newStones = Array.from({ length: 9 }).map((_, i) => ({
+                                id: `debug-${Date.now()}-${i}`,
+                                worry: `这是第 ${i + 1} 个测试烦恼`,
+                                insight: `山谷没有回音，是因为它在倾听 (测试数据 ${i + 1})。`,
+                                timestamp: Date.now(),
+                                weather: 'Sun',
+                                shapePolygon: generateOrganicShape(), 
+                                rotation: Math.random() * 30 - 15,
+                                x: Math.random() * 160 - 80, 
+                                y: Math.random() * 160 - 80
+                            }));
+                            onUpdateStones(prev => [...prev, ...newStones]);
+                        }}
+                        className="absolute bottom-4 right-4 z-50 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-800/60 text-xs font-bold rounded hover:bg-red-500/20 transition-colors backdrop-blur-md"
+                    >
+                        [测试] +9 石头
+                    </button>
+                    {/* ================= 调试用按钮 END ================= */}
 
                     {stones.length > 0 && (
                         <div className="absolute top-6 right-6 z-30 flex gap-4">
@@ -1279,12 +1373,14 @@ const playSound = (type, volume = 1.0) => {
                 setCurrentWorry(text);
                 setScreen(ScreenState.OVERGROWTH);
                 try {
-                    const insight = await generateInsight(text);
+                    // 【修改点】这里传入了 text 和 currentWeather
+                    // 注意：currentWeather 是 App 组件的 state，直接用即可
+                    const insight = await generateInsight(text, currentWeather);
                     setCurrentInsight(insight);
                 } catch (e) {
                     setCurrentInsight("风吹过青苔的声音。");
                 }
-            }, []);
+            }, [currentWeather]); // 【修改点】依赖项数组里加上 currentWeather
 
             const handleGrowthComplete = () => {
                 setScreen(ScreenState.ECHO);
