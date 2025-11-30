@@ -404,7 +404,12 @@
                                             key={stone.id} 
                                             drag
                                             dragMomentum={false}
-                                            dragConstraints={{ left: -150, right: 150, top: -150, bottom: 150 }}
+                                            dragConstraints={{ 
+                                                    left: -xLimit, 
+                                                    right: xLimit, 
+                                                    top: -yLimit, 
+                                                    bottom: yLimit 
+                                                }}
                                             
                                             // 1. 开始拖拽：上锁
                                             onDragStart={() => {
@@ -964,4 +969,5 @@
     </script>
 </body>
 </html>
+
 
