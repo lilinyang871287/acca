@@ -337,6 +337,93 @@ const playSound = (type, volume = 1.0) => {
             Broom: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 2l-4 14"/><path d="M2 16h20"/><path d="M6 16v6"/><path d="M10 16v6"/><path d="M14 16v6"/><path d="M18 16v6"/></svg>
         };
 
+// ==========================================
+        // 新增素材：庭院装饰物 (水墨风格 SVG)
+        // ==========================================
+        const Decorations = {
+            // 1. 石灯笼 (象征指引)
+            Lantern: () => (
+                <g opacity="0.6">
+                    <path d="M40 100 L60 100 L55 80 L45 80 Z" fill="#2C2C2C" /> {/* 基座 */}
+                    <path d="M48 80 L52 80 L52 60 L48 60 Z" fill="#2C2C2C" /> {/* 柱 */}
+                    <path d="M35 60 L65 60 L60 40 L40 40 Z" fill="#2C2C2C" /> {/* 灯室 */}
+                    <path d="M30 40 Q50 20 70 40 L30 40" fill="#2C2C2C" /> {/* 顶盖 */}
+                    <circle cx="50" cy="35" r="3" fill="#E0E0E0" /> {/* 顶珠 */}
+                    {/* 微光效果 */}
+                    <circle cx="50" cy="50" r="8" fill="#F9A825" opacity="0.3" filter="url(#mossFuzz)" />
+                </g>
+            ),
+            // 2. 古松 (象征坚韧)
+            Pine: () => (
+                <g>
+                    {/* --- 树干 (浓墨，模拟粗糙树皮) --- */}
+                    {/* 主干：扭曲向上，底部粗壮 */}
+                    <path 
+                        d="M55 145 L45 145 Q40 120 50 100 Q35 90 30 75 Q45 80 55 90 Q60 70 55 50 L60 50 Q70 80 75 100 Q65 120 55 145 Z" 
+                        fill="#2C2C2C" 
+                        opacity="0.9" 
+                    />
+                    {/* 树枝：向右延伸的侧枝 */}
+                    <path d="M55 90 Q75 95 90 85" stroke="#2C2C2C" strokeWidth="3" fill="none" strokeLinecap="round" />
+                    {/* 树枝：向左的小枝 */}
+                    <path d="M50 100 Q35 105 20 95" stroke="#2C2C2C" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+                    {/* 树枝：顶端 */}
+                    <path d="M55 50 Q50 35 60 20" stroke="#2C2C2C" strokeWidth="2" fill="none" strokeLinecap="round" />
+
+                    {/* --- 松针/树冠 (利用滤镜制造毛绒感) --- */}
+                    {/* 右侧主树冠 */}
+                    <circle cx="90" cy="85" r="14" fill="#3A4D1F" opacity="0.8" filter="url(#mossRoughness)" />
+                    <circle cx="85" cy="80" r="10" fill="#1a260e" opacity="0.5" filter="url(#mossRoughness)" /> {/* 阴影层 */}
+                    
+                    {/* 左侧树冠 */}
+                    <circle cx="20" cy="95" r="12" fill="#3A4D1F" opacity="0.8" filter="url(#mossRoughness)" />
+                    
+                    {/* 顶部树冠 */}
+                    <circle cx="60" cy="20" r="15" fill="#3A4D1F" opacity="0.9" filter="url(#mossRoughness)" />
+                    <circle cx="50" cy="25" r="10" fill="#7B924A" opacity="0.6" filter="url(#mossRoughness)" /> {/* 高光层 */}
+
+                    {/* 中部点缀 (增加层次) */}
+                    <circle cx="50" cy="60" r="8" fill="#3A4D1F" opacity="0.7" filter="url(#mossRoughness)" />
+                </g>
+            ),
+            // 3. 翠竹 (象征虚心)
+            Bamboo: () => (
+                <g>
+                    {/* --- 后景竹 (淡墨，营造景深) --- */}
+                    <path d="M65 145 Q70 100 68 30" stroke="#3A4D1F" strokeWidth="2" fill="none" opacity="0.4" strokeLinecap="round" />
+                    {/* 竹节 */}
+                    <path d="M66 110 L70 109" stroke="#2C2C2C" strokeWidth="1" opacity="0.3" />
+                    <path d="M67 70 L71 69" stroke="#2C2C2C" strokeWidth="1" opacity="0.3" />
+                    
+                    {/* --- 左侧竹 (中墨) --- */}
+                    <path d="M35 150 Q30 90 38 40" stroke="#3A4D1F" strokeWidth="3" fill="none" opacity="0.7" strokeLinecap="round" />
+                    {/* 竹节 */}
+                    <path d="M30 120 L40 118" stroke="#2C2C2C" strokeWidth="1.5" opacity="0.6" />
+                    <path d="M32 80 L42 78" stroke="#2C2C2C" strokeWidth="1.5" opacity="0.6" />
+                    
+                    {/* --- 主竹 (浓墨，挺拔) --- */}
+                    <path d="M50 155 Q52 80 48 10" stroke="#2C2C2C" strokeWidth="4" fill="none" opacity="0.85" strokeLinecap="round" />
+                    {/* 竹节 (强调骨力) */}
+                    <path d="M45 125 L56 123" stroke="#2C2C2C" strokeWidth="2" />
+                    <path d="M46 90 L57 88" stroke="#2C2C2C" strokeWidth="2" />
+                    <path d="M47 55 L58 53" stroke="#2C2C2C" strokeWidth="2" />
+
+                    {/* --- 竹叶 (聚散有致，模拟笔触) --- */}
+                    {/* 顶部竹叶组 */}
+                    <path d="M48 20 L35 25 M48 20 L55 10 M48 20 L60 25" stroke="#3A4D1F" strokeWidth="2" fill="none" />
+                    
+                    {/* 中部竹叶组 (左) */}
+                    <path d="M38 40 L25 45 M38 40 L28 30" stroke="#3A4D1F" strokeWidth="2" fill="none" opacity="0.8" />
+                    
+                    {/* 中部竹叶组 (右) */}
+                    <path d="M46 90 L60 95 M46 90 L65 85" stroke="#3A4D1F" strokeWidth="2" fill="none" opacity="0.8" />
+                    
+                    {/* 底部竹叶组 (点缀) */}
+                    <path d="M30 120 L20 125" stroke="#3A4D1F" strokeWidth="1.5" fill="none" opacity="0.6" />
+                </g>
+            )
+        };
+
         const ScreenState = {
             COURTYARD: 'COURTYARD',
             ETCHING: 'ETCHING',
@@ -553,517 +640,450 @@ const playSound = (type, volume = 1.0) => {
         // ==========================================
 
 // --- Courtyard (庭院 - 无限分页 + 自动滚动版) ---
-        const Courtyard = ({ stones, onStart, onUpdateStones }) => {
-            // 1. 定义一个 state 来强制刷新（当窗口大小改变时）
-            const [windowSize, setWindowSize] = useState({
-                w: window.innerWidth,
-                h: window.innerHeight
-            });
+const Courtyard = ({ stones, onStart, onUpdateStones, gardenItems, onTransform }) => {
+    // ==========================================
+    // 1. 逻辑与状态定义区
+    // ==========================================
+    
+    const [windowSize, setWindowSize] = useState({ w: window.innerWidth, h: window.innerHeight });
 
-            // 2. 监听窗口调整，实时更新边界
-            useEffect(() => {
-                const handleResize = () => {
-                    setWindowSize({
-                        w: window.innerWidth,
-                        h: window.innerHeight
-                    });
-                };
-                window.addEventListener('resize', handleResize);
-                return () => window.removeEventListener('resize', handleResize);
-            }, []);
+    useEffect(() => {
+        const handleResize = () => setWindowSize({ w: window.innerWidth, h: window.innerHeight });
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
-            // 3. 计算边界 (基于实时窗口大小 windowSize)
-            const xLimit = windowSize.w / 2 - 60;
-            const yLimit = windowSize.h / 2 - 90;
+    const xLimit = windowSize.w / 2 - 60;
+    const yLimit = windowSize.h / 2 - 90;
 
-            const [isSelectorOpen, setIsSelectorOpen] = useState(false);
-            const [selectedStone, setSelectedStone] = useState(null);
-            const [currentPageIndex, setCurrentPageIndex] = useState(0);
-            const [showClearConfirm, setShowClearConfirm] = useState(false);
-            
-            // 标记是否正在拖拽，防止拖拽结束时误触点击
-            const isDraggingRef = useRef(false);
+    const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+    const [selectedStone, setSelectedStone] = useState(null);
+    const [currentPageIndex, setCurrentPageIndex] = useState(0);
+    const [showClearConfirm, setShowClearConfirm] = useState(false);
+    const [showTransformConfirm, setShowTransformConfirm] = useState(false);
+    const [showNotReadyTip, setShowNotReadyTip] = useState(false);
 
-            const scrollContainerRef = useRef(null);
-            const pageRefs = useRef([]);
+    const isDraggingRef = useRef(false);
+    const scrollContainerRef = useRef(null);
+    const pageRefs = useRef([]);
 
-          // ==========================================
-            // 【修改 1】石头分组逻辑（包含页面防塌陷修复）
-            // ==========================================
-            const stoneChunks = useMemo(() => {
-                const sorted = [...stones]; 
-                const chunks = chunkArray(sorted, 9);
-                
-                // 如果没有石头，至少保留一页空页面
-                if (chunks.length === 0) chunks.push([]);
+    const stoneChunks = useMemo(() => {
+        const sorted = [...stones]; 
+        const chunks = chunkArray(sorted, 9);
+        if (chunks.length === 0) chunks.push([]);
+        while (chunks.length <= currentPageIndex) {
+            chunks.push([]);
+        }
+        return chunks;
+    }, [stones, currentPageIndex]);
 
-                // 【关键修复】
-                // 只要当前的 chunks 数量少于你所在的页码 (currentPageIndex)，
-                // 就强行往后填充空数组。
-                // 这样当你点击“清空所有”时，你所在的页面容器不会瞬间消失，
-                // 而是变成一个空页面，给石头留出播放“下沉动画”的时间。
-                while (chunks.length <= currentPageIndex) {
-                    chunks.push([]);
-                }
+    // 【新增】获取当前页面显示的石头列表 (这就是“眼前”的石头)
+    const currentChunk = stoneChunks[currentPageIndex] || [];
 
-                return chunks;
-            }, [stones, currentPageIndex]); // 注意：这里加了 currentPageIndex 依赖
-
-            // ==========================================
-            // 【核心逻辑 2】自动滚动
-            // 当页面数量增加时（产生了第10个、第19个...石头），自动滑到最新的一页
-	    // ==========================================
-            
-            // 定义一个缓动滚动函数
-            const smoothScrollTo = (element, target, duration) => {
-                const start = element.scrollTop;
-                const change = target - start;
-                const startTime = performance.now();
-                
-                // 临时禁用 CSS 滚动吸附，防止它和动画打架
-                element.style.scrollSnapType = 'none';
-
-                const animateScroll = (currentTime) => {
-                    const timeElapsed = currentTime - startTime;
-                    if (timeElapsed < duration) {
-                        // 使用 easeInOutQuad 缓动曲线：慢-快-慢
-                        const progress = timeElapsed / duration;
-                        const ease = progress < 0.5 
-                            ? 2 * progress * progress 
-                            : -1 + (4 - 2 * progress) * progress;
-                        
-                        element.scrollTop = start + (change * ease);
-                        requestAnimationFrame(animateScroll);
-                    } else {
-                        element.scrollTop = target;
-                        // 动画结束后，恢复 CSS 滚动吸附
-                        element.style.scrollSnapType = 'y mandatory';
-                    }
-                };
+    const smoothScrollTo = (element, target, duration) => {
+        const start = element.scrollTop;
+        const change = target - start;
+        const startTime = performance.now();
+        element.style.scrollSnapType = 'none';
+        const animateScroll = (currentTime) => {
+            const timeElapsed = currentTime - startTime;
+            if (timeElapsed < duration) {
+                const progress = timeElapsed / duration;
+                const ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+                element.scrollTop = start + (change * ease);
                 requestAnimationFrame(animateScroll);
-            };
+            } else {
+                element.scrollTop = target;
+                element.style.scrollSnapType = 'y mandatory';
+            }
+        };
+        requestAnimationFrame(animateScroll);
+    };
 
-            useEffect(() => {
-                // 只有当存在多页时才处理
-                if (stoneChunks.length > 1) {
-                    const lastPageIndex = stoneChunks.length - 1;
-                    const container = scrollContainerRef.current;
-                    
-                    if (container) {
-                        const pageHeight = container.clientHeight;
-                        const targetScrollTop = lastPageIndex * pageHeight;
-                        const prevPageScrollTop = (lastPageIndex - 1) * pageHeight;
+    useEffect(() => {
+        if (stoneChunks.length > 1) {
+            const lastPageIndex = stoneChunks.length - 1;
+            const container = scrollContainerRef.current;
+            if (container) {
+                const pageHeight = container.clientHeight;
+                const targetScrollTop = lastPageIndex * pageHeight;
+                const prevPageScrollTop = (lastPageIndex - 1) * pageHeight;
+                container.style.scrollBehavior = 'auto'; 
+                if (container.scrollTop < 10) container.scrollTop = prevPageScrollTop;
+                smoothScrollTo(container, targetScrollTop, 1500); 
+            }
+        }
+    }, [stones.length, stoneChunks.length]);
 
-                        // 【关键修改 1】
-                        // 必须强制把 CSS 里的 scroll-behavior: smooth 关掉！
-                        // 否则浏览器会把我们的“瞬移”指令变成“从头开始的慢动作播放”。
-                        container.style.scrollBehavior = 'auto'; 
+    const weatherOptions = [
+        { type: Weather.SUN, icon: Icons.Sun, label: "晴朗" },
+        { type: Weather.CLOUD, icon: Icons.Cloud, label: "多云" },
+        { type: Weather.RAIN, icon: Icons.CloudRain, label: "雨天" },
+        { type: Weather.STORM, icon: Icons.CloudLightning, label: "风暴" },
+    ];
 
-                        // 【关键修改 2】
-                        // 执行瞬移：如果当前在顶部，直接跳到上一页的位置
-                        if (container.scrollTop < 10) {
-                             container.scrollTop = prevPageScrollTop;
-                        }
+    const formatDate = (timestamp) => {
+        const date = new Date(timestamp);
+        const Y = date.getFullYear();
+        const M = (date.getMonth() + 1).toString().padStart(2, '0');
+        const D = date.getDate().toString().padStart(2, '0');
+        const h = date.getHours().toString().padStart(2, '0');
+        const m = date.getMinutes().toString().padStart(2, '0');
+        return `${Y}年${M}月${D}日 ${h}:${m}`;
+    };
 
-                        // 【关键修改 3】
-                        // 开始 JS 手动动画 (从上一页滑向当前页)
-                        // 动画函数内部会自己处理每一帧的滚动，不需要 CSS 插手
-                        smoothScrollTo(container, targetScrollTop, 1500); 
-                    }
-                }
-            }, [stones.length, stoneChunks.length]);
+    const handleScroll = () => {
+        if (!scrollContainerRef.current) return;
+        const scrollTop = scrollContainerRef.current.scrollTop;
+        const height = scrollContainerRef.current.clientHeight;
+        const index = Math.round(scrollTop / height);
+        setCurrentPageIndex(index);
+    };
 
-            const weatherOptions = [
-                { type: Weather.SUN, icon: Icons.Sun, label: "晴朗" },
-                { type: Weather.CLOUD, icon: Icons.Cloud, label: "多云" },
-                { type: Weather.RAIN, icon: Icons.CloudRain, label: "雨天" },
-                { type: Weather.STORM, icon: Icons.CloudLightning, label: "风暴" },
-            ];
+    const handleDragEnd = (stoneId, info) => {
+        const delta = { x: info.offset.x, y: info.offset.y };
+        onUpdateStones(prev => prev.map(s => {
+            if (s.id === stoneId) {
+                let newX = (s.x || 0) + delta.x;
+                let newY = (s.y || 0) + delta.y;
+                newX = Math.max(-xLimit, Math.min(newX, xLimit));
+                newY = Math.max(-yLimit, Math.min(newY, yLimit));
+                return { ...s, x: newX, y: newY };
+            }
+            return s;
+        }));
+    };
 
-            const formatDate = (timestamp) => {
-                const date = new Date(timestamp);
-                const Y = date.getFullYear();
-                const M = (date.getMonth() + 1).toString().padStart(2, '0');
-                const D = date.getDate().toString().padStart(2, '0');
-                const h = date.getHours().toString().padStart(2, '0');
-                const m = date.getMinutes().toString().padStart(2, '0');
+    const handleOrganize = () => {
+        playSound('organize');
+        if(currentChunk.length === 0) return;
+        const gridGap = 110; 
+        const startX = -110; 
+        const startY = -120; 
+        const updates = {};
+        currentChunk.forEach((stone, index) => {
+            const row = Math.floor(index / 3);
+            const col = index % 3;
+            updates[stone.id] = { x: startX + col * gridGap, y: startY + row * gridGap, rotation: 0 };
+        });
+        onUpdateStones(prev => prev.map(s => updates[s.id] ? { ...s, ...updates[s.id] } : s));
+    };
+
+    const handleClear = (type) => {
+        if (type === 'current') {
+            const stonesToRemove = currentChunk.map(s => s.id);
+            onUpdateStones(prev => prev.filter(s => !stonesToRemove.includes(s.id)));
+        } else if (type === 'all') {
+            onUpdateStones([]);
+        }
+        setShowClearConfirm(false);
+    };
+
+    // 【智能转化点击逻辑】
+    // 依赖于 currentChunk.length 而不是 stones.length
+    const handleTransformationClick = () => {
+        if (currentChunk.length >= 9) {
+            setShowTransformConfirm(true);
+        } else {
+            setShowNotReadyTip(true);
+            setTimeout(() => setShowNotReadyTip(false), 2000);
+        }
+    };
+
+    const getPageDateRange = (chunk) => {
+        if (!chunk || chunk.length === 0) return "";
+        const fmt = (ts) => {
+            const d = new Date(ts);
+            return `${d.getFullYear()}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`;
+        };
+        const startStr = fmt(chunk[0].timestamp);
+        const endStr = fmt(chunk[chunk.length - 1].timestamp);
+        return startStr === endStr ? startStr : `${startStr} - ${endStr}`;
+    };
+
+    // ==========================================
+    // 2. 视图渲染区
+    // ==========================================
+    return (
+        <div className="relative w-full h-full">
+            <header className="absolute top-4 left-0 w-full text-center z-20 pointer-events-none">
+                <h1 className="text-3xl font-serif font-bold text-ink opacity-80">苔与石</h1>
+                <p className="text-xs text-ink/60 mt-2 tracking-[0.2em] uppercase">Moss & Stone</p>
                 
-                // 返回格式示例：2023年12月01日 14:30
-                return `${Y}年${M}月${D}日 ${h}:${m}`;
-            };
-
-            const handleScroll = () => {
-                if (!scrollContainerRef.current) return;
-                const scrollTop = scrollContainerRef.current.scrollTop;
-                const height = scrollContainerRef.current.clientHeight;
-                const index = Math.round(scrollTop / height);
-                setCurrentPageIndex(index);
-            };
-
-            const handleDragEnd = (stoneId, info) => {
-                const delta = { x: info.offset.x, y: info.offset.y };
-                
-                onUpdateStones(prev => prev.map(s => {
-                    if (s.id === stoneId) {
-                        let newX = (s.x || 0) + delta.x;
-                        let newY = (s.y || 0) + delta.y;
-
-                        // 边界限制
-                        newX = Math.max(-xLimit, Math.min(newX, xLimit));
-                        newY = Math.max(-yLimit, Math.min(newY, yLimit));
-
-                        return {
-                            ...s,
-                            x: newX,
-                            y: newY
-                        };
-                    }
-                    return s;
-                }));
-            };
-
-            const handleOrganize = () => {
-		playSound('organize');
-                if(stoneChunks[currentPageIndex].length === 0) return;
-                const currentChunkStones = stoneChunks[currentPageIndex];
-                const gridGap = 110; 
-                const startX = -110; 
-                const startY = -120; 
-
-                const updates = {};
-                
-                currentChunkStones.forEach((stone, index) => {
-                    const row = Math.floor(index / 3);
-                    const col = index % 3;
-                    const targetX = startX + col * gridGap;
-                    const targetY = startY + row * gridGap;
-                    updates[stone.id] = { x: targetX, y: targetY, rotation: 0 };
-                });
-
-                onUpdateStones(prev => prev.map(s => {
-                    if (updates[s.id]) {
-                        return { ...s, ...updates[s.id] };
-                    }
-                    return s;
-                }));
-            };
-
-            const handleClear = (type) => {
-                if (type === 'current') {
-                    const stonesToRemove = stoneChunks[currentPageIndex].map(s => s.id);
-                    onUpdateStones(prev => prev.filter(s => !stonesToRemove.includes(s.id)));
-                } else if (type === 'all') {
-                    onUpdateStones([]);
-                }
-                setShowClearConfirm(false);
-            };
-
-	    // ==========================================
-            // 【新增功能】计算每一页的日期范围
-            // ==========================================
-            const getPageDateRange = (chunk) => {
-                if (!chunk || chunk.length === 0) return "";
-                
-                // 因为 chunk 里的石头是按时间顺序排的
-                const firstStone = chunk[0];
-                const lastStone = chunk[chunk.length - 1];
-
-                const fmt = (ts) => {
-                    const d = new Date(ts);
-                    return `${d.getFullYear()}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`;
-                };
-
-                const startStr = fmt(firstStone.timestamp);
-                const endStr = fmt(lastStone.timestamp);
-
-                // 如果开始和结束是同一天，只显示一个日期
-                // 如果跨越了多天，显示 "开始日期 - 结束日期"
-                return startStr === endStr ? startStr : `${startStr} - ${endStr}`;
-            };
-
-            return (
-                <div className="relative w-full h-full">
-                    <header className="absolute top-4 left-0 w-full text-center z-20 pointer-events-none">
-                        <h1 className="text-3xl font-serif font-bold text-ink opacity-80">苔与石</h1>
-                        <p className="text-xs text-ink/60 mt-2 tracking-[0.2em] uppercase">Moss & Stone</p>
-                    </header>
-
-{/* ================= 调试用按钮 START (发布前删除) ================= */}
-                    <button
-                        onClick={() => {
-                            const newStones = Array.from({ length: 9 }).map((_, i) => ({
-                                id: `debug-${Date.now()}-${i}`,
-                                worry: `这是第 ${i + 1} 个测试烦恼`,
-                                insight: `山谷没有回音，是因为它在倾听 (测试数据 ${i + 1})。`,
-                                timestamp: Date.now(),
-                                weather: 'Sun',
-                                shapePolygon: generateOrganicShape(), 
-                                rotation: Math.random() * 30 - 15,
-                                x: Math.random() * 160 - 80, 
-                                y: Math.random() * 160 - 80
-                            }));
-                            onUpdateStones(prev => [...prev, ...newStones]);
-                        }}
-                        className="absolute bottom-4 right-4 z-50 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-800/60 text-xs font-bold rounded hover:bg-red-500/20 transition-colors backdrop-blur-md"
-                    >
-                        [测试] +9 石头
-                    </button>
-                    {/* ================= 调试用按钮 END ================= */}
-
-                    {stones.length > 0 && (
-                        <div className="absolute top-6 right-6 z-30 flex gap-4">
-                            <button 
-                                onClick={handleOrganize}
-                                className="p-2 rounded-full bg-concrete/50 hover:bg-white/80 text-ink/40 hover:text-moss transition-all shadow-sm backdrop-blur-sm"
-                                title="整理"
-                            >
-                                <Icons.Grid size={20} />
-                            </button>
-                            <button 
-                                onClick={() => setShowClearConfirm(true)}
-                                className="p-2 rounded-full bg-concrete/50 hover:bg-white/80 text-ink/40 hover:text-red-800 transition-all shadow-sm backdrop-blur-sm"
-                                title="清扫"
-                            >
-                                <Icons.Broom size={20} />
-                            </button>
-                        </div>
-                    )}
-
-                    <div 
-                        ref={scrollContainerRef}
-                        onScroll={handleScroll}
-                        className="courtyard-scroll-container no-scrollbar"
-                    >
-                        {stoneChunks.map((chunk, pageIndex) => (
-                            <div 
-                                key={pageIndex} 
-                                ref={el => pageRefs.current[pageIndex] = el}
-                                className="courtyard-page"
-                            >
-                                <div className="relative w-[340px] h-[340px] md:w-[500px] md:h-[500px]"> 
-                                   
-                                
-                                   <AnimatePresence>
-    {chunk.map((stone, i) => (
-        <motion.div 
-            key={stone.id} 
-            
-            /* 修改 2：这里删掉了 layout 属性。
-               绝对定位(absolute)元素如果加 layout，删除时会试图重排，导致瞬间位移。
-            */
-            
-            drag
-            whileDrag={{ scale: 1.05 }} 
-            dragMomentum={false}
-            dragElastic={0}
-            
-            // ... (中间的事件处理代码保持不变，不需要动) ...
-            onPointerDown={() => {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-            }}
-            onDragStart={() => {
-                isDraggingRef.current = true;
-                playSound('lift'); 
-            }}
-            onDragEnd={(e, info) => { 
-                handleDragEnd(stone.id, info);
-                playSound('drop');
-                setTimeout(() => isDraggingRef.current = false, 200);
-            }}
-            onClick={(e) => {
-                if (isDraggingRef.current) { e.stopPropagation(); return; }
-                if (!isSelectorOpen && !selectedStone) setSelectedStone(stone);
-            }}
-            // ... (中间代码结束) ...
-
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            dragConstraints={{ left: -xLimit, right: xLimit, top: -yLimit, bottom: yLimit }}
-            
-            initial={{ scale: 0 }}
-            animate={{ 
-                scale: 1, 
-                x: stone.x || 0, 
-                y: stone.y || 0, 
-                rotate: stone.rotation,
-                opacity: 1,
-                filter: 'blur(0px)'
-            }}
-            
-            // 下沉动画保持不变（错落感）
-            exit={{ 
-                opacity: 0,
-                scale: 0.9,
-                y: (stone.y || 0) + 120, 
-                filter: 'blur(10px)', 
-                transition: { 
-                    duration: 1.5,
-                    ease: "easeInOut",
-                    delay: i * 0.08 
-                }
-            }}
-
-            className="absolute left-1/2 top-1/2 -ml-8 -mt-8"
-            style={{ zIndex: 10 }}
-        >
-            <Stone shape={stone.shapePolygon} isMossy size="sm" className="hover:scale-105 transition-transform duration-300 shadow-lg" />
-        </motion.div>
-    ))}
-</AnimatePresence>
-
-                                    {/* 这一段是那个"+"号按钮，不需要动，保留原样即可 */}
-                                    {pageIndex === stoneChunks.length - 1 && !isSelectorOpen && !selectedStone && (
-                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none translate-y-64">
-                                            {/* ...按钮代码省略，保持不变... */}
-                                            <motion.button
-                                                initial={{ opacity: 0, scale: 0.9 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                whileHover={{ scale: 1.02, rotate: 2 }}
-                                                whileTap={{ scale: 0.98 }}
-                                                onClick={() => setIsSelectorOpen(true)}
-                                                className="w-48 h-32 border-4 border-dashed border-ink/10 rounded-[40%_60%_50%_50%/50%_40%_60%_50%] flex items-center justify-center hover:border-ink/30 transition-colors bg-concrete/20 pointer-events-auto"
-                                            >
-                                                <span className="text-2xl text-ink/20">+</span>
-                                            </motion.button>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="absolute bottom-8 left-0 w-full text-center pointer-events-none">
-
-<p className="text-[10px] font-sans font-bold tracking-[0.15em] text-ink/20 mb-1.5 uppercase">
-                                        {getPageDateRange(chunk)}
-                                    </p>
-                                    
-<p className="text-xs text-ink/30 font-serif tracking-widest">
-                                    {pageIndex === stoneChunks.length - 1 
-                                        ? "把心事，放在这里。" 
-                                        : "往事已生青苔。" 
-                                    }
-                                </p>
-                                    {stoneChunks.length > 1 && (
-                                        <div className="mt-2 flex justify-center gap-1">
-                                            {stoneChunks.map((_, i) => (
-                                                <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === currentPageIndex ? 'bg-moss' : 'bg-ink/10'}`} />
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
+                {/* 左上角计数器：显示当前页进度，更直观 */}
+                {stones.length > 0 && (
+                    <div className="absolute top-2 right-[-60px] md:right-[-100px] text-[10px] text-ink/20 font-sans">
+                        本页: {currentChunk.length}/9
                     </div>
+                )}
+            </header>
 
-                    <AnimatePresence>
-                        {isSelectorOpen && (
-                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-concrete/80 backdrop-blur-sm">
-                            <motion.div
-                                initial={{ y: 50, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                exit={{ y: 50, opacity: 0 }}
-                                className="bg-[#E8E8E8] p-8 rounded-3xl shadow-2xl w-80 max-w-sm border border-white/40"
-                            >
-                                <h3 className="text-center text-ink/70 mb-8 font-serif text-lg">此刻内心的天气？</h3>
-                                <div className="flex justify-between px-2 mb-4">
-                                {weatherOptions.map((option) => (
-                                    <button
-                                    key={option.type}
-                                    onClick={() => { setIsSelectorOpen(false); onStart(option.type); }}
-                                    className="flex flex-col items-center gap-3 text-ink/40 hover:text-moss transition-colors group"
-                                    >
-                                    <div className="p-3 rounded-full bg-white/50 group-hover:bg-white transition-colors shadow-sm">
-                                        <option.icon size={24} />
-                                    </div>
-                                    <span className="text-xs font-serif">{option.label}</span>
-                                    </button>
-                                ))}
-                                </div>
-                                <button 
-                                    onClick={() => setIsSelectorOpen(false)}
-                                    className="w-full mt-8 text-xs text-ink/30 tracking-widest hover:text-ink py-2"
-                                >
-                                    取消
-                                </button>
-                            </motion.div>
-                            </div>
-                        )}
-                    </AnimatePresence>
+           {/* 庭院景观层 */}
+            <div className="absolute inset-0 z-0 overflow-hidden"> {/* 修改1: 去掉了 pointer-events-none */}
+                {gardenItems && gardenItems.map(item => {
+                    const Component = Decorations[item.type];
+                    return (
+                        <motion.div
+                            key={item.id}
+                            drag // 修改2: 加上这个，允许拖拽
+                            dragMomentum={false} // 拖完即停，不乱飘
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 1, scale: item.scale }}
+                            transition={{ duration: 2, ease: "easeOut" }}
+                            className="absolute cursor-move" // 修改3: 加上鼠标手势
+                            style={{
+                                left: `${item.x}%`,
+                                top: `${item.y}%`,
+                                filter: 'blur(1px) drop-shadow(0 4px 6px rgba(0,0,0,0.1))'
+                            }}
+                        >
+                            <svg width="100" height="150" viewBox="0 0 100 150">
+                                <Component />
+                            </svg>
+                        </motion.div>
+                    );
+                })}
+            </div>
 
-                    <AnimatePresence>
-                        {selectedStone && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-concrete/80 backdrop-blur-sm" onClick={() => setSelectedStone(null)}>
-                            <motion.div
-                                initial={{ scale: 0.95, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                exit={{ scale: 0.95, opacity: 0 }}
-                                onClick={(e) => e.stopPropagation()}
-                                className="bg-[#F0F0F0] p-8 rounded-2xl shadow-2xl w-80 max-w-sm border border-white/40 relative text-center m-4"
-                            >
-                                <button 
-                                    onClick={() => setSelectedStone(null)}
-                                    className="absolute top-4 right-4 text-ink/30 hover:text-ink transition-colors"
-                                >
-                                    <Icons.X size={20} /> 
-                                </button>
-                                
-                                <div className="mt-4 mb-8">
-                                    <p className="text-xs text-ink/40 font-serif tracking-widest uppercase mb-4">
-                                        {formatDate(selectedStone.timestamp)}
-                                    </p>
-                                    <div className="w-8 h-1 bg-moss/20 mx-auto mb-8 rounded-full"></div>
-                                    <p className="font-serif text-xl text-ink leading-loose">
-                                        “{selectedStone.insight}”
-                                    </p>
-                                </div>
-                                
-                                <div className="pt-6 border-t border-ink/5">
-                                    <p className="text-xs text-moss opacity-60 font-serif tracking-widest">
-                                        记忆已模糊，但智慧留存。
-                                    </p>
-                                </div>
-                            </motion.div>
-                        </div>
-                        )}
-                    </AnimatePresence>
+            {/* 调试按钮 (+1 石头) */}
+            {/* ================= 调试用按钮 START (发布前删除) ================= */}
+            <button
+                onClick={() => {
+                    const newStone = {
+                        id: `debug-${Date.now()}`,
+                        worry: `测试数据 ${stones.length + 1}`,
+                        insight: `测试数据：青苔不懂石头的坚硬。`,
+                        timestamp: Date.now(),
+                        weather: 'Sun',
+                        shapePolygon: generateOrganicShape(), 
+                        rotation: Math.random() * 30 - 15,
+                        x: Math.random() * 160 - 80, 
+                        y: Math.random() * 160 - 80
+                    };
+                    onUpdateStones(prev => [...prev, newStone]);
+                }}
+                className="absolute bottom-4 right-4 z-50 px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-800/60 text-xs font-bold rounded hover:bg-red-500/20 transition-colors backdrop-blur-md"
+            >
+                [测试] +1
+            </button>
+            {/* ================= 调试用按钮 END ================= */}
 
+            {/* 右上角工具栏 */}
+            {stones.length > 0 && (
+                <div className="absolute top-6 right-6 z-30 flex flex-col gap-4 items-center">
+                    <button onClick={handleOrganize} className="p-2 rounded-full bg-concrete/50 hover:bg-white/80 text-ink/40 hover:text-moss transition-all shadow-sm backdrop-blur-sm" title="整理">
+                        <Icons.Grid size={20} />
+                    </button>
+                    
+                    <button onClick={() => setShowClearConfirm(true)} className="p-2 rounded-full bg-concrete/50 hover:bg-white/80 text-ink/40 hover:text-red-800 transition-all shadow-sm backdrop-blur-sm" title="清扫">
+                        <Icons.Broom size={20} />
+                    </button>
+
+                    {/* 【智能转化按钮】
+                        逻辑修改：currentChunk.length >= 8 时才出现
+                    */}
                     <AnimatePresence>
-                        {showClearConfirm && (
-                            <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/10 backdrop-blur-sm" onClick={() => setShowClearConfirm(false)}>
-                                <motion.div
-                                    initial={{ scale: 0.9, opacity: 0 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                    exit={{ scale: 0.9, opacity: 0 }}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="bg-[#F0F0F0] p-6 rounded-2xl shadow-xl w-72 text-center border border-white/50"
+                        {currentChunk.length >= 8 && (
+                            <div className="relative">
+                                <motion.button
+                                    initial={{ scale: 0, opacity: 0 }}
+                                    animate={{ 
+                                        scale: 1, 
+                                        opacity: 1,
+                                        // 仅当本页满9个时，才呼吸发光
+                                        boxShadow: currentChunk.length >= 9 
+                                            ? "0 0 15px rgba(58, 77, 31, 0.5), inset 0 0 10px rgba(255,255,255,0.3)" 
+                                            : "none"
+                                    }}
+                                    exit={{ scale: 0, opacity: 0 }} 
+                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={handleTransformationClick}
+                                    className={`
+                                        w-10 h-10 rounded-full flex items-center justify-center 
+                                        backdrop-blur-md border border-white/30 shadow-lg
+                                        transition-all duration-500
+                                        ${currentChunk.length >= 9 
+                                            ? "bg-moss text-white/90 animate-pulse" 
+                                            : "bg-moss/20 text-moss/50" 
+                                        }
+                                    `}
                                 >
-                                    <h4 className="text-ink/80 font-serif font-bold mb-4">清扫庭院</h4>
-                                    <p className="text-xs text-ink/50 mb-6 font-serif">要扫去哪些记忆？</p>
-                                    <div className="flex flex-col gap-3">
-                                        <button 
-                                            onClick={() => handleClear('current')}
-                                            className="py-2.5 px-4 rounded-lg bg-white border border-ink/10 text-ink/70 text-sm hover:bg-moss/10 hover:text-moss transition-colors"
+                                    <span className="text-sm">⭕</span>
+                                </motion.button>
+
+                                <AnimatePresence>
+                                    {showNotReadyTip && (
+                                        <motion.div
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: -50 }}
+                                            exit={{ opacity: 0 }}
+                                            className="absolute top-1/2 -translate-y-1/2 right-0 whitespace-nowrap pointer-events-none"
                                         >
-                                            仅清扫当前页面
-                                        </button>
-                                        <button 
-                                            onClick={() => handleClear('all')}
-                                            className="py-2.5 px-4 rounded-lg bg-white border border-ink/10 text-red-800/60 text-sm hover:bg-red-50 hover:text-red-800 transition-colors"
-                                        >
-                                            清空所有
-                                        </button>
-                                        <button 
-                                            onClick={() => setShowClearConfirm(false)}
-                                            className="mt-2 text-xs text-ink/30 hover:text-ink/60 transition-colors"
-                                        >
-                                            取消
-                                        </button>
-                                    </div>
-                                </motion.div>
+                                            <div className="bg-ink/80 text-white text-[10px] px-2 py-1 rounded-md shadow-sm font-serif">
+                                                还剩 {9 - currentChunk.length} 个苔石解锁
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
                         )}
                     </AnimatePresence>
                 </div>
-            );
-        };
+            )}
 
+            <div ref={scrollContainerRef} onScroll={handleScroll} className="courtyard-scroll-container no-scrollbar">
+                {stoneChunks.map((chunk, pageIndex) => (
+                    <div key={pageIndex} ref={el => pageRefs.current[pageIndex] = el} className="courtyard-page">
+                        <div className="relative w-[340px] h-[340px] md:w-[500px] md:h-[500px]">
+                            <AnimatePresence>
+                                {chunk.map((stone, i) => (
+                                    <motion.div 
+                                        key={stone.id} 
+                                        drag
+                                        whileDrag={{ scale: 1.05 }} 
+                                        dragMomentum={false}
+                                        dragElastic={0}
+                                        onPointerDown={() => { if (audioCtx.state === 'suspended') audioCtx.resume(); }}
+                                        onDragStart={() => { isDraggingRef.current = true; playSound('lift'); }}
+                                        onDragEnd={(e, info) => { handleDragEnd(stone.id, info); playSound('drop'); setTimeout(() => isDraggingRef.current = false, 200); }}
+                                        onClick={(e) => {
+                                            if (isDraggingRef.current) { e.stopPropagation(); return; }
+                                            if (!isSelectorOpen && !selectedStone) setSelectedStone(stone);
+                                        }}
+                                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                                        dragConstraints={{ left: -xLimit, right: xLimit, top: -yLimit, bottom: yLimit }}
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1, x: stone.x || 0, y: stone.y || 0, rotate: stone.rotation, opacity: 1, filter: 'blur(0px)' }}
+                                        exit={{ opacity: 0, scale: 0.9, y: (stone.y || 0) + 120, filter: 'blur(10px)', transition: { duration: 1.5, ease: "easeInOut", delay: i * 0.08 } }}
+                                        className="absolute left-1/2 top-1/2 -ml-8 -mt-8"
+                                        style={{ zIndex: 10 }}
+                                    >
+                                        <Stone shape={stone.shapePolygon} isMossy size="sm" className="hover:scale-105 transition-transform duration-300 shadow-lg" />
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
+
+                            {/* +号按钮 */}
+                            {pageIndex === stoneChunks.length - 1 && !isSelectorOpen && !selectedStone && (
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none translate-y-64">
+                                    <motion.button
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        whileHover={{ scale: 1.02, rotate: 2 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => setIsSelectorOpen(true)}
+                                        className="w-48 h-32 border-4 border-dashed border-ink/10 rounded-[40%_60%_50%_50%/50%_40%_60%_50%] flex items-center justify-center hover:border-ink/30 transition-colors bg-concrete/20 pointer-events-auto"
+                                    >
+                                        <span className="text-2xl text-ink/20">+</span>
+                                    </motion.button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 页脚信息 */}
+                        <div className="absolute bottom-8 left-0 w-full text-center pointer-events-none">
+                            <p className="text-[10px] font-sans font-bold tracking-[0.15em] text-ink/20 mb-1.5 uppercase">{getPageDateRange(chunk)}</p>
+                            <p className="text-xs text-ink/30 font-serif tracking-widest">{pageIndex === stoneChunks.length - 1 ? "把心事，放在这里。" : "往事已生青苔。" }</p>
+                            {/* 分页指示器 */}
+                            {stoneChunks.length > 1 && (
+                                <div className="mt-2 flex justify-center gap-1">
+                                    {stoneChunks.map((_, i) => (
+                                        <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === currentPageIndex ? 'bg-moss' : 'bg-ink/10'}`} />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <AnimatePresence>
+                {/* 弹窗部分... (保持不变，省略以节省空间，直接用原有的即可) */}
+                {/* 请确保这里的 isSelectorOpen, selectedStone, showClearConfirm 弹窗代码都在 */}
+                
+                {/* 这里仅展示被修改了逻辑的 转化弹窗 */}
+                {showTransformConfirm && (
+                    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/20 backdrop-blur-sm" onClick={() => setShowTransformConfirm(false)}>
+                        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-[#F4F4F4] p-8 rounded-2xl shadow-2xl w-80 text-center border-2 border-moss/10">
+                            <div className="mb-6 text-4xl opacity-80">⭕</div>
+                            <h4 className="text-moss font-serif font-bold text-lg mb-2">庭院仪式</h4>
+                            <p className="text-xs text-ink/60 mb-8 font-serif leading-relaxed">
+                                此庭院承载了 9 份宝贵记忆。<br/>
+                                愿意将它们化作<br/>
+                                庭院里永恒的风景吗？
+                            </p>
+                            <button 
+                                onClick={() => { 
+                                    // 【核心修改】点击确认时，把当前页的石头ID列表传出去
+                                    onTransform(currentChunk.map(s => s.id)); 
+                                    setShowTransformConfirm(false); 
+                                }} 
+                                className="w-full py-3 rounded-lg bg-moss text-white text-sm tracking-widest hover:bg-moss-light transition-all shadow-lg mb-3"
+                            >
+                                放下，并转化
+                            </button>
+                            <button onClick={() => setShowTransformConfirm(false)} className="text-xs text-ink/30 hover:text-ink/60 transition-colors">我还想留着~</button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+            
+            {/* 别忘了把其他弹窗代码也放回来，如果这里被截断了 */}
+            <AnimatePresence>
+                {isSelectorOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-concrete/80 backdrop-blur-sm">
+                        <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="bg-[#E8E8E8] p-8 rounded-3xl shadow-2xl w-80 max-w-sm border border-white/40">
+                            <h3 className="text-center text-ink/70 mb-8 font-serif text-lg">此刻内心的天气？</h3>
+                            <div className="flex justify-between px-2 mb-4">
+                                {weatherOptions.map((option) => (
+                                    <button key={option.type} onClick={() => { setIsSelectorOpen(false); onStart(option.type); }} className="flex flex-col items-center gap-3 text-ink/40 hover:text-moss transition-colors group">
+                                        <div className="p-3 rounded-full bg-white/50 group-hover:bg-white transition-colors shadow-sm"><option.icon size={24} /></div>
+                                        <span className="text-xs font-serif">{option.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+                            <button onClick={() => setIsSelectorOpen(false)} className="w-full mt-8 text-xs text-ink/30 tracking-widest hover:text-ink py-2">取消</button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+            
+            <AnimatePresence>
+                {selectedStone && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-concrete/80 backdrop-blur-sm" onClick={() => setSelectedStone(null)}>
+                        <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-[#F0F0F0] p-8 rounded-2xl shadow-2xl w-80 max-w-sm border border-white/40 relative text-center m-4">
+                            <button onClick={() => setSelectedStone(null)} className="absolute top-4 right-4 text-ink/30 hover:text-ink transition-colors"><Icons.X size={20} /></button>
+                            <div className="mt-4 mb-8">
+                                <p className="text-xs text-ink/40 font-serif tracking-widest uppercase mb-4">{formatDate(selectedStone.timestamp)}</p>
+                                <div className="w-8 h-1 bg-moss/20 mx-auto mb-8 rounded-full"></div>
+                                <p className="font-serif text-xl text-ink leading-loose">“{selectedStone.insight}”</p>
+                            </div>
+                            <div className="pt-6 border-t border-ink/5"><p className="text-xs text-moss opacity-60 font-serif tracking-widest">记忆已模糊，但智慧留存。</p></div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+             <AnimatePresence>
+                {showClearConfirm && (
+                    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/10 backdrop-blur-sm" onClick={() => setShowClearConfirm(false)}>
+                        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-[#F0F0F0] p-6 rounded-2xl shadow-xl w-72 text-center border border-white/50">
+                            <h4 className="text-ink/80 font-serif font-bold mb-4">清扫庭院</h4>
+                            <p className="text-xs text-ink/50 mb-6 font-serif">要扫去哪些记忆？</p>
+                            <div className="flex flex-col gap-3">
+                                <button onClick={() => handleClear('current')} className="py-2.5 px-4 rounded-lg bg-white border border-ink/10 text-ink/70 text-sm hover:bg-moss/10 hover:text-moss transition-colors">仅清扫当前页面</button>
+                                <button onClick={() => handleClear('all')} className="py-2.5 px-4 rounded-lg bg-white border border-ink/10 text-red-800/60 text-sm hover:bg-red-50 hover:text-red-800 transition-colors">清空所有</button>
+                                <button onClick={() => setShowClearConfirm(false)} className="mt-2 text-xs text-ink/30 hover:text-ink/60 transition-colors">取消</button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
         // --- Etching (蚀刻) ---
         const Etching = ({ stoneShape, onLayDown }) => {
             const [text, setText] = useState('');
@@ -1427,12 +1447,22 @@ const playSound = (type, volume = 1.0) => {
 
         // --- App ---
         const App = () => {
+            // ==========================================
+            // 1. 状态定义 (保持不变)
+            // ==========================================
             const [screen, setScreen] = useState(ScreenState.COURTYARD);
             const [stones, setStones] = useState([]);
+            // 装饰物列表
+            const [gardenItems, setGardenItems] = useState([]);
+            
             const [currentShape, setCurrentShape] = useState(generateOrganicShape());
             const [currentWorry, setCurrentWorry] = useState('');
             const [currentWeather, setCurrentWeather] = useState(Weather.SUN);
             const [currentInsight, setCurrentInsight] = useState('');
+
+            // ==========================================
+            // 2. 核心逻辑处理
+            // ==========================================
 
             const handleStart = (weather) => {
                 setCurrentWeather(weather);
@@ -1444,14 +1474,12 @@ const playSound = (type, volume = 1.0) => {
                 setCurrentWorry(text);
                 setScreen(ScreenState.OVERGROWTH);
                 try {
-                    // 【修改点】这里传入了 text 和 currentWeather
-                    // 注意：currentWeather 是 App 组件的 state，直接用即可
                     const insight = await generateInsight(text, currentWeather);
                     setCurrentInsight(insight);
                 } catch (e) {
                     setCurrentInsight("风吹过青苔的声音。");
                 }
-            }, [currentWeather]); // 【修改点】依赖项数组里加上 currentWeather
+            }, [currentWeather]);
 
             const handleGrowthComplete = () => {
                 setScreen(ScreenState.ECHO);
@@ -1466,12 +1494,10 @@ const playSound = (type, volume = 1.0) => {
                     weather: currentWeather,
                     shapePolygon: currentShape,
                     rotation: Math.random() * 30 - 15,
-                    // 初始随机位置（相对于页面中心）
                     x: Math.random() * 200 - 100,
                     y: Math.random() * 200 - 100
                 };
                 
-                // 将新石头添加到列表中（不再限制9个）
                 setStones(prevStones => [...prevStones, newStone]);
                 
                 setScreen(ScreenState.COURTYARD);
@@ -1479,12 +1505,73 @@ const playSound = (type, volume = 1.0) => {
                 setCurrentInsight('');
             };
 
+           // 【核心修改】转化逻辑升级：智能构图算法
+            const handleTransformStones = (targetStoneIds) => {
+                // 安全检查
+                if (!targetStoneIds || targetStoneIds.length < 9) return;
+
+                // 1. 随机选一种装饰物类型
+                const types = ['Lantern', 'Pine', 'Bamboo'];
+                const randomType = types[Math.floor(Math.random() * types.length)];
+
+                // =====================================================
+                // 2. 智能布局：定义 6 个“风水宝地” (避开屏幕中心区域)
+                // =====================================================
+                const aestheticZones = [
+                    { name: '左上角', xRange: [5, 20],  yRange: [10, 25] }, 
+                    { name: '右上角', xRange: [80, 95], yRange: [10, 25] }, 
+                    { name: '左下角', xRange: [5, 25],  yRange: [70, 85] }, 
+                    { name: '右下角', xRange: [75, 95], yRange: [70, 85] }, 
+                    { name: '左边缘', xRange: [2, 12],  yRange: [35, 65] }, 
+                    { name: '右边缘', xRange: [88, 98], yRange: [35, 65] }, 
+                ];
+
+                // 随机选一个区域
+                const zone = aestheticZones[Math.floor(Math.random() * aestheticZones.length)];
+
+                // 在该区域内进行微调
+                const finalX = zone.xRange[0] + Math.random() * (zone.xRange[1] - zone.xRange[0]);
+                const finalY = zone.yRange[0] + Math.random() * (zone.yRange[1] - zone.yRange[0]);
+
+                const newItem = {
+                    id: Date.now(),
+                    type: randomType,
+                    x: finalX,
+                    y: finalY,
+                    // 稍微大一点，更有气势
+                    scale: 0.9 + Math.random() * 0.5 
+                };
+
+                // 3. 添加装饰物
+                setGardenItems(prev => [...prev, newItem]);
+                
+                // 4. 精准删除石头
+                setStones(prev => prev.filter(s => !targetStoneIds.includes(s.id)));
+                
+                // 播放音效
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                playSound('lift'); 
+            };
+
+            // ==========================================
+            // 3. 视图渲染
+            // ==========================================
             return (
                 <main className="w-full h-screen overflow-hidden bg-concrete text-ink font-sans selection:bg-moss selection:text-white relative">
                     <AnimatePresence mode="wait">
                         {screen === ScreenState.COURTYARD && (
                             <motion.div key="courtyard" className="w-full h-full" exit={{ opacity: 0, transition: { duration: 0.5 } }}>
-                                <Courtyard stones={stones} onStart={handleStart} onUpdateStones={setStones} />
+                                <Courtyard 
+                                    stones={stones} 
+                                    onStart={handleStart} 
+                                    onUpdateStones={setStones}
+                                    
+                                    /* 传递装饰物数据 */
+                                    gardenItems={gardenItems}
+                                    /* 传递新的转化函数 */
+                                    onTransform={handleTransformStones}
+                                />
                             </motion.div>
                         )}
 
@@ -1509,6 +1596,8 @@ const playSound = (type, volume = 1.0) => {
                 </main>
             );
         };
+
+                
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
