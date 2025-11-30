@@ -271,8 +271,28 @@
 
         // --- Courtyard (庭院 - 无限分页版) ---
         const Courtyard = ({ stones, onStart, onUpdateStones }) => {
-	    const xLimit = window.innerWidth / 2 - 50; 
-  	    const yLimit = window.innerHeight / 2 - 100;            
+	    // 1. 定义一个 state 来强制刷新（当窗口大小改变时）
+    const [windowSize, setWindowSize] = useState({
+        w: window.innerWidth,
+        h: window.innerHeight
+    });
+
+    // 2. 监听窗口调整，实时更新边界
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowSize({
+                w: window.innerWidth,
+                h: window.innerHeight
+            });
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // 3. 计算边界 (基于实时窗口大小 windowSize)
+    // 加大了边距：左右 60px，上下 160px (防止遮挡顶部的 "苔与石" 和底部的页码)
+    const xLimit = windowSize.w / 2 - 60;
+    const yLimit = windowSize.h / 2 - 160;
 	    const [isSelectorOpen, setIsSelectorOpen] = useState(false);
             const [selectedStone, setSelectedStone] = useState(null);
             const [currentPageIndex, setCurrentPageIndex] = useState(0);
