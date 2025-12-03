@@ -482,7 +482,7 @@
             const [showTransformConfirm, setShowTransformConfirm] = useState(false);
             const [showNotReadyTip, setShowNotReadyTip] = useState(false);
 
-           const [hasClickedTransform, setHasClickedTransform] = useState(false);
+            const [silencedPages, setSilencedPages] = useState([]);
 
             // 1. 定义 Ref (只留一份！)
             const isDraggingRef = useRef(false);
@@ -503,12 +503,16 @@
             // 3. 获取当前页数据
             const currentChunk = stoneChunks[currentPageIndex] || [];
 
-            // 4. 【新增】监听石头数量：如果被清空或转化了，重置按钮状态
+            // 4. 【修改】监听石头数量：给重置加把锁，防止滚动误判
             useEffect(() => {
+                // 安全锁：如果滚动太快导致数据还没准备好，先不执行，防止误判
+                if (!stoneChunks[currentPageIndex]) return;
+
                 if (currentChunk.length < 9) {
-                    setHasClickedTransform(false);
+                    // 只移除“当前这一页”的静音状态，不影响其他页
+                    setSilencedPages(prev => prev.filter(pageIndex => pageIndex !== currentPageIndex));
                 }
-            }, [currentChunk.length]);
+            }, [currentChunk.length, currentPageIndex, stoneChunks]);
 
             const smoothScrollTo = (element, target, duration) => {
                 const start = element.scrollTop;
@@ -611,8 +615,9 @@
 
             const handleTransformationClick = () => {
                 if (currentChunk.length >= 9) {
-                    setHasClickedTransform(true); // 点击瞬间：标记为已点，停止呼吸
-                    setShowTransformConfirm(true); // 弹出确认框
+                    // 【修改】点击后，只把“当前这一页”的页码加入静音名单
+                    setSilencedPages(prev => [...prev, currentPageIndex]); 
+                    setShowTransformConfirm(true);
                 } else {
                     setShowNotReadyTip(true);
                     setTimeout(() => setShowNotReadyTip(false), 2000);
@@ -711,7 +716,7 @@
                                             className={`rounded-full transition-all duration-500 ease-in-out`}
                                             style={
                                                 // 样式逻辑：只有同时满足 "集齐9个" 且 "还没点过" 时，才播放呼吸动画
-                                                currentChunk.length >= 9 && !hasClickedTransform
+                                                currentChunk.length >= 9 && !silencedPages.includes(currentPageIndex)
                                                 ? {
                                                     width: '10px', height: '10px',
                                                     animation: 'whiteToNeon 3s infinite ease-in-out'
