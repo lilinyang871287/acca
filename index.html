@@ -669,71 +669,69 @@
 
                    {stones.length > 0 && (
                         <div className="absolute top-6 right-6 z-30 flex flex-col gap-4 items-center">
-                            {/* 1. 整理按钮 (一直显示) */}
-                            <button onClick={handleOrganize} className="p-2 rounded-full bg-concrete/50 hover:bg-white/80 text-ink/40 hover:text-moss transition-all shadow-sm backdrop-blur-sm" title="整理">
-                                <Icons.Grid size={20} />
-                            </button>
                             
-                            {/* 2. 清扫按钮 (一直显示) */}
-                            <button onClick={() => setShowClearConfirm(true)} className="p-2 rounded-full bg-concrete/50 hover:bg-white/80 text-ink/40 hover:text-red-800 transition-all shadow-sm backdrop-blur-sm" title="清扫">
-                                <Icons.Broom size={20} />
-                            </button>
+                            {/* 【新增】定义通用的液态玻璃按钮样式 */}
+                            {(() => {
+                                const glassButtonClass = `
+                                    w-9 h-9 rounded-full flex items-center justify-center 
+                                    backdrop-blur-xl 
+                                    bg-gradient-to-br from-white/30 to-white/0 
+                                    border border-white/40
+                                    shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]
+                                    hover:bg-white/10 transition-all duration-300
+                                    text-ink/40 hover:text-ink/70
+                                `;
 
-                            {/* 3. 液态玻璃按钮 (核心修改：增加 >= 8 的判断) */}
-                            {/* 只有当本页石头数量 >= 8 时，这个按钮才会渲染出来 */}
-                            {currentChunk.length >= 8 && (
-                                <>
-                                    {/* 注入自定义呼吸动画 */}
-                                    <style>{`
-                                        @keyframes whiteToNeon {
-                                            0% { background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.8); transform: scale(1); }
-                                            50% { background-color: #39FF14; box-shadow: 0 0 20px #39FF14; transform: scale(1.3); }
-                                            100% { background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.8); transform: scale(1); }
-                                        }
-                                    `}</style>
+                                return (
+                                    <>
+                                        {/* 1. 整理按钮 (应用玻璃样式) */}
+                                        <button onClick={handleOrganize} className={glassButtonClass} title="整理">
+                                            <Icons.Grid size={20} />
+                                        </button>
+                                        
+                                        {/* 2. 清扫按钮 (应用玻璃样式) */}
+                                        <button onClick={() => setShowClearConfirm(true)} className={glassButtonClass} title="清扫">
+                                            <Icons.Broom size={20} />
+                                        </button>
 
-                                    <motion.button
-                                        initial={{ scale: 0, opacity: 0 }}
-                                        animate={{ 
-                                            scale: 1, 
-                                            opacity: 1,
-                                            // 按钮本身的投影，保持极淡，不抢戏
-                                            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.05)"
-                                        }}
-                                        exit={{ scale: 0, opacity: 0 }} 
-                                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                        whileTap={{ scale: 0.96 }}
-                                        onClick={handleTransformationClick}
-                                        className={`
-                                            w-9 h-9 rounded-full flex items-center justify-center 
-                                            backdrop-blur-xl 
-                                            bg-gradient-to-br from-white/30 to-white/0 
-                                            border border-white/40
-                                            shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]
-                                        `}
-                                    >
-                                        <div 
-                                            className={`rounded-full transition-all duration-500 ease-in-out`}
-                                            style={
-                                                // 样式逻辑：只有同时满足 "集齐9个" 且 "还没点过" 时，才播放呼吸动画
-                                                currentChunk.length >= 9 && !silencedPages.includes(currentPageIndex)
-                                                ? {
-                                                    width: '10px', height: '10px',
-                                                    animation: 'whiteToNeon 3s infinite ease-in-out'
-                                                  }
-                                                : {
-                                                    // 第8个石头出现时、或者点击后，都显示这个静止的白色小点
-                                                    width: '6px', height: '6px',
-                                                    backgroundColor: 'white', opacity: 0.4,
-                                                    boxShadow: '0 0 8px rgba(255,255,255,0.8)'
-                                                  }
-                                            }
-                                        ></div>
-                                    </motion.button>
-                                </>
-                            )}
+                                        {/* 3. 液态玻璃仪式按钮 (仅 >= 8 时显示) */}
+                                        {currentChunk.length >= 8 && (
+                                            <>
+                                                <style>{`
+                                                    @keyframes whiteToNeon {
+                                                        0% { background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.8); transform: scale(1); }
+                                                        50% { background-color: #39FF14; box-shadow: 0 0 20px #39FF14; transform: scale(1.3); }
+                                                        100% { background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.8); transform: scale(1); }
+                                                    }
+                                                `}</style>
 
-                            {/* 4. 提示气泡 (为了不干扰视线，也加上 >= 8 的限制) */}
+                                                <motion.button
+                                                    initial={{ scale: 0, opacity: 0 }}
+                                                    animate={{ scale: 1, opacity: 1, boxShadow: "0 4px 10px rgba(0, 0, 0, 0.05)" }}
+                                                    exit={{ scale: 0, opacity: 0 }} 
+                                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                                    whileTap={{ scale: 0.96 }}
+                                                    onClick={handleTransformationClick}
+                                                    // 直接复用上面的 glassButtonClass，并移除文字颜色相关类
+                                                    className={glassButtonClass.replace('text-ink/40 hover:text-ink/70', '')}
+                                                >
+                                                    <div 
+                                                        className={`rounded-full transition-all duration-500 ease-in-out`}
+                                                        style={
+                                                            // 判断：只有集齐9个 且 不在静音名单里，才呼吸
+                                                            currentChunk.length >= 9 && !silencedPages.includes(currentPageIndex)
+                                                            ? { width: '10px', height: '10px', animation: 'whiteToNeon 3s infinite ease-in-out' }
+                                                            : { width: '6px', height: '6px', backgroundColor: 'white', opacity: 0.4, boxShadow: '0 0 8px rgba(255,255,255,0.8)' }
+                                                        }
+                                                    ></div>
+                                                </motion.button>
+                                            </>
+                                        )}
+                                    </>
+                                );
+                            })()}
+
+                            {/* 4. 提示气泡 (保持不变) */}
                             <AnimatePresence>
                                 {showNotReadyTip && currentChunk.length >= 8 && (
                                     <motion.div
