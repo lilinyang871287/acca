@@ -482,10 +482,14 @@
             const [showTransformConfirm, setShowTransformConfirm] = useState(false);
             const [showNotReadyTip, setShowNotReadyTip] = useState(false);
 
+           const [hasClickedTransform, setHasClickedTransform] = useState(false);
+
+            // 1. 定义 Ref (只留一份！)
             const isDraggingRef = useRef(false);
             const scrollContainerRef = useRef(null);
             const pageRefs = useRef([]);
 
+            // 2. 计算分页数据
             const stoneChunks = useMemo(() => {
                 const sorted = [...stones]; 
                 const chunks = chunkArray(sorted, 9);
@@ -496,7 +500,15 @@
                 return chunks;
             }, [stones, currentPageIndex]);
 
+            // 3. 获取当前页数据
             const currentChunk = stoneChunks[currentPageIndex] || [];
+
+            // 4. 【新增】监听石头数量：如果被清空或转化了，重置按钮状态
+            useEffect(() => {
+                if (currentChunk.length < 9) {
+                    setHasClickedTransform(false);
+                }
+            }, [currentChunk.length]);
 
             const smoothScrollTo = (element, target, duration) => {
                 const start = element.scrollTop;
@@ -599,7 +611,8 @@
 
             const handleTransformationClick = () => {
                 if (currentChunk.length >= 9) {
-                    setShowTransformConfirm(true);
+                    setHasClickedTransform(true); // 点击瞬间：标记为已点，停止呼吸
+                    setShowTransformConfirm(true); // 弹出确认框
                 } else {
                     setShowNotReadyTip(true);
                     setTimeout(() => setShowNotReadyTip(false), 2000);
@@ -651,79 +664,73 @@
 
                    {stones.length > 0 && (
                         <div className="absolute top-6 right-6 z-30 flex flex-col gap-4 items-center">
-                            {/* 1. 整理按钮 */}
+                            {/* 1. 整理按钮 (一直显示) */}
                             <button onClick={handleOrganize} className="p-2 rounded-full bg-concrete/50 hover:bg-white/80 text-ink/40 hover:text-moss transition-all shadow-sm backdrop-blur-sm" title="整理">
                                 <Icons.Grid size={20} />
                             </button>
                             
-                            {/* 2. 清扫按钮 */}
+                            {/* 2. 清扫按钮 (一直显示) */}
                             <button onClick={() => setShowClearConfirm(true)} className="p-2 rounded-full bg-concrete/50 hover:bg-white/80 text-ink/40 hover:text-red-800 transition-all shadow-sm backdrop-blur-sm" title="清扫">
                                 <Icons.Broom size={20} />
                             </button>
 
-                            {/* 3. 新的液态玻璃呼吸按钮 (带自定义样式) */}
-                            <style>{`
-                                @keyframes whiteToNeon {
-                                    0% { 
-                                        background-color: #ffffff; 
-                                        box-shadow: 0 0 8px rgba(255,255,255,0.8); 
-                                        transform: scale(1);
-                                    }
-                                    50% { 
-                                        background-color: #39FF14; /* 荧光绿 */
-                                        box-shadow: 0 0 20px #39FF14; /* 强烈的绿色光晕 */
-                                        transform: scale(1.3); /* 物理变大 30% */
-                                    }
-                                    100% { 
-                                        background-color: #ffffff; 
-                                        box-shadow: 0 0 8px rgba(255,255,255,0.8); 
-                                        transform: scale(1);
-                                    }
-                                }
-                            `}</style>
+                            {/* 3. 液态玻璃按钮 (核心修改：增加 >= 8 的判断) */}
+                            {/* 只有当本页石头数量 >= 8 时，这个按钮才会渲染出来 */}
+                            {currentChunk.length >= 8 && (
+                                <>
+                                    {/* 注入自定义呼吸动画 */}
+                                    <style>{`
+                                        @keyframes whiteToNeon {
+                                            0% { background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.8); transform: scale(1); }
+                                            50% { background-color: #39FF14; box-shadow: 0 0 20px #39FF14; transform: scale(1.3); }
+                                            100% { background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.8); transform: scale(1); }
+                                        }
+                                    `}</style>
 
-                            <motion.button
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ 
-                                    scale: 1, 
-                                    opacity: 1,
-                                    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.05)"
-                                }}
-                                exit={{ scale: 0, opacity: 0 }} 
-                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                whileTap={{ scale: 0.96 }}
-                                onClick={handleTransformationClick}
-                                className={`
-                                    w-9 h-9 rounded-full flex items-center justify-center 
-                                    backdrop-blur-xl 
-                                    bg-gradient-to-br from-white/30 to-white/0 
-                                    border border-white/40
-                                    shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]
-                                `}
-                            >
-                                <div 
-                                    className={`rounded-full transition-all duration-500 ease-in-out`}
-                                    style={
-                                        currentChunk.length >= 9 
-                                        ? {
-                                            width: '10px',
-                                            height: '10px',
-                                            animation: 'whiteToNeon 3s infinite ease-in-out'
-                                          }
-                                        : {
-                                            width: '6px',
-                                            height: '6px',
-                                            backgroundColor: 'white',
-                                            opacity: 0.4,
-                                            boxShadow: '0 0 8px rgba(255,255,255,0.8)'
-                                          }
-                                    }
-                                ></div>
-                            </motion.button>
+                                    <motion.button
+                                        initial={{ scale: 0, opacity: 0 }}
+                                        animate={{ 
+                                            scale: 1, 
+                                            opacity: 1,
+                                            // 按钮本身的投影，保持极淡，不抢戏
+                                            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.05)"
+                                        }}
+                                        exit={{ scale: 0, opacity: 0 }} 
+                                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                        whileTap={{ scale: 0.96 }}
+                                        onClick={handleTransformationClick}
+                                        className={`
+                                            w-9 h-9 rounded-full flex items-center justify-center 
+                                            backdrop-blur-xl 
+                                            bg-gradient-to-br from-white/30 to-white/0 
+                                            border border-white/40
+                                            shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]
+                                        `}
+                                    >
+                                        <div 
+                                            className={`rounded-full transition-all duration-500 ease-in-out`}
+                                            style={
+                                                // 样式逻辑：只有同时满足 "集齐9个" 且 "还没点过" 时，才播放呼吸动画
+                                                currentChunk.length >= 9 && !hasClickedTransform
+                                                ? {
+                                                    width: '10px', height: '10px',
+                                                    animation: 'whiteToNeon 3s infinite ease-in-out'
+                                                  }
+                                                : {
+                                                    // 第8个石头出现时、或者点击后，都显示这个静止的白色小点
+                                                    width: '6px', height: '6px',
+                                                    backgroundColor: 'white', opacity: 0.4,
+                                                    boxShadow: '0 0 8px rgba(255,255,255,0.8)'
+                                                  }
+                                            }
+                                        ></div>
+                                    </motion.button>
+                                </>
+                            )}
 
-                            {/* 4. 未集齐时的提示气泡 */}
+                            {/* 4. 提示气泡 (为了不干扰视线，也加上 >= 8 的限制) */}
                             <AnimatePresence>
-                                {showNotReadyTip && (
+                                {showNotReadyTip && currentChunk.length >= 8 && (
                                     <motion.div
                                         initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: -50 }}
