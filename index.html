@@ -129,45 +129,72 @@
     </svg>
 
     <script type="text/babel">
-        const INSIGHT_DICT = {
-            universal: [
-                "石头从不着急赶路。", "青苔不懂石头的坚硬，但它懂得拥抱。", "山谷没有回音，是因为它在倾听。",
-                "有些重量，放下后才能看清形状。", "风吹过，痕迹变淡，但石头记得。", "此刻的粗糙，是未来圆润的开始。",
-                "河流流过，不留痕迹。", "看不见的根，比看得见的叶更深。", "世界是空旷的，回音全来自自身。",
-                "不要慌张，月亮也经常失眠。"
-            ],
-            comfort: [
-                "青苔只在阴影里生长，不必时刻向阳。", "雨水归于大海，情绪也终将平静。", "允许自己像石头一样，在这个午后静止。",
-                "裂缝不是破碎，是光和苔藓的入口。", "落叶归根，并不是某种失败。", "哪怕是石头，淋雨久了也会变软。",
-                "躲在壳里也没关系，蜗牛也是这样长大的。", "潮湿的时候，就长一点青苔吧。", "不必坚强，像水一样流淌就好。",
-                "夜色落下，一切都会变得温柔。"
-            ],
-            courage: [
-                "山不向我走来，我便站住。", "悬崖不害怕坠落，它成为了风景。", "急流中，只有最重的石头最安静。",
-                "风无法撼动扎根的树。", "把心变成石头，就不怕硬碰硬。", "路没有尽头，只有路口。",
-                "去撞击吧，像浪花撞击礁石那样。", "所有的墙，最后都会变成门。", "野草不需要园丁的允许也能生长。",
-                "站直了，影子自然会跟随你。"
-            ],
-            patience: [
-                "花只开一次，但年年准时。", "等待也是一种生长，像钟乳石那样。", "时间是风，记忆是灰，让它散去。",
-                "冬天来了，春天就不会迷路。", "旧物比新人更懂沉默。", "如果水流不通，那就变成湖泊。",
-                "答案像雾，太阳出来就会显现。", "不要追赶落日，它明天还会升起。", "缘起缘灭，像云聚云散。",
-                "有些事，过了一个季节就懂了。"
-            ]
-        };
+    // ==========================================
+    // 0. 配置区域
+    // ==========================================
+    // ... (保持原有的 INSIGHT_DICT 不变)
+    const INSIGHT_DICT = {
+        universal: [
+            "石头从不着急赶路。",
+            "青苔不懂石头的坚硬，但它懂得拥抱。",
+            "山谷没有回音，是因为它在倾听。",
+            "有些重量，放下后才能看清形状。",
+            "风吹过，痕迹变淡，但石头记得。",
+            "此刻的粗糙，是未来圆润的开始。",
+            "河流流过，不留痕迹。",
+            "看不见的根，比看得见的叶更深。",
+            "世界是空旷的，回音全来自自身。",
+            "不要慌张，月亮也经常失眠。"
+        ],
+        comfort: [
+            "青苔只在阴影里生长，不必时刻向阳。",
+            "雨水归于大海，情绪也终将平静。",
+            "允许自己像石头一样，在这个午后静止。",
+            "裂缝不是破碎，是光和苔藓的入口。",
+            "落叶归根，并不是某种失败。",
+            "哪怕是石头，淋雨久了也会变软。",
+            "躲在壳里也没关系，蜗牛也是这样长大的。",
+            "潮湿的时候，就长一点青苔吧。",
+            "不必坚强，像水一样流淌就好。",
+            "夜色落下，一切都会变得温柔。"
+        ],
+        courage: [
+            "山不向我走来，我便站住。",
+            "悬崖不害怕坠落，它成为了风景。",
+            "急流中，只有最重的石头最安静。",
+            "风无法撼动扎根的树。",
+            "把心变成石头，就不怕硬碰硬。",
+            "路没有尽头，只有路口。",
+            "去撞击吧，像浪花撞击礁石那样。",
+            "所有的墙，最后都会变成门。",
+            "野草不需要园丁的允许也能生长。",
+            "站直了，影子自然会跟随你。"
+        ],
+        patience: [
+            "花只开一次，但年年准时。",
+            "等待也是一种生长，像钟乳石那样。",
+            "时间是风，记忆是灰，让它散去。",
+            "冬天来了，春天就不会迷路。",
+            "旧物比新人更懂沉默。",
+            "如果水流不通，那就变成湖泊。",
+            "答案像雾，太阳出来就会显现。",
+            "不要追赶落日，它明天还会升起。",
+            "缘起缘灭，像云聚云散。",
+            "有些事，过了一个季节就懂了。"
+        ]
+    };
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const bufferSize = audioCtx.sampleRate * 2; 
-        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            output[i] = Math.random() * 2 - 1;
-        }
+    // ... (保持原有的 AudioContext 代码不变)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const bufferSize = audioCtx.sampleRate * 2; 
+    const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+    }
 
-        const playSound = (type, volume = 1.0) => {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+    const playSound = (type, volume = 1.0) => {
+        const runAudioLogic = () => {
             const t = audioCtx.currentTime;
             const gainNode = audioCtx.createGain();
             gainNode.connect(audioCtx.destination);
@@ -225,1091 +252,1366 @@
                 source.stop(t + 0.05);
             }
         };
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume().then(() => { runAudioLogic(); });
+        } else {
+            runAudioLogic();
+        }
+    };
 
-        const { motion, AnimatePresence } = window.Motion || {};
-        const { useState, useEffect, useCallback, useRef, useMemo } = React;
+    const { motion, AnimatePresence } = window.Motion || {};
+    const { useState, useEffect, useCallback, useRef, useMemo } = React;
 
-        const chunkArray = (array, size) => {
-            const result = [];
-            for (let i = 0; i < array.length; i += size) {
-                result.push(array.slice(i, i + size));
-            }
-            return result;
-        };
+    const chunkArray = (array, size) => {
+        const result = [];
+        for (let i = 0; i < array.length; i += size) {
+            result.push(array.slice(i, i + size));
+        }
+        return result;
+    };
 
-        const Icons = {
-            Return: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>,
-            Sun: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>,
-            Cloud: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>,
-            CloudRain: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>,
-            CloudLightning: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973"/><path d="m13 12-3 5h4l-3 5"/></svg>,
-            X: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>,
-            Trash: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>,
-            Grid: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>,
-            Broom: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/><path d="M4 6h16l-1-2H5L4 6Z"/></svg>
-        };
+    // ... (保持 Icons 定义不变)
+    const Icons = {
+        Return: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>,
+        Sun: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>,
+        Cloud: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>,
+        CloudRain: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>,
+        CloudLightning: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973"/><path d="m13 12-3 5h4l-3 5"/></svg>,
+        X: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>,
+        Trash: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>,
+        Grid: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>,
+        Broom: ({size=24, className}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/><path d="M4 6h16l-1-2H5L4 6Z"/></svg>
+    };
 
-        const Decorations = {
-            Lantern: () => (
-                <g opacity="0.6">
-                    <path d="M40 100 L60 100 L55 80 L45 80 Z" fill="#2C2C2C" />
-                    <path d="M48 80 L52 80 L52 60 L48 60 Z" fill="#2C2C2C" />
-                    <path d="M35 60 L65 60 L60 40 L40 40 Z" fill="#2C2C2C" />
-                    <path d="M30 40 Q50 20 70 40 L30 40" fill="#2C2C2C" />
-                    <circle cx="50" cy="35" r="3" fill="#E0E0E0" />
-                    <circle cx="50" cy="50" r="8" fill="#F9A825" opacity="0.3" filter="url(#mossFuzz)" />
-                </g>
-            ),
-            Pine: () => (
-                <g>
-                    <path d="M55 145 L45 145 Q40 120 50 100 Q35 90 30 75 Q45 80 55 90 Q60 70 55 50 L60 50 Q70 80 75 100 Q65 120 55 145 Z" fill="#2C2C2C" opacity="0.9" />
-                    <path d="M55 90 Q75 95 90 85" stroke="#2C2C2C" strokeWidth="3" fill="none" strokeLinecap="round" />
-                    <path d="M50 100 Q35 105 20 95" stroke="#2C2C2C" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-                    <path d="M55 50 Q50 35 60 20" stroke="#2C2C2C" strokeWidth="2" fill="none" strokeLinecap="round" />
-                    <circle cx="90" cy="85" r="14" fill="#3A4D1F" opacity="0.8" filter="url(#mossRoughness)" />
-                    <circle cx="85" cy="80" r="10" fill="#1a260e" opacity="0.5" filter="url(#mossRoughness)" />
-                    <circle cx="20" cy="95" r="12" fill="#3A4D1F" opacity="0.8" filter="url(#mossRoughness)" />
-                    <circle cx="60" cy="20" r="15" fill="#3A4D1F" opacity="0.9" filter="url(#mossRoughness)" />
-                    <circle cx="50" cy="25" r="10" fill="#7B924A" opacity="0.6" filter="url(#mossRoughness)" />
-                    <circle cx="50" cy="60" r="8" fill="#3A4D1F" opacity="0.7" filter="url(#mossRoughness)" />
-                </g>
-            ),
-            Bamboo: () => (
-                <g>
-                    <path d="M65 145 Q70 100 68 30" stroke="#3A4D1F" strokeWidth="2" fill="none" opacity="0.4" strokeLinecap="round" />
-                    <path d="M66 110 L70 109" stroke="#2C2C2C" strokeWidth="1" opacity="0.3" />
-                    <path d="M67 70 L71 69" stroke="#2C2C2C" strokeWidth="1" opacity="0.3" />
-                    <path d="M35 150 Q30 90 38 40" stroke="#3A4D1F" strokeWidth="3" fill="none" opacity="0.7" strokeLinecap="round" />
-                    <path d="M30 120 L40 118" stroke="#2C2C2C" strokeWidth="1.5" opacity="0.6" />
-                    <path d="M32 80 L42 78" stroke="#2C2C2C" strokeWidth="1.5" opacity="0.6" />
-                    <path d="M50 155 Q52 80 48 10" stroke="#2C2C2C" strokeWidth="4" fill="none" opacity="0.85" strokeLinecap="round" />
-                    <path d="M45 125 L56 123" stroke="#2C2C2C" strokeWidth="2" />
-                    <path d="M46 90 L57 88" stroke="#2C2C2C" strokeWidth="2" />
-                    <path d="M47 55 L58 53" stroke="#2C2C2C" strokeWidth="2" />
-                    <path d="M48 20 L35 25 M48 20 L55 10 M48 20 L60 25" stroke="#3A4D1F" strokeWidth="2" fill="none" />
-                    <path d="M38 40 L25 45 M38 40 L28 30" stroke="#3A4D1F" strokeWidth="2" fill="none" opacity="0.8" />
-                    <path d="M46 90 L60 95 M46 90 L65 85" stroke="#3A4D1F" strokeWidth="2" fill="none" opacity="0.8" />
-                    <path d="M30 120 L20 125" stroke="#3A4D1F" strokeWidth="1.5" fill="none" opacity="0.6" />
-                </g>
-            )
-        };
-
-        const ScreenState = {
-            COURTYARD: 'COURTYARD',
-            ETCHING: 'ETCHING',
-            OVERGROWTH: 'OVERGROWTH',
-            ECHO: 'ECHO'
-        };
-
-        const Weather = {
-            SUN: 'Sun',
-            CLOUD: 'Cloud',
-            RAIN: 'Rain',
-            STORM: 'Storm'
-        };
-
-        const generateOrganicShape = () => {
-            const r = () => 30 + Math.random() * 40; 
-            return `${r()}% ${r()}% ${r()}% ${r()}% / ${r()}% ${r()}% ${r()}% ${r()}%`;
-        };
-
-        const generateInsight = async (text, weatherType) => {
-            return new Promise(resolve => {
-                const thinkTime = 1500 + Math.random() * 1200;
-                setTimeout(() => {
-                    // 简单的模拟 insight 生成，不依赖 hash 避免复杂性
-                    let pool = INSIGHT_DICT.universal;
-                    if(weatherType === Weather.RAIN) pool = [...pool, ...INSIGHT_DICT.comfort];
-                    if(weatherType === Weather.STORM) pool = [...pool, ...INSIGHT_DICT.courage];
-                    if(weatherType === Weather.CLOUD) pool = [...pool, ...INSIGHT_DICT.patience];
-                    
-                    const randomIdx = Math.floor(Math.random() * pool.length);
-                    resolve(pool[randomIdx]);
-                }, thinkTime);
-            });
-        };
-
-        const Stone = ({ shape, size = 'md', isMossy = false, className = '', onClick, children, style }) => {
-            const sizeClasses = {
-                sm: 'w-16 h-16',
-                md: 'w-32 h-32',
-                lg: 'w-80 h-80' 
-            };
-            const thickShadowStyle = `
-                inset 2px 2px 10px rgba(255,255,255, 0.8), 
-                inset -3px -3px 15px rgba(0,0,0, 0.25), 
-                0px 5px 5px rgba(0,0,0, 0.15), 
-                0px 12px 20px rgba(0,0,0, 0.1), 
-                0px 25px 40px rgba(0,0,0, 0.1)
+    // ... (保持 Decorations 定义不变)
+    const Decorations = {
+        Lantern: () => (
+            <g opacity="0.6">
+                <path d="M40 100 L60 100 L55 80 L45 80 Z" fill="#2C2C2C" />
+                <path d="M48 80 L52 80 L52 60 L48 60 Z" fill="#2C2C2C" />
+                <path d="M35 60 L65 60 L60 40 L40 40 Z" fill="#2C2C2C" />
+                <path d="M30 40 Q50 20 70 40 L30 40" fill="#2C2C2C" />
+                <circle cx="50" cy="35" r="3" fill="#E0E0E0" />
+                <circle cx="50" cy="50" r="8" fill="#F9A825" opacity="0.3" filter="url(#mossFuzz)" />
+            </g>
+        ),
+        Pine: () => {
+            // 定义单个松针扇形的路径（模拟图片中的辐射状）
+            // 使用长短不一的线条来形成扇面
+            const fanPath = `
+                M0,0 L0,-28 
+                M0,0 L-6,-27 M0,0 L-12,-24 M0,0 L-17,-19 M0,0 L-22,-12 M0,0 L-25,-5 
+                M0,0 L6,-27 M0,0 L12,-24 M0,0 L17,-19 M0,0 L22,-12 M0,0 L25,-5
             `;
 
             return (
-                <div onClick={onClick} className={`relative bg-[#d4d4d4] overflow-hidden cursor-grab active:cursor-grabbing transition-all duration-300 ease-out ${sizeClasses[size]} ${className}`} style={{ borderRadius: shape, boxShadow: thickShadowStyle, transform: 'translateZ(0) perspective(500px) rotateX(2deg)', backfaceVisibility: 'hidden', ...style }}>
-                    <div className="absolute inset-0 opacity-20 pointer-events-none z-0" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")` }}></div>
-                    {isMossy && (
-                        <>
-                            <div className="absolute inset-0 z-10 opacity-70 mix-blend-multiply pointer-events-none" style={{ backgroundColor: '#4A5D23', filter: 'url(#mossRoughness) contrast(1.2)', transform: 'scale(1.02)' }}></div>
-                            <div className="absolute inset-0 z-10 opacity-60 mix-blend-overlay pointer-events-none" style={{ backgroundColor: '#8A9A5B', backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='fuzz'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23fuzz)' opacity='0.5'/%3E%3C/svg%3E")`, boxShadow: 'inset 5px 5px 20px rgba(255,255,255,0.3)' }}></div>
-                             <div className="absolute inset-0 z-10 pointer-events-none opacity-40 mix-blend-multiply" style={{ background: 'radial-gradient(circle at 30% 30%, transparent 40%, #1a260e 100%)' }}></div>
-                        </>
-                    )}
-                    <div className="relative z-20 w-full h-full">{children}</div>
-                </div>
+                <g>
+                    {/* 上方的松扇 - 居中直立 */}
+                    <g transform="translate(50, 65) scale(0.9)">
+                        {/* 松针 - 使用平头(butt)端点模拟扁平叶片 */}
+                        <path d={fanPath} stroke="#3A4D1F" strokeWidth="3.5" strokeLinecap="butt" fill="none" />
+                        {/* 枝干 */}
+                        <path d="M0,0 L0,30" stroke="#2C2C2C" strokeWidth="2" opacity="0.6" />
+                    </g>
+
+                    {/* 左下方的松扇 - 向左旋转 */}
+                    <g transform="translate(28, 95) rotate(-50) scale(0.8)">
+                        <path d={fanPath} stroke="#3A4D1F" strokeWidth="3.5" strokeLinecap="butt" fill="none" opacity="0.9" />
+                        <path d="M0,0 L0,20" stroke="#2C2C2C" strokeWidth="2" opacity="0.6" />
+                    </g>
+
+                    {/* 右下方的松扇 - 向右旋转 */}
+                    <g transform="translate(72, 95) rotate(50) scale(0.8)">
+                        <path d={fanPath} stroke="#3A4D1F" strokeWidth="3.5" strokeLinecap="butt" fill="none" opacity="0.9" />
+                        <path d="M0,0 L0,20" stroke="#2C2C2C" strokeWidth="2" opacity="0.6" />
+                    </g>
+                    
+                    {/* 根部连接点 - 增加一点点细节让它们聚拢 */}
+                    <path d="M50,130 Q50,110 50,95" stroke="#2C2C2C" strokeWidth="1.5" opacity="0.4" fill="none" />
+                </g>
             );
-        };
+        },
+        Bamboo: () => (
+            // 1. 稍微放大到 0.11，并调整位置使其居中
+            <g transform="translate(-5, 30) scale(0.11)">
+                {/* 左上叶子 - 深色强调 */}
+                <path 
+                    d="M528.406 66.185h97.912S614.8 123.781 614.8 164.098s4.32 135.829 10.56 181.425h-97.913s13.418-103.742 12.477-183.585c-0.359-30.598-11.518-95.753-11.518-95.753zM528.406 372.882h97.912S614.8 430.477 614.8 470.795c0 40.316 4.32 135.826 10.56 181.425h-97.913s13.418-103.745 12.477-183.586c-0.359-30.598-11.518-95.752-11.518-95.752zM528.406 678.137h97.912S614.8 735.734 614.8 776.05c0 40.316 4.32 135.827 10.56 181.426h-97.913s13.418-103.746 12.477-183.586c-0.359-30.598-11.518-95.753-11.518-95.753zM390.178 678.137h97.913s-11.52 57.597-11.52 97.913c0 40.316 4.32 135.827 10.56 181.426h-97.913s13.418-103.746 12.478-183.586c-0.359-30.598-11.518-95.753-11.518-95.753zM387.298 450.158h100.793s-11.52 41.366-11.52 70.321c0 28.959 1.44 78.466 9.601 129.823h-95.034s8.618-76.09 7.678-133.432c-0.36-21.976-11.518-66.712-11.518-66.712zM773.187 571.107s12.477-76.797 68.152-107.512c55.678-30.717 116.154-68.155 116.154-68.155s-9.6 70.073-77.754 131.51c-68.152 61.437-106.552 44.157-106.552 44.157zM705.035 621.983s46.075-18.242 77.753-14.399c31.678 3.841 120.95 41.275 129.591 45.114 0 0-79.677 39.358-154.552 11.52-74.875-27.837-52.792-42.235-52.792-42.235zM723.27 401.2s-25.918 103.673-28.798 128.63c-2.88 24.955 18.239 63.353 31.676 71.993 0 0 38.398-20.158 32.64-79.672-5.759-59.517-25.917-108.472-35.518-120.952z" 
+                    fill="#3A4D1F" 
+                    opacity="0.9"
+                />
+                
+                {/* 底部和右侧 - 稍微淡一点，制造远近感 */}
+                <path 
+                    d="M620.2 668.778l160.664-104.392 7.442 5.282-161.628 107.03zM378.12 251.564s-9.232-77.251-63.566-110.285c-54.335-33.037-113.178-72.985-113.178-72.985s6.641 70.415 72.147 134.668c65.506 64.248 104.596 48.602 104.596 48.602zM444.071 305.265s-45.267-20.164-77.077-17.66c-31.813 2.502-122.583 36.145-131.374 39.619 0 0 77.944 42.675 153.924 18.015 75.98-24.657 54.527-39.974 54.527-39.974zM435.146 83.912s21.532 104.67 23.36 129.728c1.825 25.054-20.892 62.53-34.684 70.595 0 0-37.514-21.755-29.253-80.977 8.26-59.22 30.464-107.284 40.577-119.346z" 
+                    fill="#3A4D1F" 
+                    opacity="0.7"
+                />
+                
+                {/* 中间主干 - 颜色加深 */}
+                <path 
+                    d="M541.191 366.045l-170.46-121.517-7.655 4.962 172.052 123.392zM244.177 602.254s-20.4-63.572-71.574-82.527C121.43 500.778 65.33 476.74 65.33 476.74s17.1 58.236 82.787 101.661c65.684 43.423 96.059 23.853 96.059 23.853zM308.513 636.719s-41.43-9.59-67.818-2.285c-26.392 7.307-97.364 50.481-104.203 54.846 0 0 72.638 23.215 132.617-9.979 59.98-33.183 39.404-42.582 39.404-42.582zM264.823 451.696S300.065 536.36 305.7 557.17c5.631 20.804-7.38 56.09-17.682 65.137 0 0-35.158-12.197-37.877-63.44-2.718-51.24 8.133-95.357 14.682-107.172z" 
+                    fill="#2C2C2C" 
+                    opacity="0.6" 
+                />
+                
+                {/* 根部 */}
+                <path 
+                    d="M400.264 672.051l-163.46-74.52-5.64 5.435L396.272 678.8z" 
+                    fill="#3A4D1F" 
+                    opacity="0.8"
+                />
+            </g>
+        ),
+    };
 
-        const Pool = ({ isActive, stoneCount, onClick }) => {
-            return (
-                <div className="absolute bottom-0 left-0 w-full flex justify-center pb-12 pointer-events-none z-40">
-                    <motion.div
-                        layoutId="courtyard-pool"
-                        initial={{ height: 120, width: 180, borderRadius: "40% 60% 50% 50% / 50% 40% 60% 50%" }}
-                        animate={{
-                            height: 160,
-                            width: 300,
-                            backgroundColor: isActive ? "rgba(100, 200, 240, 0.4)" : "rgba(160, 170, 180, 0.25)",
-                            boxShadow: isActive 
-                                ? "0 0 30px rgba(100, 200, 240, 0.3), inset 0 0 20px rgba(255,255,255,0.4)" 
-                                : "inset 0 0 20px rgba(0,0,0,0.05)",
-                            scale: isActive ? [1, 1.02, 1] : 1,
-                        }}
-                        transition={{ 
-                            layout: { duration: 0.6, ease: "easeInOut" },
-                            scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                            backgroundColor: { duration: 0.5 }
-                        }}
-                        className={`backdrop-blur-sm border-2 transition-colors duration-500 flex items-center justify-center pointer-events-auto ${
-                            isActive ? "border-blue-200/50 cursor-pointer" : "border-ink/5"
-                        }`}
-                        onClick={isActive ? onClick : undefined}
-                    >
-                        <AnimatePresence mode="wait">
-                            {isActive ? (
-                                <motion.div
-                                    key="active"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className="text-center"
-                                >
-                                    <span className="text-white/90 font-serif font-bold tracking-widest text-lg drop-shadow-md">
-                                        兑换风景
-                                    </span>
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    key="inactive"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className="text-center"
-                                >
-                                    <span className="text-ink/20 font-serif text-sm tracking-widest block mb-1">
-                                        放入苔石 ({stoneCount}/3)
-                                    </span>
-                                    <span className="text-[10px] text-ink/10 uppercase tracking-[0.2em]">
-                                        Pool Area
-                                    </span>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </motion.div>
-                </div>
-            );
-        };
+    const ScreenState = {
+        COURTYARD: 'COURTYARD',
+        ETCHING: 'ETCHING',
+        OVERGROWTH: 'OVERGROWTH',
+        ECHO: 'ECHO'
+    };
 
-        const ShopMenu = ({ onClose, onSelect }) => {
-            const items = [
-                { type: 'Lantern', name: '石灯笼', icon: Decorations.Lantern },
-                { type: 'Pine', name: '罗汉松', icon: Decorations.Pine },
-                { type: 'Bamboo', name: '新竹', icon: Decorations.Bamboo },
-            ];
+    const Weather = {
+        SUN: 'Sun',
+        CLOUD: 'Cloud',
+        RAIN: 'Rain',
+        STORM: 'Storm'
+    };
 
-            return (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/5 backdrop-blur-[2px]" onClick={onClose}>
-                    <motion.div 
-                        initial={{ scale: 0.9, opacity: 0, y: 20 }} 
-                        animate={{ scale: 1, opacity: 1, y: 0 }} 
-                        exit={{ scale: 0.95, opacity: 0, y: 10 }} 
-                        onClick={(e) => e.stopPropagation()} 
-                        className="bg-white/40 backdrop-blur-[20px] backdrop-saturate-[180%] p-6 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.1),_inset_0_1px_0_rgba(255,255,255,0.8)] w-80 text-center border border-white/60"
-                    >
-                        <h4 className="text-ink/80 font-serif font-bold mb-6 tracking-wider">选择庭院风景</h4>
-                        <div className="flex gap-4 justify-center">
-                            {items.map((item) => {
-                                const Icon = item.icon;
-                                return (
-                                    <button 
-                                        key={item.type}
-                                        onClick={() => onSelect(item.type)}
-                                        className="flex flex-col items-center gap-2 group"
-                                    >
-                                        <div className="w-16 h-20 bg-white/40 rounded-xl border border-white/40 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform overflow-hidden relative">
-                                            <svg width="40" height="60" viewBox="0 0 100 150">
-                                                <Icon />
-                                            </svg>
-                                        </div>
-                                        <span className="text-[10px] font-serif text-ink/60 group-hover:text-ink transition-colors">{item.name}</span>
-                                    </button>
-                                );
-                            })}
-                        </div>
-                        <button onClick={onClose} className="mt-8 text-xs text-ink/30 hover:text-ink/60 transition-colors tracking-widest">再想想</button>
-                    </motion.div>
-                </div>
-            );
-        };
+    // [修复2] 添加丢失的 weatherOptions 定义
+    const weatherOptions = [
+        { type: Weather.SUN, label: "晴朗", icon: Icons.Sun },
+        { type: Weather.CLOUD, label: "多云", icon: Icons.Cloud },
+        { type: Weather.RAIN, label: "雨天", icon: Icons.CloudRain },
+        { type: Weather.STORM, label: "雷雨", icon: Icons.CloudLightning },
+    ];
 
-        const Courtyard = ({ stones, onStart, onUpdateStones, gardenItems, onTransform }) => {
-            const [windowSize, setWindowSize] = useState({ w: window.innerWidth, h: window.innerHeight });
-
-            useEffect(() => {
-                const handleResize = () => setWindowSize({ w: window.innerWidth, h: window.innerHeight });
-                window.addEventListener('resize', handleResize);
-                return () => window.removeEventListener('resize', handleResize);
-            }, []);
-
-            const xLimit = windowSize.w / 2 - 60;
-            const yLimit = windowSize.h / 2 - 90;
-
-            const [isSelectorOpen, setIsSelectorOpen] = useState(false);
-            const [selectedStone, setSelectedStone] = useState(null);
-            const [currentPageIndex, setCurrentPageIndex] = useState(0);
-            const [showClearConfirm, setShowClearConfirm] = useState(false);
-            const [showNotReadyTip, setShowNotReadyTip] = useState(false);
-
-            const [isShopMode, setIsShopMode] = useState(false);
-            const [stonesInPool, setStonesInPool] = useState([]);
-            const [showShopMenu, setShowShopMenu] = useState(false);
-
-            const toggleShopMode = () => {
-                if (!isShopMode) {
-                    setIsShopMode(true);
-                    setStonesInPool([]);
-                } else {
-                    setIsShopMode(false);
-                    setStonesInPool([]);
-                    setShowShopMenu(false);
-                }
-            };
+    const generateOrganicShape = () => {
+        const r = () => 30 + Math.random() * 40; 
+        return `${r()}% ${r()}% ${r()}% ${r()}% / ${r()}% ${r()}% ${r()}% ${r()}%`;
+    };
+    
+    // ... (保持 generateInsight, Stone, Pool, ShopMenu 不变)
+    const generateInsight = async (text, weatherType) => {
+        return new Promise(resolve => {
+            const thinkTime = 1500 + Math.random() * 1200;
             
-            useEffect(() => {
-                const handleWheel = (e) => {
-                    if (isShopMode && Math.abs(e.deltaY) > 50 && !showShopMenu) {
-                         // setIsShopMode(false); 
+            setTimeout(() => {
+                const t = (text || "").toLowerCase();
+                let hash = 0;
+                for (let i = 0; i < t.length; i++) {
+                    const char = t.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash; 
+                }
+                const seed = Math.abs(hash); 
+
+                const dict = {
+                    negations: ["不", "没", "非", "别", "无", "not", "no", "don't"],
+                    emotions: {
+                        negative: ["累", "痛", "苦", "哭", "烦", "死", "糟", "烂", "丧", "病", "难", "累", "倦", "sad", "bad", "tired"],
+                        fear: ["怕", "慌", "恐", "吓", "避", "逃", "不敢", "担心", "afraid", "fear"],
+                        confused: ["迷", "惑", "乱", "晕", "不懂", "不知", "怀疑", "lost", "confused"]
+                    },
+                    topics: {
+                        love: ["爱", "情", "他", "她", "你", "想", "念", "分", "离", "前任", "友", "家", "love", "miss"],
+                        work: ["职", "工", "作", "钱", "穷", "忙", "业", "考", "学", "板", "户", "work", "job", "money"],
+                        self: ["我", "己", "人", "命", "运", "性格", "自", "self", "life"]
                     }
                 };
-                window.addEventListener('wheel', handleWheel);
-                return () => window.removeEventListener('wheel', handleWheel);
-            }, [isShopMode, showShopMenu]);
 
-            const [showDebug, setShowDebug] = useState(false);
-            const debugClickCountRef = useRef(0);
-            const debugTimerRef = useRef(null);
-
-            const handleTitleClick = () => {
-                debugClickCountRef.current += 1;
-                if (debugTimerRef.current) clearTimeout(debugTimerRef.current);
-                debugTimerRef.current = setTimeout(() => {
-                    debugClickCountRef.current = 0;
-                }, 500);
-                if (debugClickCountRef.current >= 3) {
-                    setShowDebug(prev => !prev);
-                    debugClickCountRef.current = 0;
-                    clearTimeout(debugTimerRef.current);
-                }
-            };
-
-            const [silencedPages, setSilencedPages] = useState([]);
-            const isDraggingRef = useRef(false);
-            const scrollContainerRef = useRef(null);
-            const pageRefs = useRef([]);
-
-            const stoneChunks = useMemo(() => {
-                const sorted = [...stones]; 
-                const chunks = chunkArray(sorted, 9);
-                if (chunks.length === 0) chunks.push([]);
-                while (chunks.length <= currentPageIndex) {
-                    chunks.push([]);
-                }
-                return chunks;
-            }, [stones, currentPageIndex]);
-
-            const currentChunk = stoneChunks[currentPageIndex] || [];
-
-            useEffect(() => {
-                if (!stoneChunks[currentPageIndex]) return;
-                if (currentChunk.length < 9) {
-                    setSilencedPages(prev => prev.filter(pageIndex => pageIndex !== currentPageIndex));
-                }
-            }, [currentChunk.length, currentPageIndex, stoneChunks]);
-
-            const smoothScrollTo = (element, target, duration) => {
-                const start = element.scrollTop;
-                const change = target - start;
-                const startTime = performance.now();
-                element.style.scrollSnapType = 'none';
-                const animateScroll = (currentTime) => {
-                    const timeElapsed = currentTime - startTime;
-                    if (timeElapsed < duration) {
-                        const progress = timeElapsed / duration;
-                        const ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
-                        element.scrollTop = start + (change * ease);
-                        requestAnimationFrame(animateScroll);
-                    } else {
-                        element.scrollTop = target;
-                        element.style.scrollSnapType = 'y mandatory';
-                    }
+                const has = (keywords) => {
+                    return keywords.some(k => {
+                        const idx = t.indexOf(k);
+                        if (idx === -1) return false;
+                        const prev2Chars = t.substring(Math.max(0, idx - 2), idx);
+                        const isNegated = dict.negations.some(n => prev2Chars.includes(n));
+                        return !isNegated; 
+                    });
                 };
-                requestAnimationFrame(animateScroll);
-            };
 
-            useEffect(() => {
-                if (stoneChunks.length > 1) {
-                    const lastPageIndex = stoneChunks.length - 1;
-                    const container = scrollContainerRef.current;
-                    if (container) {
-                        const pageHeight = container.clientHeight;
-                        const targetScrollTop = lastPageIndex * pageHeight;
-                        const prevPageScrollTop = (lastPageIndex - 1) * pageHeight;
-                        container.style.scrollBehavior = 'auto'; 
-                        if (container.scrollTop < 10) container.scrollTop = prevPageScrollTop;
-                        smoothScrollTo(container, targetScrollTop, 1500); 
-                    }
+                let category = null;
+
+                if (has(dict.topics.work) && (has(dict.emotions.negative) || has(dict.emotions.fear))) {
+                    category = (seed % 2 === 0) ? "comfort" : "courage";
                 }
-            }, [stones.length, stoneChunks.length]);
-
-            const weatherOptions = [
-                { type: Weather.SUN, icon: Icons.Sun, label: "晴朗" },
-                { type: Weather.CLOUD, icon: Icons.Cloud, label: "多云" },
-                { type: Weather.RAIN, icon: Icons.CloudRain, label: "雨天" },
-                { type: Weather.STORM, icon: Icons.CloudLightning, label: "风暴" },
-            ];
-
-            const formatDate = (timestamp) => {
-                const date = new Date(timestamp);
-                const Y = date.getFullYear();
-                const M = (date.getMonth() + 1).toString().padStart(2, '0');
-                const D = date.getDate().toString().padStart(2, '0');
-                const h = date.getHours().toString().padStart(2, '0');
-                const m = date.getMinutes().toString().padStart(2, '0');
-                return `${Y}年${M}月${D}日 ${h}:${m}`;
-            };
-
-            const handleScroll = () => {
-                if (!scrollContainerRef.current) return;
-                const scrollTop = scrollContainerRef.current.scrollTop;
-                const height = scrollContainerRef.current.clientHeight;
-                const index = Math.round(scrollTop / height);
-                setCurrentPageIndex(index);
-            };
-
-            const handleDragEnd = (stoneId, info) => {
-                const delta = { x: info.offset.x, y: info.offset.y };
-                onUpdateStones(prev => prev.map(s => {
-                    if (s.id === stoneId) {
-                        let newX = (s.x || 0) + delta.x;
-                        let newY = (s.y || 0) + delta.y;
-                        newX = Math.max(-xLimit, Math.min(newX, xLimit));
-                        newY = Math.max(-yLimit, Math.min(newY, yLimit));
-                        return { ...s, x: newX, y: newY };
-                    }
-                    return s;
-                }));
-
-                if (isShopMode) {
-                    const poolThreshold = window.innerHeight - 180;
-                    if (info.point.y > poolThreshold) {
-                        setStonesInPool(prev => {
-                            if (!prev.includes(stoneId)) return [...prev, stoneId];
-                            return prev;
-                        });
-                    } else {
-                        setStonesInPool(prev => prev.filter(id => id !== stoneId));
-                    }
+                else if (has(dict.topics.love) && (has(dict.emotions.negative) || has(dict.emotions.confused))) {
+                    category = "patience";
                 }
-            };
-            
-            const handleRedeem = (itemType) => {
-                const stonesToSacrifice = stonesInPool.slice(0, 3);
-                onTransform(stonesToSacrifice, itemType); 
-                setShowShopMenu(false);
-                setIsShopMode(false);
-                setStonesInPool([]);
-            };
-
-            const handleOrganize = () => {
-                playSound('organize');
-                if(currentChunk.length === 0) return;
-                const gridGap = 110; 
-                const startX = -110; 
-                const startY = -120; 
-                const updates = {};
-                currentChunk.forEach((stone, index) => {
-                    const row = Math.floor(index / 3);
-                    const col = index % 3;
-                    updates[stone.id] = { x: startX + col * gridGap, y: startY + row * gridGap, rotation: 0 };
-                });
-                onUpdateStones(prev => prev.map(s => updates[s.id] ? { ...s, ...updates[s.id] } : s));
-            };
-
-            const handleClear = (type) => {
-                if (type === 'current') {
-                    const stonesToRemove = currentChunk.map(s => s.id);
-                    onUpdateStones(prev => prev.filter(s => !stonesToRemove.includes(s.id)));
-                } else if (type === 'all') {
-                    onUpdateStones([]);
+                else if (has(dict.topics.self) && has(dict.emotions.confused)) {
+                    category = "courage";
                 }
-                setShowClearConfirm(false);
-            };
+                else if (has(dict.emotions.negative)) category = "comfort";
+                else if (has(dict.emotions.fear)) category = "courage";
+                else if (has(dict.emotions.confused)) category = "patience";
+                else {
+                    if (weatherType === 'Rain') category = "comfort";
+                    else if (weatherType === 'Cloud') category = "patience";
+                    else category = "universal";
+                }
+                
+                let pool = [...INSIGHT_DICT[category || "universal"]];
+                if (category && category !== "universal") {
+                    pool = [...pool, ...INSIGHT_DICT.universal];
+                }
+                
+                const daySeed = new Date().getDate() + new Date().getHours();
+                const finalIndex = (seed + daySeed) % pool.length;
+                
+                resolve(pool[finalIndex]);
 
-            const getPageDateRange = (chunk) => {
-                if (!chunk || chunk.length === 0) return "";
-                const fmt = (ts) => {
-                    const d = new Date(ts);
-                    return `${d.getFullYear()}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`;
-                };
-                const startStr = fmt(chunk[0].timestamp);
-                const endStr = fmt(chunk[chunk.length - 1].timestamp);
-                return startStr === endStr ? startStr : `${startStr} - ${endStr}`;
-            };
+            }, thinkTime);
+        });
+    };
 
-            return (
-                <div className="relative w-full h-full bg-[#E0E0E0] transition-colors duration-700">
-                    <header className="absolute top-12 left-0 w-full text-center z-20 pointer-events-none">
-                        <div className="relative h-12 overflow-hidden">
-                            <AnimatePresence mode="wait">
-                                {isShopMode ? (
-                                    <motion.div 
-                                        key="shop-title"
-                                        initial={{ y: 20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        exit={{ y: -20, opacity: 0 }}
-                                        className="absolute w-full"
-                                    >
-                                        <h1 className="text-3xl font-serif font-bold text-moss opacity-90">苔石商店</h1>
-                                        <p className="text-xs text-moss/60 mt-2 tracking-[0.2em] uppercase">Moss Stone Shop</p>
-                                    </motion.div>
-                                ) : (
-                                    <motion.div 
-                                        key="normal-title"
-                                        initial={{ y: -20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        exit={{ y: 20, opacity: 0 }}
-                                        className="absolute w-full pointer-events-auto cursor-pointer"
-                                        onClick={handleTitleClick}
-                                    >
-                                        <h1 className="text-3xl font-serif font-bold text-ink opacity-80">苔与石</h1>
-                                        <p className="text-xs text-ink/60 mt-2 tracking-[0.2em] uppercase">Moss &amp; Stone</p>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                        {stones.length > 0 && !isShopMode && (
-                            <div className="absolute top-2 right-[-60px] md:right-[-100px] text-[10px] text-ink/20 font-sans">
-                                本页: {currentChunk.length}/9
-                            </div>
-                        )}
-                    </header>
+    const Stone = ({ shape, size = 'md', isMossy = false, className = '', onClick, children, style }) => {
+        const sizeClasses = {
+            sm: 'w-16 h-16',
+            md: 'w-32 h-32',
+            lg: 'w-80 h-80' 
+        };
+        const thickShadowStyle = `
+            inset 2px 2px 10px rgba(255,255,255, 0.8), 
+            inset -3px -3px 15px rgba(0,0,0, 0.25), 
+            0px 5px 5px rgba(0,0,0, 0.15), 
+            0px 12px 20px rgba(0,0,0, 0.1), 
+            0px 25px 40px rgba(0,0,0, 0.1)
+        `;
 
-                    <div className="absolute top-12 right-6 z-30 flex flex-col gap-4 items-center">
-                        {isShopMode ? (
-                            <button 
-                                onClick={toggleShopMode}
-                                className="w-9 h-9 rounded-full flex items-center justify-center bg-white/40 border border-white/30 shadow-sm text-ink/60 hover:text-ink hover:bg-white/60 transition-all"
-                            >
-                                <Icons.Return size={18} />
-                            </button>
-                        ) : (
-                            stones.length > 0 && (
-                                <>
-                                    <button onClick={handleOrganize} className="w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md bg-white/20 border border-white/30 shadow-sm text-ink/60 hover:text-ink hover:scale-105 transition-all" title="整理">
-                                        <Icons.Grid size={18} />
-                                    </button>
-                                    
-                                    <button onClick={() => setShowClearConfirm(true)} className="w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md bg-white/20 border border-white/30 shadow-sm text-ink/60 hover:text-ink hover:scale-105 transition-all" title="收纳">
-                                        <Icons.Broom size={18} />
-                                    </button>
+        return (
+            <div onClick={onClick} className={`relative bg-[#d4d4d4] overflow-hidden cursor-grab active:cursor-grabbing transition-all duration-300 ease-out ${sizeClasses[size]} ${className}`} style={{ borderRadius: shape, boxShadow: thickShadowStyle, transform: 'translateZ(0) perspective(500px) rotateX(2deg)', backfaceVisibility: 'hidden', ...style }}>
+                <div className="absolute inset-0 opacity-20 pointer-events-none z-0" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")` }}></div>
+                {isMossy && (
+                    <>
+                        <div className="absolute inset-0 z-10 opacity-70 mix-blend-multiply pointer-events-none" style={{ backgroundColor: '#4A5D23', filter: 'url(#mossRoughness) contrast(1.2)', transform: 'scale(1.02)' }}></div>
+                        <div className="absolute inset-0 z-10 opacity-60 mix-blend-overlay pointer-events-none" style={{ backgroundColor: '#8A9A5B', backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='fuzz'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23fuzz)' opacity='0.5'/%3E%3C/svg%3E")`, boxShadow: 'inset 5px 5px 20px rgba(255,255,255,0.3)' }}></div>
+                         <div className="absolute inset-0 z-10 pointer-events-none opacity-40 mix-blend-multiply" style={{ background: 'radial-gradient(circle at 30% 30%, transparent 40%, #1a260e 100%)' }}></div>
+                    </>
+                )}
+                <div className="relative z-20 w-full h-full">{children}</div>
+            </div>
+        );
+    };
 
-                                    {stones.length >= 2 && (
-                                        <>
-                                             <style>{`
-                                                @keyframes whiteToNeon {
-                                                    0% { background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.8); transform: scale(1); }
-                                                    50% { background-color: #39FF14; box-shadow: 0 0 20px #39FF14; transform: scale(1.3); }
-                                                    100% { background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.8); transform: scale(1); }
-                                                }
-                                            `}</style>
-                                            <motion.button
-                                                initial={{ scale: 0, opacity: 0 }}
-                                                animate={{ scale: 1, opacity: 1 }}
-                                                exit={{ scale: 0, opacity: 0 }} 
-                                                whileTap={{ scale: 0.9 }}
-                                                onClick={toggleShopMode} 
-                                                className="w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md bg-white/20 border border-white/30 shadow-sm"
-                                            >
-                                                <div 
-                                                    className={`rounded-full transition-all duration-500 ease-in-out`}
-                                                    style={
-                                                        stones.length >= 3 
-                                                        ? { width: '10px', height: '10px', animation: 'whiteToNeon 3s infinite ease-in-out' }
-                                                        : { width: '6px', height: '6px', backgroundColor: 'white', opacity: 0.9, boxShadow: '0 0 6px rgba(255,255,255,0.9)' }
-                                                    }
-                                                ></div>
-                                            </motion.button>
-                                        </>
-                                    )}
-                                </>
-                            )
-                        )}
-                    </div>
+const Pool = ({ isActive, stoneCount, onClick }) => {
+        // 这是和“添加石头”按钮完全一致的形状参数
+        const targetShape = "40% 60% 50% 50% / 50% 40% 60% 50%"; 
 
-                    <div ref={scrollContainerRef} onScroll={handleScroll} className={`courtyard-scroll-container no-scrollbar relative transition-opacity duration-500 ${isShopMode ? 'overflow-visible' : ''}`}>
-                        {stoneChunks.map((chunk, pageIndex) => (
-                            <div key={pageIndex} ref={el => pageRefs.current[pageIndex] = el} className="courtyard-page">
-                                <div className="relative w-[340px] h-[340px] md:w-[500px] md:h-[500px]">
-                                    <AnimatePresence>
-                                        {chunk.map((stone, i) => (
-                                            <motion.div 
-                                                key={stone.id} 
-                                                drag
-                                                whileDrag={{ scale: 1.05, zIndex: 100 }} 
-                                                dragMomentum={false}
-                                                dragElastic={0}
-                                                onPointerDown={() => { if (audioCtx.state === 'suspended') audioCtx.resume(); }}
-                                                onDragStart={() => { isDraggingRef.current = true; playSound('lift'); }}
-                                                onDragEnd={(e, info) => { 
-                                                    handleDragEnd(stone.id, info); 
-                                                    playSound('drop'); 
-                                                    setTimeout(() => isDraggingRef.current = false, 200); 
-                                                }}
-                                                onClick={(e) => {
-                                                    if (isShopMode) return; 
-                                                    if (isDraggingRef.current) { e.stopPropagation(); return; }
-                                                    if (!isSelectorOpen && !selectedStone) setSelectedStone(stone);
-                                                }}
-                                                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                                                dragConstraints={{ left: -xLimit, right: xLimit, top: -yLimit, bottom: yLimit }}
-                                                initial={{ scale: 0 }}
-                                                animate={{ 
-                                                    scale: 1, 
-                                                    x: stone.x || 0, 
-                                                    y: stone.y || 0, 
-                                                    rotate: stone.rotation, 
-                                                    opacity: 1,
-                                                }}
-                                                className="absolute left-1/2 top-1/2 -ml-8 -mt-8"
-                                                style={{ zIndex: 10 }}
-                                            >
-                                                <Stone shape={stone.shapePolygon} isMossy size="sm" className="hover:scale-105 transition-transform duration-300 shadow-lg" />
-                                            </motion.div>
-                                        ))}
-                                    </AnimatePresence>
-                                </div>
-
-                                {pageIndex === stoneChunks.length - 1 && !isShopMode && !isSelectorOpen && !selectedStone && (
-                                    <div className="absolute left-0 w-full flex justify-center pointer-events-none bottom-20">
-                                        <motion.button
-                                            initial={{ opacity: 0, scale: 0.9 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            onClick={() => setIsSelectorOpen(true)}
-                                            className="w-48 h-32 border-4 border-dashed border-ink/10 rounded-[40%_60%_50%_50%/50%_40%_60%_50%] flex items-center justify-center hover:border-ink/30 transition-colors bg-concrete/20 pointer-events-auto"
-                                        >
-                                            <span className="text-2xl text-ink/20">+</span>
-                                        </motion.button>
-                                    </div>
-                                )}
-                                
-                                {!isShopMode && (
-                                    <div className="absolute bottom-8 left-0 w-full text-center pointer-events-none">
-                                        <p className="text-[10px] font-sans font-bold tracking-[0.15em] text-ink/20 mb-1.5 uppercase">{getPageDateRange(chunk)}</p>
-                                        <p className="text-xs text-ink/60 font-serif tracking-widest">{pageIndex === stoneChunks.length - 1 ? "把心事，放在这里。" : "往事已生青苔。" }</p>
-                                        {stoneChunks.length > 1 && (
-                                            <div className="mt-2 flex justify-center gap-1">
-                                                {stoneChunks.map((_, i) => (
-                                                    <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === currentPageIndex ? 'bg-moss' : 'bg-ink/10'}`} />
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-
-                    <AnimatePresence>
-                        {isShopMode && (
+        return (
+            /* 
+               【关键修改】
+               1. 将 className 改为与“+号按钮”完全一致的定位：bottom-20
+               2. 去掉了之前的 pb-12, h-[300px], items-end，确保位置精确重叠
+            */
+            <div className="absolute bottom-20 left-0 w-full flex justify-center pointer-events-none">
+                <motion.div
+                    layoutId="courtyard-pool"
+                    /* 保持尺寸为 w-48 (192px) 和 h-32 (128px) */
+                    initial={{ width: 192, height: 128, borderRadius: targetShape }}
+                    animate={{
+                        width: 192, 
+                        height: 128, 
+                        borderRadius: targetShape,
+                        backgroundColor: isActive ? "rgba(100, 200, 240, 0.4)" : "rgba(160, 170, 180, 0.25)",
+                        boxShadow: isActive 
+                            ? "0 0 30px rgba(100, 200, 240, 0.3), inset 0 0 20px rgba(255,255,255,0.4)" 
+                            : "inset 0 0 20px rgba(0,0,0,0.05)",
+                        scale: isActive ? [1, 1.05, 1] : 1, 
+                    }}
+                    transition={{ 
+                        scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                        backgroundColor: { duration: 0.5 }
+                    }}
+                    className={`backdrop-blur-sm border-2 transition-colors duration-500 flex items-center justify-center ${
+                        isActive ? "border-blue-200/50" : "border-ink/5"
+                    }`}
+                >
+                    <AnimatePresence mode="wait">
+                        {isActive ? (
                             <motion.div
-                                initial={{ y: 200, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                exit={{ y: 200, opacity: 0 }}
-                                transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                                className="fixed bottom-0 left-0 w-full z-40 pointer-events-none"
+                                key="active"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="text-center pointer-events-auto cursor-pointer z-50"
+                                onClick={(e) => { e.stopPropagation(); onClick(); }}
                             >
-                                <Pool 
-                                    isActive={stonesInPool.length >= 3} 
-                                    stoneCount={stonesInPool.length} 
-                                    onClick={() => setShowShopMenu(true)} 
-                                />
+                                <span className="text-white/90 font-serif font-bold tracking-widest text-lg drop-shadow-md">
+                                    兑换
+                                </span>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="inactive"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="text-center pointer-events-none"
+                            >
+                                <span className="text-ink/20 font-serif text-xs tracking-widest block mb-1">
+                                    放入 ({stoneCount}/3)
+                                </span>
                             </motion.div>
                         )}
                     </AnimatePresence>
+                </motion.div>
+            </div>
+        );
+    };
 
-                    <AnimatePresence>
-                        {showShopMenu && (
-                            <ShopMenu 
-                                onClose={() => setShowShopMenu(false)}
-                                onSelect={handleRedeem}
-                            />
-                        )}
-                    </AnimatePresence>
+    const ShopMenu = ({ onClose, onSelect }) => {
+        const items = [
+            { type: 'Lantern', name: '石灯笼', icon: Decorations.Lantern },
+            { type: 'Pine', name: '罗汉松', icon: Decorations.Pine },
+            { type: 'Bamboo', name: '新竹', icon: Decorations.Bamboo },
+        ];
 
-                    <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none"> 
-                        {gardenItems && gardenItems.map(item => {
-                            const Component = Decorations[item.type];
+        return (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/5 backdrop-blur-[2px]" onClick={onClose}>
+                <motion.div 
+                    initial={{ scale: 0.9, opacity: 0, y: 20 }} 
+                    animate={{ scale: 1, opacity: 1, y: 0 }} 
+                    exit={{ scale: 0.95, opacity: 0, y: 10 }} 
+                    onClick={(e) => e.stopPropagation()} 
+                    className="bg-white/40 backdrop-blur-[20px] backdrop-saturate-[180%] p-6 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.1),_inset_0_1px_0_rgba(255,255,255,0.8)] w-80 text-center border border-white/60"
+                >
+                    <h4 className="text-ink/80 font-serif font-bold mb-6 tracking-wider">选择庭院风景</h4>
+                    <div className="flex gap-4 justify-center">
+                        {items.map((item) => {
+                            const Icon = item.icon;
                             return (
-                                <motion.div
-                                    key={item.id}
-                                    drag 
-                                    dragMomentum={false} 
-                                    initial={{ opacity: 0, scale: 0 }}
-                                    animate={{ opacity: 1, scale: item.scale }}
-                                    transition={{ duration: 2, ease: "easeOut" }}
-                                    className="absolute cursor-move pointer-events-auto" 
-                                    style={{
-                                        left: `${item.x}%`,
-                                        top: `${item.y}%`,
-                                        filter: 'blur(1px) drop-shadow(0 4px 6px rgba(0,0,0,0.1))'
-                                    }}
+                                <button 
+                                    key={item.type}
+                                    onClick={() => onSelect(item.type)}
+                                    className="flex flex-col items-center gap-2 group"
                                 >
-                                    <svg width="100" height="150" viewBox="0 0 100 150">
-                                        <Component />
-                                    </svg>
-                                </motion.div>
+                                    <div className="w-16 h-20 bg-white/40 rounded-xl border border-white/40 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform overflow-hidden relative">
+                                        <svg width="40" height="60" viewBox="0 0 100 150">
+                                            <Icon />
+                                        </svg>
+                                    </div>
+                                    <span className="text-[10px] font-serif text-ink/60 group-hover:text-ink transition-colors">{item.name}</span>
+                                </button>
                             );
                         })}
                     </div>
-                    
-                    <AnimatePresence>
-                        {isSelectorOpen && (
-                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-concrete/80 backdrop-blur-sm">
-                                <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="bg-[#E8E8E8] p-8 rounded-3xl shadow-2xl w-80 max-w-sm border border-white/40">
-                                    <h3 className="text-center text-ink/70 mb-8 font-serif text-lg">此刻内心的天气？</h3>
-                                    <div className="flex justify-between px-2 mb-4">
-                                        {weatherOptions.map((option) => {
-                                            const IconComponent = option.icon;
-                                            return (
-                                                <button key={option.type} onClick={() => { setIsSelectorOpen(false); onStart(option.type); }} className="flex flex-col items-center gap-3 text-ink/40 hover:text-moss transition-colors group">
-                                                    <div className="p-3 rounded-full bg-white/50 group-hover:bg-white transition-colors shadow-sm"><IconComponent size={24} /></div>
-                                                    <span className="text-xs font-serif">{option.label}</span>
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
-                                    <button onClick={() => setIsSelectorOpen(false)} className="w-full mt-8 text-xs text-ink/30 tracking-widest hover:text-ink py-2">取消</button>
-                                </motion.div>
-                            </div>
-                        )}
-                    </AnimatePresence>
-                    
-                    <AnimatePresence>
-                        {selectedStone && (
-                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-concrete/80 backdrop-blur-sm" onClick={() => setSelectedStone(null)}>
-                                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-[#F0F0F0] p-8 rounded-2xl shadow-2xl w-80 max-w-sm border border-white/40 relative text-center m-4">
-                                    <button onClick={() => setSelectedStone(null)} className="absolute top-4 right-4 text-ink/30 hover:text-ink transition-colors"><Icons.X size={20} /></button>
-                                    <div className="mt-4 mb-8">
-                                        <p className="text-xs text-ink/40 font-serif tracking-widest uppercase mb-4">{formatDate(selectedStone.timestamp)}</p>
-                                        <div className="w-8 h-1 bg-moss/20 mx-auto mb-8 rounded-full"></div>
-                                        <p className="font-serif text-xl text-ink leading-loose">“{selectedStone.insight}”</p>
-                                    </div>
-                                    <div className="pt-6 border-t border-ink/5"><p className="text-xs text-moss opacity-60 font-serif tracking-widest">记忆已模糊，但智慧留存。</p></div>
-                                </motion.div>
-                            </div>
-                        )}
-                    </AnimatePresence>
+                    <button onClick={onClose} className="mt-8 text-xs text-ink/30 hover:text-ink/60 transition-colors tracking-widest">再想想</button>
+                </motion.div>
+            </div>
+        );
+    };
 
-                    <AnimatePresence>
-                        {showClearConfirm && (
-                             <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/5 backdrop-blur-[2px]" onClick={() => setShowClearConfirm(false)}>
-                                <motion.div 
-                                    initial={{ scale: 0.9, opacity: 0, y: 20 }} 
-                                    animate={{ scale: 1, opacity: 1, y: 0 }} 
-                                    exit={{ scale: 0.95, opacity: 0, y: 10 }} 
-                                    onClick={(e) => e.stopPropagation()} 
-                                    className="relative bg-white/40 backdrop-blur-[20px] backdrop-saturate-[180%] p-6 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.1),_inset_0_1px_0_rgba(255,255,255,0.8)] w-72 text-center border border-white/60"
-                                >
-                                    <h4 className="text-ink/80 font-serif font-bold mb-4 tracking-wider">收纳庭院</h4>
-                                    <p className="text-xs text-ink/80 mb-6 font-serif">收纳苔石后，将无法再次查看</p>
-                                    
-                                    <div className="flex flex-col gap-3">
-                                        <button onClick={() => handleClear('current')} className="py-3 px-4 rounded-xl bg-white/40 border border-white/40 text-ink/70 text-sm hover:bg-white/80 transition-all shadow-sm backdrop-blur-sm">
-                                            仅收纳当前庭院
-                                        </button>
-                                        
-                                        <button onClick={() => handleClear('all')} className="py-3 px-4 rounded-xl bg-white/40 border border-white/40 text-red-800/60 text-sm hover:bg-red-50 hover:text-red-800 transition-all shadow-sm backdrop-blur-sm">
-                                            收纳所有庭院
-                                        </button>
-                                        
-                                        <button onClick={() => setShowClearConfirm(false)} className="mt-2 text-xs text-ink/30 hover:text-ink/60 transition-colors tracking-widest">我还想留着~</button>
-                                    </div>
-                                </motion.div>
-                            </div>
-                        )}
-                    </AnimatePresence>
+const Courtyard = ({ stones, onStart, onUpdateStones, gardenItems, onTransform }) => {
+    const [windowSize, setWindowSize] = useState({ w: window.innerWidth, h: window.innerHeight });
+    const debugTimeRef = useRef(Date.now());
+    useEffect(() => {
+        const handleResize = () => setWindowSize({ w: window.innerWidth, h: window.innerHeight });
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
-                    {showDebug && (
-                         <button
-                            onClick={() => {
-                                const newStone = {
-                                    id: `debug-${Date.now()}`,
-                                    worry: `测试数据 ${stones.length + 1}`,
-                                    insight: `测试数据：青苔不懂石头的坚硬。`,
-                                    timestamp: Date.now(),
-                                    weather: 'Sun',
-                                    shapePolygon: generateOrganicShape(), 
-                                    rotation: Math.random() * 30 - 15,
-                                    x: Math.random() * 160 - 80, 
-                                    y: Math.random() * 160 - 80
-                                };
-                                onUpdateStones(prev => [...prev, newStone]);
-                            }}
-                            className="absolute bottom-4 right-4 z-[100] px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-800/60 text-xs font-bold rounded hover:bg-red-500/20 transition-colors backdrop-blur-md"
-                        >
-                            [测试] +1
-                        </button>
-                    )}
-                </div>
-            );
+    const xLimit = windowSize.w / 2 - 60;
+    const yLimit = windowSize.h / 2 - 90;
+
+    const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+    const [selectedStone, setSelectedStone] = useState(null);
+    const [currentPageIndex, setCurrentPageIndex] = useState(0);
+    const [showClearConfirm, setShowClearConfirm] = useState(false);
+    const [showNotReadyTip, setShowNotReadyTip] = useState(false);
+
+    const [isShopMode, setIsShopMode] = useState(false);
+    const [stonesInPool, setStonesInPool] = useState([]);
+    const [showShopMenu, setShowShopMenu] = useState(false); 
+
+    // 计算最新有效石头的时间戳 (忽略已归档的，虽然归档不改时间戳，但这样更严谨)
+    // 实际上，只要 stones 数组里有新对象且时间戳变大，就是新增。
+    const latestTimestamp = useMemo(() => {
+        // 过滤掉已归档的石头，只看还存在的石头的时间戳
+        const activeStones = stones.filter(s => !s.isArchived);
+        if (activeStones.length === 0) return 0;
+        return Math.max(...activeStones.map(s => s.timestamp));
+    }, [stones]);
+
+    const prevTimestampRef = useRef(0);
+
+    const toggleShopMode = () => {
+        if (!isShopMode) {
+            setIsShopMode(true);
+            setStonesInPool([]);
+        } else {
+            setIsShopMode(false);
+            setStonesInPool([]);
+            setShowShopMenu(false);
+        }
+    };
+
+    useEffect(() => {
+        if (isShopMode) {
+            const thresholdY = (windowSize.h / 2) - 180;
+            // 商店模式下，只让 visible 的石头能被吸入
+            const stonesAlreadyThere = (stoneChunks[currentPageIndex] || [])
+                .filter(s => !s.isArchived && (s.y || 0) > thresholdY);
+            
+            const ids = stonesAlreadyThere.map(s => s.id);
+            
+            if (ids.length > 0) {
+                setStonesInPool(prev => {
+                    const newIds = ids.filter(id => !prev.includes(id));
+                    return newIds.length > 0 ? [...prev, ...newIds] : prev;
+                });
+            }
+        }
+    }, [isShopMode, currentPageIndex, stoneChunks, windowSize.h]);
+    
+    useEffect(() => {
+        const handleWheel = (e) => {
+            if (isShopMode && Math.abs(e.deltaY) > 50 && !showShopMenu) {
+                    setIsShopMode(false); 
+                    setStonesInPool([]);  
+            }
         };
+        window.addEventListener('wheel', handleWheel);
+        return () => window.removeEventListener('wheel', handleWheel);
+    }, [isShopMode, showShopMenu]);
+
+    const [showDebug, setShowDebug] = useState(false);
+    const debugClickCountRef = useRef(0);
+    const debugTimerRef = useRef(null);
+
+    const handleTitleClick = () => {
+        debugClickCountRef.current += 1;
+        if (debugTimerRef.current) clearTimeout(debugTimerRef.current);
+        debugTimerRef.current = setTimeout(() => {
+            debugClickCountRef.current = 0;
+        }, 500);
+        if (debugClickCountRef.current >= 3) {
+            setShowDebug(prev => !prev);
+            debugClickCountRef.current = 0;
+            clearTimeout(debugTimerRef.current);
+        }
+    };
+
+    const [silencedPages, setSilencedPages] = useState([]);
+    const isDraggingRef = useRef(false);
+    const scrollContainerRef = useRef(null);
+    const pageRefs = useRef([]);
+
+    const stoneChunks = useMemo(() => {
+        // 这里不对 stones 做 filter(!isArchived) !
+        // 必须保留“幽灵占位符”，这样 chunks 的切割位置才不会变。
+        const sorted = [...stones]; 
+        const chunks = chunkArray(sorted, 9);
+        if (chunks.length === 0) chunks.push([]);
+        while (chunks.length <= currentPageIndex) {
+            chunks.push([]);
+        }
+        return chunks;
+    }, [stones, currentPageIndex]);
+
+    const currentChunk = stoneChunks[currentPageIndex] || [];
+
+    useEffect(() => {
+        if (!stoneChunks[currentPageIndex]) return;
+        // 这里的逻辑可能需要微调：如果当前页全是幽灵石头，是否算空？
+        // 暂时保持原样，影响不大
+        if (currentChunk.length < 9) {
+            setSilencedPages(prev => prev.filter(pageIndex => pageIndex !== currentPageIndex));
+        }
+    }, [currentChunk.length, currentPageIndex, stoneChunks]);
+
+    const smoothScrollTo = (element, target, duration) => {
+        const start = element.scrollTop;
+        const change = target - start;
+        const startTime = performance.now();
+        element.style.scrollSnapType = 'none';
+        const animateScroll = (currentTime) => {
+            const timeElapsed = currentTime - startTime;
+            if (timeElapsed < duration) {
+                const progress = timeElapsed / duration;
+                const ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+                element.scrollTop = start + (change * ease);
+                requestAnimationFrame(animateScroll);
+            } else {
+                element.scrollTop = target;
+                element.style.scrollSnapType = 'y mandatory';
+            }
+        };
+        requestAnimationFrame(animateScroll);
+    };
+
+    // 滚动逻辑：仅当有"新石头"诞生时滚动
+    useEffect(() => {
+        if (latestTimestamp > prevTimestampRef.current) {
+            if (stoneChunks.length > 1) {
+                const lastPageIndex = stoneChunks.length - 1;
+                const container = scrollContainerRef.current;
+                if (container) {
+                    const pageHeight = container.clientHeight;
+                    const targetScrollTop = lastPageIndex * pageHeight;
+                    container.style.scrollBehavior = 'auto'; 
+                    if (Math.abs(container.scrollTop - targetScrollTop) > 10) {
+                        smoothScrollTo(container, targetScrollTop, 1500); 
+                    }
+                }
+            }
+        }
+        prevTimestampRef.current = latestTimestamp;
+    }, [latestTimestamp, stoneChunks.length]);
+
+    const formatDate = (timestamp) => {
+        const date = new Date(timestamp);
+        const Y = date.getFullYear();
+        const M = (date.getMonth() + 1).toString().padStart(2, '0');
+        const D = date.getDate().toString().padStart(2, '0');
+        const h = date.getHours().toString().padStart(2, '0');
+        const m = date.getMinutes().toString().padStart(2, '0');
+        return `${Y}年${M}月${D}日 ${h}:${m}`;
+    };
+
+    const handleScroll = () => {
+        if (!scrollContainerRef.current) return;
+        const scrollTop = scrollContainerRef.current.scrollTop;
+        const height = scrollContainerRef.current.clientHeight;
+        const index = Math.round(scrollTop / height);
+        setCurrentPageIndex(index);
+    };
+
+    const handleDragEnd = (stoneId, info) => {
+        const delta = { x: info.offset.x, y: info.offset.y };
+        const currentStone = stones.find(s => s.id === stoneId);
+        // 防御性检查：如果拖拽的是幽灵石头（理论上选不中），直接返回
+        if (!currentStone) return;
+
+        const startX = currentStone.x || 0;
+        const startY = currentStone.y || 0;
+
+        let newX = startX + delta.x;
+        let newY = startY + delta.y;
         
-        const Etching = ({ stoneShape, onLayDown }) => {
-            const [text, setText] = useState('');
-            const [isCarving, setIsCarving] = useState(false);
-            const [carvedIndex, setCarvedIndex] = useState(0); 
-            const textareaRef = useRef(null);
-            const scrollRef = useRef(null);
+        newX = Math.max(-xLimit, Math.min(newX, xLimit));
+        newY = Math.max(-yLimit, Math.min(newY, yLimit));
 
-            useEffect(() => {
-                const timer = setTimeout(() => {
-                    if (textareaRef.current) textareaRef.current.focus();
-                }, 850);
-                return () => clearTimeout(timer);
-            }, []);
+        onUpdateStones(prev => prev.map(s => {
+            if (s.id === stoneId) {
+                return { ...s, x: newX, y: newY };
+            }
+            return s;
+        }));
 
-            useEffect(() => {
-                if (isCarving && scrollRef.current) {
-                    const element = scrollRef.current;
-                    const isOverflowing = element.scrollHeight > element.clientHeight;
-                    if (isOverflowing) {
-                        element.scrollTop = element.scrollHeight;
-                    }
-                }
-            }, [carvedIndex, isCarving]);
+        if (isShopMode) {
+            const stoneAbsoluteY = (windowSize.h / 2) + newY;
+            const poolThreshold = windowSize.h - 220;
+            
+            if (stoneAbsoluteY > poolThreshold) {
+                setStonesInPool(prev => {
+                    if (!prev.includes(stoneId)) return [...prev, stoneId];
+                    return prev;
+                });
+            } else {
+                setStonesInPool(prev => prev.filter(id => id !== stoneId));
+            }
+        }
+    };
+    
+    const handleRedeem = (itemType) => {
+        setShowShopMenu(false);
+        setIsShopMode(false);
+        const stonesToSacrifice = stonesInPool.slice(0, 3);
+        
+        onUpdateStones(prev => {
+            // === 核心修改逻辑开始 ===
+            
+            // 1. 判断是否处于“纯单页模式”
+            // 如果当前总石头数量很少（<=9），说明用户还在第一页折腾。
+            // 这种情况下，我们优先“省空间”，而不是“留历史”。
+            if (prev.length <= 9) {
+                // 直接物理删除！不留活口，不留占位符。
+                // 剩下的石头索引会自动前移，新石头会补在这个数组的末尾。
+                // 结果：永远无法突破 9 个，永远不开 B 页。
+                return prev.filter(s => !stonesToSacrifice.includes(s.id));
+            }
 
-            useEffect(() => {
-                if (!isCarving) return;
+            // 2. 如果已经有多页历史（>9）
+            // 采用之前的“归档 + 尾部修剪”策略，保护中间页的空窗感。
+            
+            // 2.1 标记归档
+            let newStones = prev.map(s => 
+                stonesToSacrifice.includes(s.id) ? { ...s, isArchived: true } : s
+            );
 
-                if (carvedIndex >= text.length) {
-                    const finishTimer = setTimeout(() => {
-                        onLayDown(text);
-                    }, 500);
-                    return () => clearTimeout(finishTimer);
-                }
+            // 2.2 尾部修剪（如果正好兑换的是最后几个，就让页面回缩）
+            let trimIndex = newStones.length;
+            while (trimIndex > 0 && newStones[trimIndex - 1].isArchived) {
+                trimIndex--;
+            }
+            
+            return newStones.slice(0, trimIndex);
+             // === 核心修改逻辑结束 ===
+        });
+        
+        setStonesInPool([]);
+        setTimeout(() => {
+            onTransform(stonesToSacrifice, itemType); 
+        }, 800);
+    };
 
-                let delay;
-                const maxDelay = 450; 
-                const minDelay = 20;  
-                const accelerationStart = 2; 
+    const handleOrganize = () => {
+        playSound('organize');
+        // 只整理当前页可见的石头
+        const visibleStones = currentChunk.filter(s => !s.isArchived);
+        if(visibleStones.length === 0) return;
+        
+        const gridGap = 110; 
+        const startX = -110; 
+        const startY = -120; 
+        const updates = {};
+        
+        visibleStones.forEach((stone, index) => {
+            const row = Math.floor(index / 3);
+            const col = index % 3;
+            updates[stone.id] = { x: startX + col * gridGap, y: startY + row * gridGap, rotation: 0 };
+        });
+        
+        onUpdateStones(prev => prev.map(s => updates[s.id] ? { ...s, ...updates[s.id] } : s));
+    };
 
-                if (carvedIndex < accelerationStart) {
-                    delay = maxDelay;
-                } else {
-                    const x = carvedIndex - accelerationStart; 
-                    const decayFactor = 0.12; 
-                    delay = Math.max(
-                        minDelay, 
-                        maxDelay * Math.pow(Math.E, -decayFactor * x)
-                    );
-                    const jitter = (Math.random() * 10) - 5;
-                    delay = Math.round(delay + jitter);
-                }                        
+    const handleClear = (type) => {
+        if (type === 'current') {
+            // 清理当前页时，物理删除
+            const stonesToRemove = currentChunk.map(s => s.id);
+            onUpdateStones(prev => prev.filter(s => !stonesToRemove.includes(s.id)));
+        } else if (type === 'all') {
+            onUpdateStones([]);
+        }
+        setShowClearConfirm(false);
+    };
 
-                const timer = setTimeout(() => {
-                    setCarvedIndex(prev => prev + 1);
-                    const safeIndex = Math.min(carvedIndex, text.length - 1);
-                    const currentChar = text[safeIndex] || ""; 
-                    const isSilentChar = /\s/.test(currentChar);
-                    const volumeProfile = [
-                        1.00, 0.85, 0.70, 0.55, 
-                        0.37, 0.28, 0.24, 0.20, 0.16, 
-                        0.12, 0.10, 0.08, 0.04, 0.03, 0.01
-                    ];
-                    let currentVol = 0;
-                    if (carvedIndex < volumeProfile.length) {
-                        currentVol = volumeProfile[carvedIndex];
-                    }
+    const getPageDateRange = (chunk) => {
 
-                    if (currentVol > 0 && !isSilentChar && isFinite(currentVol)) {
-                        playSound('carve', currentVol); 
-                    }
+        if (!chunk || chunk.length === 0) return "";
+    
+    const fmt = (ts) => {
+        const d = new Date(ts);
+        return `${d.getFullYear()}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`;
+    };
+    
+    // 使用 chunk 而不是 visibleChunk
+    const startStr = fmt(chunk[0].timestamp);
+    const endStr = fmt(chunk[chunk.length - 1].timestamp);
+    return startStr === endStr ? startStr : `${startStr} - ${endStr}`;
+};
+    return (
+        <div className="relative w-full h-full bg-[#E0E0E0] transition-colors duration-700">
+            <header className="absolute top-12 left-0 w-full text-center z-20 pointer-events-none">
+                <div className="relative min-h-[5rem] overflow-visible">
+                    <AnimatePresence mode="wait">
+                        {isShopMode ? (
+                            <motion.div 
+                                key="shop-title"
+                                initial={{ y: 20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                exit={{ y: -20, opacity: 0 }}
+                                className="absolute w-full"
+                            >
+                                <h1 className="text-3xl font-serif font-bold text-moss opacity-90">苔石商店</h1>
+                                <p className="text-xs text-moss/60 mt-2 tracking-[0.2em] uppercase">Moss Stone Shop</p>
+                            </motion.div>
+                        ) : (
+                            <motion.div 
+                                key="normal-title"
+                                initial={{ y: -20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                exit={{ y: 20, opacity: 0 }}
+                                className="absolute w-full pointer-events-auto cursor-pointer"
+                                onClick={handleTitleClick} 
+                            >
+                                <h1 className="text-3xl font-serif font-bold text-ink opacity-80">苔与石</h1>
+                                <p className="text-xs text-ink/60 mt-2 tracking-[0.2em] uppercase">Moss & Stone</p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+                {stones.filter(s => !s.isArchived).length > 0 && !isShopMode && (
+                    <div className="absolute top-2 right-[-60px] md:right-[-100px] text-[10px] text-ink/20 font-sans">
+                        {/* 显示的是可见石头的数量 */}
+                        本页: {currentChunk.filter(s => !s.isArchived).length}/9
+                    </div>
+                )}
+            </header>
 
-                }, delay);
+            <div className="absolute top-12 right-6 z-30 flex flex-col gap-4 items-center">
+                {isShopMode ? (
+                    <button 
+                        onClick={toggleShopMode}
+                        className="w-9 h-9 rounded-full flex items-center justify-center bg-white/40 border border-white/30 shadow-sm text-ink/60 hover:text-ink hover:bg-white/60 transition-all"
+                    >
+                        <Icons.Return size={18} />
+                    </button>
+                ) : (
+                    stones.length > 0 && (
+                        <>
+                            <button onClick={handleOrganize} className="w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md bg-white/20 border border-white/30 shadow-sm text-ink/60 hover:text-ink hover:scale-105 transition-all" title="整理">
+                                <Icons.Grid size={18} />
+                            </button>
+                            
+                            <button onClick={() => setShowClearConfirm(true)} className="w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md bg-white/20 border border-white/30 shadow-sm text-ink/60 hover:text-ink hover:scale-105 transition-all" title="收纳">
+                                <Icons.Broom size={18} />
+                            </button>
 
-                return () => clearTimeout(timer);
-            }, [isCarving, carvedIndex, text, onLayDown]);
+                            {currentChunk.filter(s => !s.isArchived).length >= 2 && (
+                                <div className="relative">
+                                    <AnimatePresence>
+                                        {showNotReadyTip && (
+                                            <motion.div 
+                                                initial={{ opacity: 0, x: 20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0 }}
+                                                className="absolute right-12 top-1.5 whitespace-nowrap bg-ink/80 text-white text-[10px] px-2 py-1 rounded-md shadow-sm font-serif pointer-events-none backdrop-blur-md z-50"
+                                            >
+                                                还剩 {3 - currentChunk.filter(s => !s.isArchived).length} 个苔石解锁
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
 
-            const handleSubmit = () => {
-                if (text.trim().length === 0) return;
-                
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-
-                const dummyOsc = audioCtx.createOscillator();
-                const dummyGain = audioCtx.createGain();
-                dummyGain.gain.value = 0; 
-                dummyOsc.connect(dummyGain);
-                dummyGain.connect(audioCtx.destination);
-                dummyOsc.start();
-                dummyOsc.stop(0.1);
-
-                if (textareaRef.current) textareaRef.current.blur();
-                
-                setTimeout(() => {
-                    setIsCarving(true); 
-                    setCarvedIndex(0); 
-                }, 10); 
-            };
-
-            return (
-                <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 pb-20 overflow-hidden"> 
-                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.8, ease: "easeOut" }} className="relative">
-                        <Stone shape={stoneShape} size="lg" className="overflow-hidden relative">
-                            <div className="w-full h-full flex items-center justify-center relative z-20">
-                                {!isCarving && (
-                                    <textarea
-                                        ref={textareaRef}
-                                        value={text}
-                                        onChange={(e) => setText(e.target.value)}
-                                        placeholder="刚才发生了什么？"
-                                        maxLength={130}
-                                        spellCheck={false}
-                                        autoComplete="off"
-                                        style={{ textShadow: '0px 1px 0px rgba(255,255,255,0.5)', caretColor: '#2C2C2C', outline: 'none', border: 'none', boxShadow: 'none', resize: 'none' }}
-                                        className="no-scrollbar appearance-none border-0 shadow-none w-[75%] h-[55%] py-4 bg-transparent text-center text-[#333] font-serif text-lg leading-relaxed placeholder:text-ink/30 placeholder:italic placeholder:shadow-none overflow-y-auto focus:ring-0"
-                                    />
-                                )}
-                                {isCarving && (
-                                    <div 
-                                        ref={scrollRef}
-                                        style={{ transform: 'translateZ(0)', maskImage: 'linear-gradient(to bottom, transparent 0px, black 24px, black calc(100% - 24px), transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 24px, black calc(100% - 24px), transparent 100%)' }}
-                                        className="no-scrollbar w-[80%] h-[60%] py-6 text-center font-serif text-lg leading-relaxed break-words whitespace-pre-wrap flex flex-wrap justify-center content-start overflow-y-auto scroll-smooth"
+                                     <style>{`
+                                        @keyframes whiteToNeon {
+                                            0% { background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.8); transform: scale(1); }
+                                            50% { background-color: #39FF14; box-shadow: 0 0 20px #39FF14; transform: scale(1.3); }
+                                            100% { background-color: #ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.8); transform: scale(1); }
+                                        }
+                                    `}</style>
+                                    <motion.button
+                                        initial={{ scale: 0, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        exit={{ scale: 0, opacity: 0 }} 
+                                        whileTap={{ scale: 0.9 }}
+                                        onClick={() => {
+                                            if (currentChunk.filter(s => !s.isArchived).length < 3) {
+                                                setShowNotReadyTip(true);
+                                                setTimeout(() => setShowNotReadyTip(false), 2000);
+                                            } else {
+                                                toggleShopMode();
+                                            }
+                                        }}
+                                        className="w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md bg-white/20 border border-white/30 shadow-sm"
                                     >
-                                        {text.split('').map((char, index) => (
-                                            <span key={index} className={index < carvedIndex ? "carved-deep" : "opacity-0"} style={{ transition: 'opacity 0.1s' }}>{char}</span>
+                                        <div 
+                                            className={`rounded-full transition-all duration-500 ease-in-out`}
+                                            style={
+                                                currentChunk.filter(s => !s.isArchived).length >= 3 
+                                                ? { width: '10px', height: '10px', animation: 'whiteToNeon 3s infinite ease-in-out' }
+                                                : { width: '6px', height: '6px', backgroundColor: 'white', opacity: 0.9, boxShadow: '0 0 6px rgba(255,255,255,0.9)' }
+                                            }
+                                        ></div>
+                                    </motion.button>
+                                </div>
+                            )}
+                        </>
+                    )
+                )}
+            </div>
+
+            <div ref={scrollContainerRef} onScroll={handleScroll} className="courtyard-scroll-container no-scrollbar relative transition-opacity duration-500">
+                {stoneChunks.map((chunk, pageIndex) => (
+                    <div key={pageIndex} ref={el => pageRefs.current[pageIndex] = el} className="courtyard-page">
+                        <div className="relative w-[340px] h-[340px] md:w-[500px] md:h-[500px]">
+                            <AnimatePresence>
+                                {/* 【关键修改】只渲染未归档的石头。由于 chunk 包含所有石头，所以页面结构固定，不会发生位移。*/}
+                                {chunk.filter(s => !s.isArchived).map((stone, i) => {
+                                    const isInPool = stonesInPool.includes(stone.id);
+                                    return (
+                                    <motion.div 
+                                        key={stone.id} 
+                                        drag
+                                        whileDrag={{ scale: 1.05, zIndex: 100 }} 
+                                        dragMomentum={false}
+                                        dragElastic={0}
+                                        onPointerDown={() => { if (audioCtx.state === 'suspended') audioCtx.resume(); }}
+                                        onDragStart={() => { isDraggingRef.current = true; playSound('lift'); }}
+                                        onDragEnd={(e, info) => { 
+                                            handleDragEnd(stone.id, info); 
+                                            playSound('drop'); 
+                                            setTimeout(() => isDraggingRef.current = false, 200); 
+                                        }}
+                                        onClick={(e) => {
+                                            if (isShopMode) { e.stopPropagation(); return; }
+                                            if (isDraggingRef.current) { e.stopPropagation(); return; }
+                                            if (!isSelectorOpen && !selectedStone) setSelectedStone(stone);
+                                        }}
+                                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                                        dragConstraints={{ left: -xLimit, right: xLimit, top: -yLimit, bottom: yLimit }}
+                                        
+                                        initial={{ scale: 0 }}
+                                        animate={{ 
+                                            scale: 1, 
+                                            x: stone.x || 0, 
+                                            y: stone.y || 0, 
+                                            rotate: stone.rotation, 
+                                            opacity: 1,
+                                            filter: 'blur(0px)'
+                                        }}
+                                        exit={{ 
+                                            opacity: 0,                
+                                            scale: 0.9,                
+                                            y: (stone.y || 0) + 120,   
+                                            filter: 'blur(10px)',      
+                                            transition: { 
+                                                duration: 1.5,         
+                                                ease: "easeInOut",
+                                                delay: i * 0.08        
+                                            }
+                                        }}
+                                        className="absolute left-1/2 top-1/2 -ml-8 -mt-8"
+                                        style={{ zIndex: (isInPool || isShopMode) ? 50 : 10 }}
+                                    >
+                                        <Stone shape={stone.shapePolygon} isMossy size="sm" className="hover:scale-105 transition-transform duration-300 shadow-lg" />
+                                    </motion.div>
+                                )})}
+                            </AnimatePresence>
+                        </div>
+
+                        {pageIndex === stoneChunks.length - 1 && !isShopMode && !isSelectorOpen && !selectedStone && (
+                            <div className="absolute left-0 w-full flex justify-center pointer-events-none bottom-20">
+                                <motion.button
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    onClick={() => setIsSelectorOpen(true)}
+                                    className="w-48 h-32 border-4 border-dashed border-ink/10 rounded-[40%_60%_50%_50%/50%_40%_60%_50%] flex items-center justify-center hover:border-ink/30 transition-colors bg-concrete/20 pointer-events-auto"
+                                >
+                                    <span className="text-2xl text-ink/20">+</span>
+                                </motion.button>
+                            </div>
+                        )}
+                        
+                        {!isShopMode && (
+                            
+                            <div className="absolute bottom-8 left-0 w-full text-center pointer-events-none translate-y-[10px]">
+                                <p className="text-[10px] font-sans font-bold tracking-[0.15em] text-ink/20 mb-1.5 uppercase">{getPageDateRange(chunk)}</p>
+                                <p className="text-xs text-ink/60 font-serif tracking-widest">{pageIndex === stoneChunks.length - 1 ? "把心事，放在这里。" : "往事已生青苔。" }</p>
+                                {stoneChunks.length > 1 && (
+                                    <div className="mt-2 flex justify-center gap-1">
+                                        {stoneChunks.map((_, i) => (
+                                            <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === currentPageIndex ? 'bg-moss' : 'bg-ink/10'}`} />
                                         ))}
                                     </div>
                                 )}
                             </div>
-                        </Stone>
-                        <div className="absolute top-full left-0 w-full flex flex-col items-center pt-12">
-                            <motion.button initial={{ opacity: 0 }} animate={{ opacity: text.length > 0 && !isCarving ? 1 : 0 }} disabled={text.length === 0 || isCarving} onClick={handleSubmit} className="px-8 py-3 bg-transparent border border-ink/20 rounded-full text-ink/60 tracking-widest text-sm font-serif hover:bg-ink/5 transition-all disabled:opacity-0 focus:outline-none focus:ring-0 whitespace-nowrap">{isCarving ? "刻录中..." : "刻好了，放下吧"}</motion.button>
+                        )}
+                    </div>
+                ))}
+            </div>
+
+            <AnimatePresence>
+                {isShopMode && (
+                    <motion.div
+                        key="pool-wrapper"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                        className="fixed inset-0 z-0 pointer-events-none" 
+                    >
+                        <Pool 
+                            isActive={stonesInPool.length >= 3} 
+                            stoneCount={stonesInPool.length} 
+                            onClick={() => setShowShopMenu(true)} 
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {showShopMenu && (
+                    <ShopMenu 
+                        onClose={() => setShowShopMenu(false)} 
+                        onSelect={handleRedeem} 
+                    />
+                )}
+            </AnimatePresence>
+            
+            {isShopMode && stonesInPool.length >= 3 && (
+                <div 
+                    className="fixed bottom-0 left-0 w-full h-[300px] z-40 cursor-pointer"
+                    title="点击兑换"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setShowShopMenu(true);
+                    }}
+                />
+            )}
+
+            <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none"> 
+                {gardenItems && gardenItems.map(item => {
+                    const Component = Decorations[item.type];
+                    return (
+                        <motion.div
+                            key={item.id}
+                            drag 
+                            dragMomentum={false} 
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 1, scale: item.scale }}
+                            transition={{ duration: 2, ease: "easeOut" }}
+                            className="absolute cursor-move pointer-events-auto" 
+                            style={{
+                                left: `${item.x}%`,
+                                top: `${item.y}%`,
+                                filter: 'blur(1px) drop-shadow(0 4px 6px rgba(0,0,0,0.1))'
+                            }}
+                        >
+                            <svg width="100" height="150" viewBox="0 0 100 150">
+                                <Component />
+                            </svg>
+                        </motion.div>
+                    );
+                })}
+            </div>
+            
+            <AnimatePresence>
+                {isSelectorOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-concrete/80 backdrop-blur-sm">
+                        <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="bg-[#E8E8E8] p-8 rounded-3xl shadow-2xl w-80 max-w-sm border border-white/40">
+                            <h3 className="text-center text-ink/70 mb-8 font-serif text-lg">此刻内心的天气？</h3>
+                            <div className="flex justify-between px-2 mb-4">
+                                {weatherOptions.map((option) => (
+                                    <button key={option.type} onClick={() => { setIsSelectorOpen(false); onStart(option.type); }} className="flex flex-col items-center gap-3 text-ink/40 hover:text-moss transition-colors group">
+                                        <div className="p-3 rounded-full bg-white/50 group-hover:bg-white transition-colors shadow-sm"><option.icon size={24} /></div>
+                                        <span className="text-xs font-serif">{option.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+                            <button onClick={() => setIsSelectorOpen(false)} className="w-full mt-8 text-xs text-ink/30 tracking-widest hover:text-ink py-2">取消</button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+            
+            <AnimatePresence>
+                {selectedStone && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-concrete/80 backdrop-blur-sm" onClick={() => setSelectedStone(null)}>
+                        <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} onClick={(e) => e.stopPropagation()} className="bg-[#F0F0F0] p-8 rounded-2xl shadow-2xl w-80 max-w-sm border border-white/40 relative text-center m-4">
+                            <button onClick={() => setSelectedStone(null)} className="absolute top-4 right-4 text-ink/30 hover:text-ink transition-colors"><Icons.X size={20} /></button>
+                            <div className="mt-4 mb-8">
+                                <p className="text-xs text-ink/40 font-serif tracking-widest uppercase mb-4">{formatDate(selectedStone.timestamp)}</p>
+                                <div className="w-8 h-1 bg-moss/20 mx-auto mb-8 rounded-full"></div>
+                                <p className="font-serif text-xl text-ink leading-loose">“{selectedStone.insight}”</p>
+                            </div>
+                            <div className="pt-6 border-t border-ink/5"><p className="text-xs text-moss opacity-60 font-serif tracking-widest">记忆已模糊，但智慧留存。</p></div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {showClearConfirm && (
+                        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/5 backdrop-blur-[2px]" onClick={() => setShowClearConfirm(false)}>
+                        <motion.div 
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }} 
+                            animate={{ scale: 1, opacity: 1, y: 0 }} 
+                            exit={{ scale: 0.95, opacity: 0, y: 10 }} 
+                            onClick={(e) => e.stopPropagation()} 
+                            className="relative bg-white/40 backdrop-blur-[20px] backdrop-saturate-[180%] p-6 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.1),_inset_0_1px_0_rgba(255,255,255,0.8)] w-72 text-center border border-white/60"
+                        >
+                            <h4 className="text-ink/80 font-serif font-bold mb-4 tracking-wider">收纳庭院</h4>
+                            <p className="text-xs text-ink/80 mb-6 font-serif">收纳后，将无法再次查看</p>
+                            
+                            <div className="flex flex-col gap-3">
+                                <button onClick={() => handleClear('current')} className="py-3 px-4 rounded-xl bg-white/40 border border-white/40 text-ink/70 text-sm hover:bg-white/80 transition-all shadow-sm backdrop-blur-sm">
+                                    仅收纳当前庭院
+                                </button>
+                                
+                                <button onClick={() => handleClear('all')} className="py-3 px-4 rounded-xl bg-white/40 border border-white/40 text-red-800/60 text-sm hover:bg-red-50 hover:text-red-800 transition-all shadow-sm backdrop-blur-sm">
+                                    收纳所有庭院
+                                </button>
+                                
+                                <button onClick={() => setShowClearConfirm(false)} className="mt-2 text-xs text-ink/30 hover:text-ink/60 transition-colors tracking-widest">我还想留着~</button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {showDebug && (
+                <div className="absolute bottom-4 right-4 z-[100] flex flex-col gap-2 items-end pointer-events-auto">
+                    {/* 按钮 1：增加一天并生成石头 */}
+                    <button
+                        onClick={() => {
+                            // 增加 24 小时 (毫秒数)
+                            debugTimeRef.current += 24 * 60 * 60 * 1000;
+                            
+                            const newStone = {
+                                id: `debug-${Date.now()}`,
+                                worry: `测试数据 (未来)`,
+                                insight: `时间已过去一天，青苔又厚了一层。`,
+                                timestamp: debugTimeRef.current, // 使用更新后的时间
+                                weather: ['Sun', 'Cloud', 'Rain', 'Storm'][Math.floor(Math.random() * 4)],
+                                shapePolygon: generateOrganicShape(), 
+                                rotation: Math.random() * 30 - 15,
+                                x: Math.random() * 160 - 80, 
+                                y: Math.random() * 160 - 80
+                            };
+                            onUpdateStones(prev => [...prev, newStone]);
+                        }}
+                        className="px-4 py-2 bg-blue-500/10 border border-blue-500/30 text-blue-800/60 text-xs font-bold rounded hover:bg-blue-500/20 transition-colors backdrop-blur-md"
+                    >
+                        [测试] +1天
+                    </button>
+
+                    {/* 按钮 2：仅增加石头 (保持当前测试时间) */}
+                    <button
+                        onClick={() => {
+                            const newStone = {
+                                id: `debug-${Date.now()}`,
+                                worry: `测试数据 ${stones.length + 1}`,
+                                insight: `测试数据：青苔不懂石头的坚硬。`,
+                                timestamp: debugTimeRef.current, // 使用当前的测试时间
+                                weather: 'Sun',
+                                shapePolygon: generateOrganicShape(), 
+                                rotation: Math.random() * 30 - 15,
+                                x: Math.random() * 160 - 80, 
+                                y: Math.random() * 160 - 80
+                            };
+                            onUpdateStones(prev => [...prev, newStone]);
+                        }}
+                        className="px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-800/60 text-xs font-bold rounded hover:bg-red-500/20 transition-colors backdrop-blur-md"
+                    >
+                        [测试] +1石
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+    
+    // ... (保持 Etching, Overgrowth, Echo, App 不变)
+    const Etching = ({ stoneShape, onLayDown }) => {
+        const [text, setText] = useState('');
+        const [isCarving, setIsCarving] = useState(false);
+        const [carvedIndex, setCarvedIndex] = useState(0); 
+        const textareaRef = useRef(null);
+        const scrollRef = useRef(null);
+
+        useEffect(() => {
+            const timer = setTimeout(() => {
+                if (textareaRef.current) textareaRef.current.focus();
+            }, 850);
+            return () => clearTimeout(timer);
+        }, []);
+
+        useEffect(() => {
+            if (isCarving && scrollRef.current) {
+                const element = scrollRef.current;
+                const isOverflowing = element.scrollHeight > element.clientHeight;
+                if (isOverflowing) {
+                    element.scrollTop = element.scrollHeight;
+                }
+            }
+        }, [carvedIndex, isCarving]);
+
+        useEffect(() => {
+            if (!isCarving) return;
+
+            if (carvedIndex >= text.length) {
+                const finishTimer = setTimeout(() => {
+                    onLayDown(text);
+                }, 500);
+                return () => clearTimeout(finishTimer);
+            }
+
+            let delay;
+            const maxDelay = 450; 
+            const minDelay = 20;  
+            const accelerationStart = 2; 
+
+            if (carvedIndex < accelerationStart) {
+                delay = maxDelay;
+            } else {
+                const x = carvedIndex - accelerationStart; 
+                const decayFactor = 0.12; 
+                delay = Math.max(
+                    minDelay, 
+                    maxDelay * Math.pow(Math.E, -decayFactor * x)
+                );
+                const jitter = (Math.random() * 10) - 5;
+                delay = Math.round(delay + jitter);
+            }                        
+
+            const timer = setTimeout(() => {
+                setCarvedIndex(prev => prev + 1);
+                const safeIndex = Math.min(carvedIndex, text.length - 1);
+                const currentChar = text[safeIndex] || ""; 
+                const isSilentChar = /\s/.test(currentChar);
+                const volumeProfile = [
+                    1.00, 0.85, 0.70, 0.55, 
+                    0.37, 0.28, 0.24, 0.20, 0.16, 
+                    0.12, 0.10, 0.08, 0.04, 0.03, 0.01
+                ];
+                let currentVol = 0;
+                if (carvedIndex < volumeProfile.length) {
+                    currentVol = volumeProfile[carvedIndex];
+                }
+
+                if (currentVol > 0 && !isSilentChar && isFinite(currentVol)) {
+                    playSound('carve', currentVol); 
+                }
+
+            }, delay);
+
+            return () => clearTimeout(timer);
+        }, [isCarving, carvedIndex, text, onLayDown]);
+
+        const handleSubmit = () => {
+            if (text.trim().length === 0) return;
+            
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const dummyOsc = audioCtx.createOscillator();
+            const dummyGain = audioCtx.createGain();
+            dummyGain.gain.value = 0; 
+            dummyOsc.connect(dummyGain);
+            dummyGain.connect(audioCtx.destination);
+            dummyOsc.start();
+            dummyOsc.stop(0.1);
+
+            if (textareaRef.current) textareaRef.current.blur();
+            
+            setTimeout(() => {
+                setIsCarving(true); 
+                setCarvedIndex(0); 
+            }, 10); 
+        };
+
+        return (
+            <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 pb-20 overflow-hidden"> 
+                <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.8, ease: "easeOut" }} className="relative">
+                    <Stone shape={stoneShape} size="lg" className="overflow-hidden relative">
+                        <div className="w-full h-full flex items-center justify-center relative z-20">
                             {!isCarving && (
-                                <div className="mt-4 text-ink/20 text-xs italic font-serif">
-                                    {text.length}/130
+                                <textarea
+                                    ref={textareaRef}
+                                    value={text}
+                                    onChange={(e) => setText(e.target.value)}
+                                    placeholder="刚才发生了什么？"
+                                    maxLength={130}
+                                    spellCheck={false}
+                                    autoComplete="off"
+                                    style={{ textShadow: '0px 1px 0px rgba(255,255,255,0.5)', caretColor: '#2C2C2C', outline: 'none', border: 'none', boxShadow: 'none', resize: 'none' }}
+                                    className="no-scrollbar appearance-none border-0 shadow-none w-[75%] h-[55%] py-4 bg-transparent text-center text-[#333] font-serif text-lg leading-relaxed placeholder:text-ink/30 placeholder:italic placeholder:shadow-none overflow-y-auto focus:ring-0"
+                                />
+                            )}
+                            {isCarving && (
+                                <div 
+                                    ref={scrollRef}
+                                    style={{ transform: 'translateZ(0)', maskImage: 'linear-gradient(to bottom, transparent 0px, black 24px, black calc(100% - 24px), transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 24px, black calc(100% - 24px), transparent 100%)' }}
+                                    className="no-scrollbar w-[80%] h-[60%] py-6 text-center font-serif text-lg leading-relaxed break-words whitespace-pre-wrap flex flex-wrap justify-center content-start overflow-y-auto scroll-smooth"
+                                >
+                                    {text.split('').map((char, index) => (
+                                        <span key={index} className={index < carvedIndex ? "carved-deep" : "opacity-0"} style={{ transition: 'opacity 0.1s' }}>{char}</span>
+                                    ))}
                                 </div>
                             )}
                         </div>
-                    </motion.div>
-                </div>
-            );
-        };
-
-        const Overgrowth = ({ worry, stoneShape, onGrowthComplete }) => {
-            useEffect(() => {
-                const timer = setTimeout(() => {
-                    onGrowthComplete();
-                }, 5000); 
-                return () => clearTimeout(timer);
-            }, [onGrowthComplete]);
-
-            return (
-                <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 pb-20 overflow-hidden"> 
-                    <motion.div className="relative">
-                        <Stone shape={stoneShape} size="lg" className="overflow-hidden relative">
-                            <div className="w-full h-full flex items-center justify-center relative z-0">
-                                <motion.div initial={{ opacity: 0.8 }} animate={{ opacity: 0 }} transition={{ duration: 2, delay: 1 }} style={{ transform: 'translateZ(0)', maskImage: 'linear-gradient(to bottom, transparent 0px, black 24px, black calc(100% - 24px), transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 24px, black calc(100% - 24px), transparent 100%)' }} className="no-scrollbar w-[80%] h-[60%] py-6 text-center font-serif text-lg leading-relaxed break-words whitespace-pre-wrap flex flex-wrap justify-center content-start overflow-hidden pointer-events-none">
-                                    <span className="carved-deep w-full">{worry}</span>
-                                </motion.div>
+                    </Stone>
+                    <div className="absolute top-full left-0 w-full flex flex-col items-center pt-12">
+                        <motion.button initial={{ opacity: 0 }} animate={{ opacity: text.length > 0 && !isCarving ? 1 : 0 }} disabled={text.length === 0 || isCarving} onClick={handleSubmit} className="px-8 py-3 bg-transparent border border-ink/20 rounded-full text-ink/60 tracking-widest text-sm font-serif hover:bg-ink/5 transition-all disabled:opacity-0 focus:outline-none focus:ring-0 whitespace-nowrap">{isCarving ? "刻录中..." : "刻好了，放下吧"}</motion.button>
+                        {!isCarving && (
+                            <div className="mt-4 text-ink/20 text-xs italic font-serif">
+                                {text.length}/130
                             </div>
-                            <motion.div initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 0.7, scale: 1 }} transition={{ duration: 4, ease: "easeOut", delay: 0.5 }} className="absolute inset-0 z-30 mix-blend-multiply" style={{ borderRadius: stoneShape, backgroundColor: '#4A5D23', filter: 'url(#mossRoughness)' }} />
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} transition={{ duration: 3, delay: 1.8 }} className="absolute inset-0 z-40 mix-blend-overlay" style={{ borderRadius: stoneShape, backgroundColor: '#8A9A5B', backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='fuzz'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23fuzz)' opacity='0.5'/%3E%3C/svg%3E")` }} />
-                        </Stone>
-                        <div className="absolute top-full left-0 w-full flex justify-center pt-12">
-                            <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0] }} transition={{ duration: 4, times: [0, 0.5, 1] }} className="text-moss text-sm font-serif whitespace-nowrap">正在回归大地...</motion.p>
+                        )}
+                    </div>
+                </motion.div>
+            </div>
+        );
+    };
+
+    const Overgrowth = ({ worry, stoneShape, onGrowthComplete }) => {
+        useEffect(() => {
+            const timer = setTimeout(() => {
+                onGrowthComplete();
+            }, 5000); 
+            return () => clearTimeout(timer);
+        }, [onGrowthComplete]);
+
+        return (
+            <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 pb-20 overflow-hidden"> 
+                <motion.div className="relative">
+                    <Stone shape={stoneShape} size="lg" className="overflow-hidden relative">
+                        <div className="w-full h-full flex items-center justify-center relative z-0">
+                            <motion.div initial={{ opacity: 0.8 }} animate={{ opacity: 0 }} transition={{ duration: 2, delay: 1 }} style={{ transform: 'translateZ(0)', maskImage: 'linear-gradient(to bottom, transparent 0px, black 24px, black calc(100% - 24px), transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 24px, black calc(100% - 24px), transparent 100%)' }} className="no-scrollbar w-[80%] h-[60%] py-6 text-center font-serif text-lg leading-relaxed break-words whitespace-pre-wrap flex flex-wrap justify-center content-start overflow-hidden pointer-events-none">
+                                <span className="carved-deep w-full">{worry}</span>
+                            </motion.div>
                         </div>
-                    </motion.div>
-                </div>
-            );
-        };
+                        <motion.div initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 0.7, scale: 1 }} transition={{ duration: 4, ease: "easeOut", delay: 0.5 }} className="absolute inset-0 z-30 mix-blend-multiply" style={{ borderRadius: stoneShape, backgroundColor: '#4A5D23', filter: 'url(#mossRoughness)' }} />
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} transition={{ duration: 3, delay: 1.8 }} className="absolute inset-0 z-40 mix-blend-overlay" style={{ borderRadius: stoneShape, backgroundColor: '#8A9A5B', backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='fuzz'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23fuzz)' opacity='0.5'/%3E%3C/svg%3E")` }} />
+                    </Stone>
+                    <div className="absolute top-full left-0 w-full flex justify-center pt-12">
+                        <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0] }} transition={{ duration: 4, times: [0, 0.5, 1] }} className="text-moss text-sm font-serif whitespace-nowrap">正在回归大地...</motion.p>
+                    </div>
+                </motion.div>
+            </div>
+        );
+    };
 
-        const Echo = ({ insight, stoneShape, onReturn }) => {
-            const randomID = useMemo(() => Math.random().toString(36).substring(2, 8).toUpperCase(), []);
-            const currentDate = useMemo(() => {
-                const d = new Date();
-                return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear().toString().substr(-2)} ${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;
-            }, []);
+    const Echo = ({ insight, stoneShape, onReturn }) => {
+        const randomID = useMemo(() => Math.random().toString(36).substring(2, 8).toUpperCase(), []);
+        const currentDate = useMemo(() => {
+            const d = new Date();
+            return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear().toString().substr(-2)} ${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;
+        }, []);
 
-            return (
-                <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 bg-black/5 overflow-hidden relative">
-                    <motion.div initial={{ scale: 1.5, y: 0, opacity: 1 }} animate={{ scale: 0.6, y: -120, opacity: 0.8 }} transition={{ duration: 1.5, type: "spring", bounce: 0.2 }} className="absolute pointer-events-none grayscale opacity-10 z-0">
-                        <Stone shape={stoneShape} isMossy size="md" />
-                    </motion.div>
-                    <motion.div drag dragConstraints={{ left: -100, right: 100, top: -100, bottom: 100 }} whileDrag={{ scale: 1, rotate: 0 }} dragElastic={0.1} initial={{ opacity: 0, y: 20, rotate: -5 }} animate={{ opacity: 1, y: 20, rotate: 1 }} transition={{ delay: 0.5, duration: 0.8, type: "spring" }} className="relative z-20 bg-[#Fdfdfd] text-ink w-64 max-w-sm drop-shadow-jagged cursor-grab active:cursor-grabbing" style={{ transformOrigin: "center center" }}>
-                        <div className="absolute top-[-8px] left-0 w-full h-[8px] jagged-top"></div>
-                        <div className="absolute bottom-[-8px] left-0 w-full h-[8px] jagged-bottom"></div>
-                        <button onClick={onReturn} className="absolute top-2 right-2 text-ink/40 hover:text-red-500 transition-colors z-30 p-2"><Icons.X size={16} /></button>
-                        <div className="p-5 pb-6 font-sans">
-                            <div className="text-center mb-4">
-                                <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-ink/80">Pager Message</h3>
-                            </div>
-                            <div className="flex justify-between items-end text-[9px] text-ink/50 mb-2 font-bold tracking-wide">
-                                <span>ID: {randomID}</span>
-                                <span>{currentDate}</span>
-                            </div>
-                            <div className="w-full border-b-2 border-dashed border-ink/10 mb-4"></div>
-                            <div className="min-h-[100px] flex items-center justify-center">
-                                <p className="text-base font-bold leading-relaxed text-ink text-left w-full select-none" style={{ textWrap: 'balance' }}>{insight}</p>
-                            </div>
-                            <div className="h-4"></div>
-                            <div className="w-full border-b-2 border-dashed border-ink/10 mb-3"></div>
-                            <div className="flex justify-between items-center opacity-60">
-                                <div className="flex items-end gap-[2px] h-6 overflow-hidden">
-                                    {[...Array(15)].map((_, i) => (
-                                        <div key={i} className="bg-ink" style={{ width: Math.random() > 0.6 ? '1px' : '2px', height: '100%' }}></div>
-                                    ))}
-                                </div>
-                                <span className="text-[8px] tracking-widest uppercase font-bold">End of Transmission</span>
-                            </div>
+        return (
+            <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 bg-black/5 overflow-hidden relative">
+                <motion.div initial={{ scale: 1.5, y: 0, opacity: 1 }} animate={{ scale: 0.6, y: -120, opacity: 0.8 }} transition={{ duration: 1.5, type: "spring", bounce: 0.2 }} className="absolute pointer-events-none grayscale opacity-10 z-0">
+                    <Stone shape={stoneShape} isMossy size="md" />
+                </motion.div>
+                <motion.div drag dragConstraints={{ left: -100, right: 100, top: -100, bottom: 100 }} whileDrag={{ scale: 1, rotate: 0 }} dragElastic={0.1} initial={{ opacity: 0, y: 20, rotate: -5 }} animate={{ opacity: 1, y: 20, rotate: 1 }} transition={{ delay: 0.5, duration: 0.8, type: "spring" }} className="relative z-20 bg-[#Fdfdfd] text-ink w-64 max-w-sm drop-shadow-jagged cursor-grab active:cursor-grabbing" style={{ transformOrigin: "center center" }}>
+                    <div className="absolute top-[-8px] left-0 w-full h-[8px] jagged-top"></div>
+                    <div className="absolute bottom-[-8px] left-0 w-full h-[8px] jagged-bottom"></div>
+                    <button onClick={onReturn} className="absolute top-2 right-2 text-ink/40 hover:text-red-500 transition-colors z-30 p-2"><Icons.X size={16} /></button>
+                    <div className="p-5 pb-6 font-sans">
+                        <div className="text-center mb-4">
+                            <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-ink/80">Pager Message</h3>
                         </div>
-                    </motion.div>
-                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }} className="absolute bottom-12 text-xs font-serif text-ink/40 tracking-widest pointer-events-none">拖拽纸条 · 点击 × 收入口袋</motion.p>
-                </div>
-            );
+                        <div className="flex justify-between items-end text-[9px] text-ink/50 mb-2 font-bold tracking-wide">
+                            <span>ID: {randomID}</span>
+                            <span>{currentDate}</span>
+                        </div>
+                        <div className="w-full border-b-2 border-dashed border-ink/10 mb-4"></div>
+                        <div className="min-h-[100px] flex items-center justify-center">
+                            <p className="text-base font-bold leading-relaxed text-ink text-left w-full select-none" style={{ textWrap: 'balance' }}>{insight}</p>
+                        </div>
+                        <div className="h-4"></div>
+                        <div className="w-full border-b-2 border-dashed border-ink/10 mb-3"></div>
+                        <div className="flex justify-between items-center opacity-60">
+                            <div className="flex items-end gap-[2px] h-6 overflow-hidden">
+                                {[...Array(15)].map((_, i) => (
+                                    <div key={i} className="bg-ink" style={{ width: Math.random() > 0.6 ? '1px' : '2px', height: '100%' }}></div>
+                                ))}
+                            </div>
+                            <span className="text-[8px] tracking-widest uppercase font-bold">End of Transmission</span>
+                        </div>
+                    </div>
+                </motion.div>
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }} className="absolute bottom-12 text-xs font-serif text-ink/40 tracking-widest pointer-events-none">拖拽纸条 · 点击 × 收入口袋</motion.p>
+            </div>
+        );
+    };
+
+    const App = () => {
+        const [screen, setScreen] = useState(ScreenState.COURTYARD);
+        const [stones, setStones] = useState([]);
+        const [gardenItems, setGardenItems] = useState([]);
+        const [currentShape, setCurrentShape] = useState(generateOrganicShape());
+        const [currentWorry, setCurrentWorry] = useState('');
+        const [currentWeather, setCurrentWeather] = useState(Weather.SUN);
+        const [currentInsight, setCurrentInsight] = useState('');
+
+        const handleStart = (weather) => {
+            setCurrentWeather(weather);
+            setCurrentShape(generateOrganicShape());
+            setScreen(ScreenState.ETCHING);
         };
 
-        const App = () => {
-            const [screen, setScreen] = useState(ScreenState.COURTYARD);
-            const [stones, setStones] = useState([]);
-            const [gardenItems, setGardenItems] = useState([]);
-            const [currentShape, setCurrentShape] = useState(generateOrganicShape());
-            const [currentWorry, setCurrentWorry] = useState('');
-            const [currentWeather, setCurrentWeather] = useState(Weather.SUN);
-            const [currentInsight, setCurrentInsight] = useState('');
+        const handleLayDown = useCallback(async (text) => {
+            setCurrentWorry(text);
+            setScreen(ScreenState.OVERGROWTH);
+            try {
+                const insight = await generateInsight(text, currentWeather);
+                setCurrentInsight(insight);
+            } catch (e) {
+                setCurrentInsight("风吹过青苔的声音。");
+            }
+        }, [currentWeather]);
 
-            const handleStart = (weather) => {
-                setCurrentWeather(weather);
-                setCurrentShape(generateOrganicShape());
-                setScreen(ScreenState.ETCHING);
-            };
-
-            const handleLayDown = useCallback(async (text) => {
-                setCurrentWorry(text);
-                setScreen(ScreenState.OVERGROWTH);
-                try {
-                    const insight = await generateInsight(text, currentWeather);
-                    setCurrentInsight(insight);
-                } catch (e) {
-                    setCurrentInsight("风吹过青苔的声音。");
-                }
-            }, [currentWeather]);
-
-            const handleGrowthComplete = () => {
-                setScreen(ScreenState.ECHO);
-            };
-
-            const handleReturn = () => {
-                const newStone = {
-                    id: Date.now().toString(),
-                    worry: currentWorry,
-                    insight: currentInsight,
-                    timestamp: Date.now(),
-                    weather: currentWeather,
-                    shapePolygon: currentShape,
-                    rotation: Math.random() * 30 - 15,
-                    x: Math.random() * 200 - 100,
-                    y: Math.random() * 200 - 100
-                };
-                setStones(prevStones => [...prevStones, newStone]);
-                setScreen(ScreenState.COURTYARD);
-                setCurrentWorry('');
-                setCurrentInsight('');
-            };
-
-            const handleTransformStones = (targetStoneIds, targetType) => {
-                if (!targetStoneIds || targetStoneIds.length < 3) return;
-                
-                const types = ['Lantern', 'Pine', 'Bamboo'];
-                const selectedType = targetType || types[Math.floor(Math.random() * types.length)];
-                
-                const aestheticZones = [
-                    { name: '左上角', xRange: [5, 20],  yRange: [10, 25] }, 
-                    { name: '右上角', xRange: [80, 95], yRange: [10, 25] }, 
-                    { name: '左下角', xRange: [5, 25],  yRange: [70, 85] }, 
-                    { name: '右下角', xRange: [75, 95], yRange: [70, 85] }, 
-                    { name: '左边缘', xRange: [2, 12],  yRange: [35, 65] }, 
-                    { name: '右边缘', xRange: [88, 98], yRange: [35, 65] }, 
-                ];
-                const zone = aestheticZones[Math.floor(Math.random() * aestheticZones.length)];
-                const finalX = zone.xRange[0] + Math.random() * (zone.xRange[1] - zone.xRange[0]);
-                const finalY = zone.yRange[0] + Math.random() * (zone.yRange[1] - zone.yRange[0]);
-
-                const newItem = {
-                    id: Date.now(),
-                    type: selectedType,
-                    x: finalX,
-                    y: finalY,
-                    scale: 0.9 + Math.random() * 0.5 
-                };
-
-                setGardenItems(prev => [...prev, newItem]);
-                setStones(prev => prev.filter(s => !targetStoneIds.includes(s.id)));
-                
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                playSound('lift'); 
-            };
-
-            return (
-                <main className="w-full h-screen overflow-hidden bg-concrete text-ink font-sans selection:bg-moss selection:text-white relative">
-                    <AnimatePresence mode="wait">
-                        {screen === ScreenState.COURTYARD && (
-                            <motion.div key="courtyard" className="w-full h-full" exit={{ opacity: 0, transition: { duration: 0.5 } }}>
-                                <Courtyard stones={stones} onStart={handleStart} onUpdateStones={setStones} gardenItems={gardenItems} onTransform={handleTransformStones} />
-                            </motion.div>
-                        )}
-                        {screen === ScreenState.ETCHING && (
-                            <motion.div key="etching" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.5 } }}>
-                                <Etching stoneShape={currentShape} onLayDown={handleLayDown} />
-                            </motion.div>
-                        )}
-                        {screen === ScreenState.OVERGROWTH && (
-                            <motion.div key="overgrowth" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.8 } }}>
-                                <Overgrowth worry={currentWorry} stoneShape={currentShape} onGrowthComplete={handleGrowthComplete} />
-                            </motion.div>
-                        )}
-                        {screen === ScreenState.ECHO && (
-                            <motion.div key="echo" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.5 } }}>
-                                <Echo insight={currentInsight} stoneShape={currentShape} onReturn={handleReturn} />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </main>
-            );
+        const handleGrowthComplete = () => {
+            setScreen(ScreenState.ECHO);
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+        const handleReturn = () => {
+            const newStone = {
+                id: Date.now().toString(),
+                worry: currentWorry,
+                insight: currentInsight,
+                timestamp: Date.now(),
+                weather: currentWeather,
+                shapePolygon: currentShape,
+                rotation: Math.random() * 30 - 15,
+                x: Math.random() * 200 - 100,
+                y: Math.random() * 200 - 100
+            };
+            setStones(prevStones => [...prevStones, newStone]);
+            setScreen(ScreenState.COURTYARD);
+            setCurrentWorry('');
+            setCurrentInsight('');
+        };
+
+        const handleTransformStones = (targetStoneIds, targetType) => {
+            if (!targetStoneIds || targetStoneIds.length < 3) return;
+            
+            const types = ['Lantern', 'Pine', 'Bamboo'];
+            const selectedType = targetType || types[Math.floor(Math.random() * types.length)];
+            
+            const aestheticZones = [
+                { name: '左上角', xRange: [5, 20],  yRange: [10, 25] }, 
+                { name: '右上角', xRange: [80, 95], yRange: [10, 25] }, 
+                { name: '左下角', xRange: [5, 25],  yRange: [70, 85] }, 
+                { name: '右下角', xRange: [75, 95], yRange: [70, 85] }, 
+                { name: '左边缘', xRange: [2, 12],  yRange: [35, 65] }, 
+                { name: '右边缘', xRange: [88, 98], yRange: [35, 65] }, 
+            ];
+            const zone = aestheticZones[Math.floor(Math.random() * aestheticZones.length)];
+            const finalX = zone.xRange[0] + Math.random() * (zone.xRange[1] - zone.xRange[0]);
+            const finalY = zone.yRange[0] + Math.random() * (zone.yRange[1] - zone.yRange[0]);
+
+            const newItem = {
+                id: Date.now(),
+                type: selectedType,
+                x: finalX,
+                y: finalY,
+                scale: 0.9 + Math.random() * 0.5 
+            };
+
+            setGardenItems(prev => [...prev, newItem]);
+            
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            playSound('lift'); 
+        };
+
+        return (
+            <main className="w-full h-screen overflow-hidden bg-concrete text-ink font-sans selection:bg-moss selection:text-white relative">
+                <AnimatePresence mode="wait">
+                    {screen === ScreenState.COURTYARD && (
+                        <motion.div key="courtyard" className="w-full h-full" exit={{ opacity: 0, transition: { duration: 0.5 } }}>
+                            <Courtyard stones={stones} onStart={handleStart} onUpdateStones={setStones} gardenItems={gardenItems} onTransform={handleTransformStones} />
+                        </motion.div>
+                    )}
+                    {screen === ScreenState.ETCHING && (
+                        <motion.div key="etching" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.5 } }}>
+                            <Etching stoneShape={currentShape} onLayDown={handleLayDown} />
+                        </motion.div>
+                    )}
+                    {screen === ScreenState.OVERGROWTH && (
+                        <motion.div key="overgrowth" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.8 } }}>
+                            <Overgrowth worry={currentWorry} stoneShape={currentShape} onGrowthComplete={handleGrowthComplete} />
+                        </motion.div>
+                    )}
+                    {screen === ScreenState.ECHO && (
+                        <motion.div key="echo" className="w-full h-full" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.5 } }}>
+                            <Echo insight={currentInsight} stoneShape={currentShape} onReturn={handleReturn} />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </main>
+        );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+</script>
 </body>
 </html>
+
