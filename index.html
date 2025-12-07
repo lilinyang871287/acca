@@ -545,6 +545,42 @@
             const [showTransformConfirm, setShowTransformConfirm] = useState(false);
             const [showNotReadyTip, setShowNotReadyTip] = useState(false);
 
+          // --- 在 Courtyard 组件内部，插入新的状态 ---
+            const [isShopMode, setIsShopMode] = useState(false); // 商店模式开关
+            const [stonesInPool, setStonesInPool] = useState([]); // 记录被拖入池子的石头ID
+            
+         // 商店模式切换处理
+            const toggleShopMode = () => {
+                if (!isShopMode) {
+                    setIsShopMode(true);
+                    setStonesInPool([]); // 进入时清空池子
+                } else {
+                    setIsShopMode(false);
+                    setStonesInPool([]); // 退出时清空池子（石头位置复原逻辑在下一轮实现）
+                }
+            };
+            
+            // 修改后的 Header 标题点击逻辑 (保留了调试功能)
+            const handleTitleClick = () => {
+                 // ... (保留你原有的调试代码逻辑) ...
+                 // 为了节省篇幅，这里假设你保留了原有的 debugClickCountRef 逻辑
+                 // 仅仅是这里不需要变动，只要确保 Header 渲染部分用了 isShopMode 即可
+            };
+            
+            // 下滑退出商店逻辑 (简单版)
+            useEffect(() => {
+                const handleWheel = (e) => {
+                    if (isShopMode && Math.abs(e.deltaY) > 50) {
+                         // setIsShopMode(false); // 暂时注释，防止过于灵敏，主要靠按钮退出
+                    }
+                };
+                window.addEventListener('wheel', handleWheel);
+                return () => window.removeEventListener('wheel', handleWheel);
+            }, [isShopMode]);
+        // ----------------------------------------------------
+
+
+            
 // --- 【新增 1：调试模式状态与逻辑】 ---
             const [showDebug, setShowDebug] = useState(false);
             const debugClickCountRef = useRef(0);
@@ -1362,3 +1398,4 @@
     </script>
 </body>
 </html>
+
