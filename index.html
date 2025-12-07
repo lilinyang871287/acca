@@ -286,13 +286,36 @@
     // ... (保持 Decorations 定义不变)
     const Decorations = {
         Lantern: () => (
-            <g opacity="0.6">
-                <path d="M40 100 L60 100 L55 80 L45 80 Z" fill="#2C2C2C" />
-                <path d="M48 80 L52 80 L52 60 L48 60 Z" fill="#2C2C2C" />
-                <path d="M35 60 L65 60 L60 40 L40 40 Z" fill="#2C2C2C" />
-                <path d="M30 40 Q50 20 70 40 L30 40" fill="#2C2C2C" />
-                <circle cx="50" cy="35" r="3" fill="#E0E0E0" />
-                <circle cx="50" cy="50" r="8" fill="#F9A825" opacity="0.3" filter="url(#mossFuzz)" />
+            <g transform="translate(0, 5)">
+                {/* 1. 顶部宝珠 (Hoju) - 颜色改为石灰色 #666666 */}
+                <path d="M45 25 Q50 20 55 25 L55 30 L45 30 Z" fill="#666666" />
+                
+                {/* 2. 宽大的屋顶 (Kasa) */}
+                <path d="M50 30 L85 45 L80 55 L20 55 L15 45 Z" fill="#666666" />
+                {/* 屋顶高光线条，增强立体感 */}
+                <path d="M20 55 L50 35 L80 55" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.3" fill="none" />
+
+                {/* 3. 火袋 (Hibukuro) */}
+                <path d="M32 55 L68 55 L65 85 L35 85 Z" fill="#666666" />
+                
+                {/* 4. 窗户与灯光 */}
+                <rect x="42" y="62" width="16" height="14" rx="1" fill="#2b2b2b" />
+                <circle cx="50" cy="69" r="4" fill="#F9A825" opacity="0.8" filter="url(#mossFuzz)" />
+
+                {/* 5. 中台 (Chudai) */}
+                <path d="M28 85 L72 85 L68 95 L32 95 Z" fill="#666666" />
+
+                {/* 6. 底部支脚 (Kiso) - 【修改重点】 */}
+                {/* 之前的 Y 是 145，现在改为 128，大幅缩短腿长 */}
+                {/* 调整了贝塞尔曲线的弯曲度，保持拱形但更敦实 */}
+                <path d="M35 95 Q33 110 26 128 L42 128 Q43 115 50 108 Q57 115 58 128 L74 128 Q67 110 65 95 Z" fill="#666666" />
+
+                {/* 7. 苔藓细节 - 位置随腿部高度相应上移 */}
+                <circle cx="25" cy="50" r="6" fill="#3A4D1F" opacity="0.8" filter="url(#mossRoughness)" />
+                <circle cx="75" cy="48" r="5" fill="#3A4D1F" opacity="0.6" filter="url(#mossRoughness)" />
+                {/* 腿部苔藓位置调整 */}
+                <path d="M28 120 Q25 125 25 128 L35 128" stroke="#3A4D1F" strokeWidth="4" fill="none" opacity="0.7" filter="url(#mossRoughness)" />
+                <circle cx="70" cy="125" r="5" fill="#3A4D1F" opacity="0.7" filter="url(#mossRoughness)" />
             </g>
         ),
         Pine: () => {
@@ -1614,4 +1637,5 @@ const Courtyard = ({ stones, onStart, onUpdateStones, gardenItems, onTransform }
 </script>
 </body>
 </html>
+
 
