@@ -763,24 +763,60 @@ const Courtyard = ({ stones, onStart, onUpdateStones, gardenItems, onTransform }
         requestAnimationFrame(animateScroll);
     };
 
-    // 滚动逻辑：仅当有"新石头"诞生时滚动
-    useEffect(() => {
+    // 滚动逻辑：区分“初始定位”和“新增滚动”
+    // 使用 useLayoutEffect 确保在画面绘制前完成定位，避免闪烁
+    React.useLayoutEffect(() => {
+        // 只有当有新石头（或初始化）时才处理
         if (latestTimestamp > prevTimestampRef.current) {
             if (stoneChunks.length > 1) {
                 const lastPageIndex = stoneChunks.length - 1;
                 const container = scrollContainerRef.current;
+                
                 if (container) {
                     const pageHeight = container.clientHeight;
                     const targetScrollTop = lastPageIndex * pageHeight;
                     container.style.scrollBehavior = 'auto'; 
-                    if (Math.abs(container.scrollTop - targetScrollTop) > 10) {
-                        smoothScrollTo(container, targetScrollTop, 1500); 
+
+                    // === 核心修改逻辑 ===
+
+                    // 场景 A: 组件刚挂载 (从回音页回来，或刷新页面)
+                    if (prevTimestampRef.current === 0) {
+                        
+                        // 1. 判断是否刚好是新页面的第一个石头 (第10个, 第19个...)
+                        // 注意：这里用可见石头的数量来判断
+                        const visibleCount = stones.filter(s => !s.isArchived).length;
+                        const isNewPageStart = (visibleCount - 1) % 9 === 0;
+
+                        // 2. 判断这块石头是不是“新鲜”的 (防止刷新旧页面时乱滚)
+                        // 如果石头是 2 秒内生成的，就算新鲜
+                        const isFresh = (Date.now() - latestTimestamp) < 2000;
+
+                        // 只有同时满足：是开启新页的石头 && 是刚才生成的
+                        if (isNewPageStart && isFresh) {
+                            // 【仪式感动画】
+                            // 先瞬间定位到“上一页”的底部 (模拟好像还在旧页)
+                            container.scrollTop = (lastPageIndex - 1) * pageHeight;
+                            // 然后优雅地滚到新页
+                            setTimeout(() => {
+                                smoothScrollTo(container, targetScrollTop, 1500);
+                            }, 50); // 稍微延迟一丁点确保浏览器渲染完成
+                        } else {
+                            // 【普通情况】直接瞬移 (防止晕眩)
+                            container.scrollTop = targetScrollTop;
+                        }
+
+                    } 
+                    // 场景 B: 停留在庭院界面时增加石头 (Debug模式)
+                    else {
+                        if (Math.abs(container.scrollTop - targetScrollTop) > 10) {
+                            smoothScrollTo(container, targetScrollTop, 1500); 
+                        }
                     }
                 }
             }
         }
         prevTimestampRef.current = latestTimestamp;
-    }, [latestTimestamp, stoneChunks.length]);
+    }, [latestTimestamp, stoneChunks.length, stones]);
 
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
